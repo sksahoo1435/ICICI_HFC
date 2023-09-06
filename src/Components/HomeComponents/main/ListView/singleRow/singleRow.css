@@ -1,0 +1,16 @@
+.singleRow{
+    color: #063E67;
+font-family: Noto Sans;
+font-size: 1.7vh;
+font-style: normal;
+font-weight: 400;
+line-height: normal;
+height: 4.5vh;
+}
+
+.nameDiv{
+    display: flex;
+    align-self: center;
+align-items: center;
+vertical-align: middle;
+}

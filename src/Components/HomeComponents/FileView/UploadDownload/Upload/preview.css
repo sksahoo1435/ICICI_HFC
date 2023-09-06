@@ -1,0 +1,63 @@
+.previewContainer {
+    height: 50vh;
+    width: 95%;
+    position: relative;
+    margin-left: 2vw;
+    display: flex;
+    flex-direction: column;
+    margin-top: 4vh;
+    gap: 2vh;
+}
+
+.previewtext {
+    height: 5%;
+}
+
+.previewtext p {
+    text-decoration: underline;
+    font-family: Arial;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.2rem;
+    letter-spacing: 0em;
+    text-align: left;
+
+}
+
+.previewTable{
+    height: 80%;
+    width: 100%;
+    position: relative;
+    overflow-y: scroll;
+}
+
+
+.previewButton{
+    height: 15%;
+    width: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    gap: 2vw;
+    float: right;
+    margin-left: 76%;
+}
+
+.back-btn button,
+.con-btn button {
+    width: 8vw;
+    height: 5vh;
+    padding: 9px -0.2vh 9px 1vh;
+    border-radius: 31px;
+    
+}
+
+.back-btn button{
+    border: 1px solid #F36523;
+    color: #F36523;
+}
+
+.con-btn button{
+    background: linear-gradient(180deg, #F8A716 0%, #E75126 120.93%);
+    color: white;
+}

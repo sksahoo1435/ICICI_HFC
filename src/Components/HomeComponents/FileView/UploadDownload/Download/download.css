@@ -1,0 +1,88 @@
+.downloadContainer {
+    position: relative;
+    margin-top: 2vh;
+    margin-left: 2vw;
+    margin-right: 2vw;
+    display: flex;
+    flex-direction: row;
+}
+
+.downloadContainer_left {
+    position: relative;
+    width: 35%;
+    height: 100%;
+
+}
+
+.downloadContainer_border {
+    border-right: 1px solid rgb(177, 175, 175);
+    height: 50vh;
+}
+
+.select_Application {
+    display: flex;
+    flex-direction: column;
+    gap: 2vh;
+}
+
+.text-select_app {
+    color: #36556B;
+    font-family: Arial;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 18px;
+    letter-spacing: 0em;
+    text-align: left;
+}
+
+.filternSearchSec {
+    height: 10%;
+    width: 100%;
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    gap: 1vh;
+}
+
+.search_btn_sec {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    gap: 2vw;
+}
+
+
+.downloadContainer_right {
+    position: relative;
+    width: 65%;
+    height: 100%;
+}
+
+.text_blank {
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    margin-top: 20%;
+}
+
+.text_blank p {
+    font-family: Arial;
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 23px;
+    letter-spacing: 0em;
+    text-align: left;
+    color: #36556B;
+}
+
+#checboxs label {
+    font-family: Arial;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 18px;
+    letter-spacing: 0em;
+    text-align: left;
+    color: #36556B;
+}

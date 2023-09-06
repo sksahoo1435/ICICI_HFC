@@ -1,0 +1,5 @@
+@media (max-width:1300px) and (min-width:900px) {
+    .container_left_right{
+        width: 80%;
+    }
+}

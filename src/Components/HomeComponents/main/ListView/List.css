@@ -1,0 +1,24 @@
+.listView{
+width: 100%;
+height: 100%;
+margin-left: 5vw;
+}
+
+.myTable{
+width: 80%;
+height: 80%;
+}
+
+.HeadingRow{
+    text-align: left;
+    color: rgba(0, 0, 0, 0.66);
+font-family: Arial;
+font-size: 1.7vh;
+font-style: normal;
+font-weight: 400;
+line-height: normal;
+height: 5vh;
+align-self: center;
+align-items: center;
+vertical-align: middle;
+}

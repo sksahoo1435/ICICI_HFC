@@ -1,0 +1,157 @@
+.overalTabs {
+  width: 100%;
+  height: 8vh;
+  margin-top: 4vh;
+  padding-left: 4vw;
+  display: flex;
+  justify-content: space-between;
+}
+
+.mainTabs {
+  display: flex;
+  height: 5vh;
+  max-width: 60%;
+}
+
+.searchDiv {
+  height: 5vh;
+}
+
+.normalTab0,
+.normalTab1,
+.normalTab2,
+.normalTab3 {
+  position: relative;
+  background-color: transparent;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  text-align: center;
+  font-size: 1.2em;
+  outline: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 12vw;
+  max-width: 12vw;
+  z-index: 99;
+  margin-right: 0;
+  margin-left: 0;
+  background: #dcd9d900;
+}
+
+.selectedTab {
+  background-color: #f37e20;
+  color: #fff;
+  width: 8vw;
+  height: 5.01vh;
+  font-size: 0.9em;
+  z-index: 1;
+  position: relative;
+  border-bottom-left-radius:0.1rem ;
+  border-bottom-right-radius:0.1rem ;
+}
+
+.selectedTab::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 5vh;
+  width: 7vw;
+  background-image: url('../../../Assets/activeLeft.png');
+  background-repeat: repeat-y;
+  left: -1.5vw;
+  z-index: 2;
+}
+
+.selectedTab::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 5vh;
+  width: 7vw;
+  background-image: url('../../../Assets/activeRight.png');
+  background-repeat: repeat-y;
+  left: 8vw; 
+  opacity: 10;
+  z-index: 200; 
+}
+
+.normalTab0 .button-icon::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 5vh;
+  width: 7vw;
+  background-image: url('../../../Assets/tabLeft.png');
+  background-repeat: repeat-y;
+  left: -1.5vw;
+  z-index: 0;
+}
+
+.normalTab0 .button-icon::after,
+.normalTab1 .button-icon::after,
+.normalTab2 .button-icon::after,
+.normalTab3 .button-icon::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 5vh;
+  width: 7vw;
+  background-image: url('../../../Assets/tabRight_icon.png');
+  background-repeat: repeat-y;
+  right: -6vw;
+  z-index: 1;
+}
+
+.search-inputforHome {
+  background: #FFFFFF;
+  height: 4.8vh;
+  margin-top: 0vh;
+  position: relative;
+  font-size: 1.8vh !important;
+  width: 16vw;
+  border: 2px solid #FFA000;
+  border-radius: 32px;
+  margin-right: 1vw;
+  padding-left: 0.5vw;
+}
+
+.requestAccessBtn {
+  margin-left: 1vw;
+  width: 13vw;
+  height: 4.8vh;
+  background: linear-gradient(180deg, #F8A716 0%, #E75126 100%);
+  border-radius: 32px;
+  border: none;
+  color: #FFFFFF;
+  font-family: Arial;
+  font-size: 2vh;
+  line-height: normal;
+  font-weight: 400;
+  text-align: center;
+  cursor: pointer;
+}
+
+.gridViewDiv {
+  cursor: pointer;
+  margin-left: 0vw;
+  height: 8vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-self: center;
+  top: -1.5vh;
+  position: relative;
+}
+
+.endingDIv {
+  display: flex;
+  flex-direction: row;
+  gap: 1vw;
+  padding-right: 2vw;
+}

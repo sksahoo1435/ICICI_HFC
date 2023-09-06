@@ -1,0 +1,73 @@
+.downloadButton:hover{
+    background-color: rgb(215, 223, 223);
+}
+
+.circleImg{
+    border-radius: 50%;
+    height: 2vh;
+    width: 1vw;
+    background-color: blue;
+}
+
+.completedText{
+    color: #21A366;
+}
+
+.custom-image {
+    height: 60px;
+    width: 75px;
+    position: absolute;
+}
+
+
+.progressContent,
+.importModalBody{
+    width: 88vw;
+}
+
+.notes{
+    margin-left: 1.5vw;
+    margin-bottom: 2vh;
+}
+
+@media (min-width:780px) and (max-width:1300px) {
+    .circleImg{
+        border-radius: 50%;
+        height: 1.5vh;
+        margin-top: 0.2vh;
+        width: 0.8vw;
+        background-color: blue;
+    }
+    .invalidtext{
+        font-size: 0.9rem;
+        line-height: 1rem;
+        white-space: nowrap;
+    }
+    .fileImg{
+        width: 3vw;
+        height: 6vh;
+    }
+    .downloadbutton{
+        height: 10;
+        width: 10;
+    }
+}
+
+@media (min-width:380px) and (max-width:779px) {
+    .circleImg{
+        border-radius: 50%;
+        height: 1.2vh;
+        width: 0.9vw;
+        margin-top: 0.5vh;
+        background-color: blue;
+    }
+    .invalidtext{
+        font-size: 0.8rem;
+        line-height: 1rem;
+        white-space: nowrap;
+    }
+    .fileImg{
+        width: 2.5vw;
+        height: 5vh;
+    }
+}

@@ -1,0 +1,148 @@
+.fileDictionary_container {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  margin-left: 5%;
+  margin-right: 3%;
+  height: 80vh;
+}
+
+.fileDictionary_container_left {
+  width: 33%;
+  border-right: 1px solid #DDDDDD;
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.fileDictionary_container_left_dataSec {
+  height: 90%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2vh;
+}
+
+.fileDictionary_container_left_dataSec_txt {
+  font-family: Arial;
+  font-size: 1cqw;
+  font-weight: 700;
+  line-height: 1.2rem;
+  letter-spacing: 0em;
+  text-align: left;
+  color: #36556B;
+}
+
+.search-inputforFile {
+  background: #FFFFFF;
+  /* Grey(Outline) */
+  height: 4.8vh;
+  margin-top: 0vh;
+  position: relative;
+  font-size: 1.8vh !important;
+  width: 16vw;
+  border: 1px solid #36556B;
+  border-radius: 32px;
+  margin-right: 1vw;
+  padding-left: 0.5vw;
+}
+
+.searchNsortsec {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.fileDictionary_container_left_btn {
+  margin-top: 1vh;
+  position: relative;
+}
+
+.label {
+  color: #36556B;
+}
+
+.fileDictionary_container_right {
+  width: 67%;
+  position: relative;
+  height: 85%;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+
+.tableContainer {
+  width: 25%;
+  margin-top: 8%;
+  border: 1px solid #a1a2a3;
+  overflow: hidden;
+  border-radius: 1rem;
+  position: relative;
+}
+
+.tableInnerContainer {
+  width: 100%;
+  padding-right: 0vw;
+  overflow-y: scroll; 
+  max-height: 62vh;
+  border-radius: 1rem;
+}
+
+.tableFile {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.tableHeadFile {
+  background-color: #E75126;
+  color: white;
+}
+
+.tableHeadFileTh {
+  padding: 1rem;
+  text-align: center;
+  font-family: Arial;
+  font-size: 1.3cqw;
+  font-weight: 400;
+  line-height: 1.1rem;
+  letter-spacing: 0em;
+}
+
+.tableBodyFileTd {
+  padding: 1rem;
+  border-bottom: 1px solid #ccc;
+  text-align: center;
+  font-family: Arial;
+  font-size: 1cqw;
+  font-weight: 400;
+  line-height: 1.1rem;
+  letter-spacing: 0em;
+  color: #36556B;
+}
+
+.tableBodyFile tr:nth-child(even) {
+  background: linear-gradient(0deg, #DDDDDD, #DDDDDD),
+    linear-gradient(0deg, #F6F6F6, #F6F6F6);
+}
+
+.tableInnerContainer::-webkit-scrollbar {
+  width: 10px;
+  border-radius: 1rem;
+}
+
+.tableInnerContainer::-webkit-scrollbar-thumb {
+  background-color: rgba(186, 186, 186, 0.682);
+  border-radius: 1rem;
+}
+
+.tableInnerContainer::-webkit-scrollbar-track {
+  background-color: #E5E5E5;
+}
+
+.tableInnerContainer {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(186, 186, 186, 0.682) #E5E5E5;
+}

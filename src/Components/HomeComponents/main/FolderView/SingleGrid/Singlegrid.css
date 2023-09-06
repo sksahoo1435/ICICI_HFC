@@ -1,0 +1,50 @@
+.singleGrid{
+ 
+
+width: 8vw;
+height: 15vh;
+
+}
+
+.singleGrid :hover{
+    background-color: #EEF6FF;
+    border-radius: 2px;
+}
+
+
+
+.gridContent{
+    display: flex;
+flex-direction: column;
+position: relative;
+}
+
+
+.downloadimg{
+    position: absolute;
+    top: 0;
+    right: 0.7vw;
+}
+
+.tileGrid{
+    color: #063E67;
+    font-family: Noto Sans;
+    font-size: 1.7vh;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    display: flex;
+justify-content: center;
+align-self: center;
+align-items: center;
+vertical-align: middle;
+margin-bottom: 1.5vh;
+}
+
+.folderIcon{
+    width: fit-content;
+    height: fit-content;
+    align-self: center;
+align-items: center;
+vertical-align: middle;
+}

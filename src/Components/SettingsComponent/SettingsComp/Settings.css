@@ -1,0 +1,31 @@
+.settingComp {
+    height: 90vh;
+    width: 100%;
+    padding-left: 5%;
+    padding-top: 5vh;
+}
+
+.goBack {
+    color: #063E67;
+    font-family: Arial;
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    margin-top: 1vh;
+    margin-left: -1.5vw;
+    margin-bottom: 2vh;
+    cursor: pointer;
+}
+
+.settings {
+    color: #36556B;
+    font-family: Arial;
+    font-size: 2vh;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    margin-bottom: 3vh;
+    margin-top: 1vh;
+    margin-left: 0vw;
+}

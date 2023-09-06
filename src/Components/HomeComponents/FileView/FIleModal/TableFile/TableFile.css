@@ -1,0 +1,120 @@
+.table-container {
+    border-radius: 1rem;
+    overflow: auto;
+    max-height: 45vh;
+    height: 45vh;
+    max-width: 100%;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 1rem;
+}
+
+.table th {
+    color: white;
+    padding: 2.5vh;
+    background: linear-gradient(0deg, #f36523, #f36523),
+        linear-gradient(0deg, #ffffff, #ffffff);
+    height: 3vh;
+    border-right: 1px solid white;
+}
+
+.table td {
+    padding: 2.5vh;
+    border-bottom: 1.5px solid #dddddd;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.table td p,
+.table th p {
+    font-family: Noto Sans;
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.1rem;
+    letter-spacing: 0em;
+    text-align: left;
+    padding-left: 2vw;
+    color: white;
+}
+
+.table td p {
+    color: #36556b;
+}
+
+.table tr:nth-child(even) {
+    background: linear-gradient(0deg, #dddddd, #dddddd),
+        linear-gradient(0deg, #f6f6f6, #f6f6f6);
+}
+
+@media (max-width: 768px) {
+    .table td {
+        white-space: normal;
+        overflow: visible;
+        text-overflow: clip;
+    }
+
+    .table th p {
+        font-family: Noto Sans;
+        font-size: 0.7rem;
+        font-weight: 500;
+        line-height: 0.9rem;
+        letter-spacing: 0em;
+        text-align: left;
+        padding-left: 2vw;
+        color: white;
+    }
+
+    .table td p {
+        font-family: Noto Sans;
+        font-size: 0.7rem;
+        font-weight: 500;
+        line-height: 0.9rem;
+        letter-spacing: 0em;
+        text-align: left;
+        padding-left: 2vw;
+        color: #36556b;
+    }
+}
+
+@media (max-height: 600px) {
+    .table-container {
+        max-height: 30vh;
+    }
+}
+
+
+.table-container::-webkit-scrollbar {
+    width: 0.8vw;
+    height: 2vh;
+    border-radius: 1vh;
+
+}
+
+
+.table-container::-webkit-scrollbar-thumb {
+    background-color: rgba(186, 186, 186, 0.682);
+    border-radius: 1vh;
+}
+
+
+
+.table-container::-webkit-scrollbar-track {
+    background-color: #E5E5E5;
+}
+
+.table-container::-webkit-scrollbar-horizontal {
+    height: 1vh;
+    border-radius: 1vh;
+}
+
+.table-container::-webkit-scrollbar-thumb:horizontal {
+    background-color: rgba(186, 186, 186, 0.682);
+    border-radius: 1vh;
+}
+
+
+

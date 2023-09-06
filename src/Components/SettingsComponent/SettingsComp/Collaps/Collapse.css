@@ -1,0 +1,34 @@
+.collapseContent {
+    margin-left: 5%;
+    width: 85% !important;
+}
+
+.labelHeading {
+    color: #36556B;
+    font-family: Arial;
+    font-size: 1rem;
+    display: flex;
+    flex-direction: row;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+
+#components-collapse-demo-collapsible .ant-space {
+    width: 100%;
+    margin-bottom: 1vh;
+    padding-bottom: 1vh;
+}
+
+.ulist {
+    color: #36556B;
+    font-family: Arial;
+    font-size: 1.7vh;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    display: flex;
+    flex-direction: column;
+    gap: 1.7vh;
+
+}
