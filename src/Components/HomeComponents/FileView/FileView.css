@@ -1,37 +1,94 @@
-.normalTab5 {
+.normalTabs0,
+.normalTabs1,
+.normalTabs2,
+.normalTabs3,
+.normalTabs5,
+.normalTabs6 {
   position: relative;
-  left: -2vw;
-
+  background-color: transparent;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  text-align: center;
+  font-size: 1rem;
+  outline: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 12vw;
+  max-width: 12vw;
+  z-index: 99;
+  margin-right: 0;
+  margin-left: 0;
+  background: #dcd9d900;
 }
 
-.normalTab6{
+.selectedTabs {
+  background-color: #f37e20;
+  color: #fff;
+  width: 8vw;
+  height: 5.01vh;
+  font-size: 0.9em;
+  z-index: 1;
   position: relative;
-  left: -3vw;
+  border-bottom-left-radius:0.1rem ;
+  border-bottom-right-radius:0.1rem ;
 }
 
-.normalTab50 {
-  position: relative;
-  left: -2vw;
-
+.selectedTabs::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 5vh;
+  width: 7vw;
+  background-image: url('../../../Assets/activeLeft.svg');
+  background-repeat: repeat-y;
+  left: -1.5vw;
+  z-index: 2;
 }
 
-.normalTab40 {
-  position: relative;
-  left: -7.6vw;
+.selectedTabs::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 5vh;
+  width: 7vw;
+  background-image: url('../../../Assets/activeRight.png');
+  background-repeat: repeat-y;
+  left: 6.8vw; 
+  opacity: 10;
+  z-index: 200; 
 }
 
-.normalTab20 {
-  position: relative;
-  left: -4vw;
-
+.normalTabs0 .button-icon::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 5vh;
+  width: 7vw;
+  background-image: url('../../../Assets/tabLeft.svg');
+  background-repeat: repeat-y;
+  left: -1.5vw;
+  z-index: 0;
 }
 
-.normalTab30 {
-  position: relative;
-  left: -5.8vw;
-}
-
-.normalTab40 {
-  position: relative;
-  left: -7.6vw;
+.normalTabs0 .button-icon::after,
+.normalTabs1 .button-icon::after,
+.normalTabs2 .button-icon::after,
+.normalTabs3 .button-icon::after,
+.normalTabs5 .button-icon::after,
+.normalTabs6 .button-icon::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 5vh;
+  width: 7vw;
+  background-image: url('../../../Assets/tabRight_icon.png');
+  background-repeat: repeat-y;
+  right: -6vw;
+  z-index: 1;
 }

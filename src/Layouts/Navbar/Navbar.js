@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import settings from "../../Assets/Vector.png"
 import logout from "../../Assets/Vector (1).png"
 import downArrow from "../../Assets/Union 2.png";
-import { DownOutlined } from '@ant-design/icons';
+
 const Navbar = () => {
   let navigate = useNavigate();
   const items = [
@@ -26,7 +26,9 @@ const Navbar = () => {
   let userIcon;
   let username;
 
-  username = "Bhuwan Jangid"
+  const userName = sessionStorage.getItem('userId')
+
+  username = userName
   let splituser = username.split(" ")
 
   let z = splituser.length - 1

@@ -2,7 +2,6 @@
     border-radius: 1rem;
     overflow: auto;
     max-height: 70vh;
-    height: 60vh;
     max-width: 100%;
     margin-top: 2vh;
     box-shadow: 0.4px 1.5px #c6c4c4;
@@ -46,6 +45,7 @@
 .table_login td p {
     color: #36556b;
 }
+
 
 .table_login tr:nth-child(even) {
     background: linear-gradient(0deg, #dddddd, #dddddd),

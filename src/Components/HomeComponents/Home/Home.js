@@ -12,14 +12,14 @@ import LogIns from "../Logins/LogIns";
 import downArrow from "../../../Assets/Union 2.svg";
 import FilterImg from '../../../Assets/filter.svg'
 import FileDictionary from "../FileDictionary/FileDictionary";
-import normalHome from "../../../Assets/Home Inactive.svg";
-import homeActive from "../../../Assets/Home Active.svg";
-import normalManageUser from "../../../Assets/Manage Users Inactive.svg";
-import manageUSerActive from "../../../Assets/Manage Users Active.svg";
-import normalLogins from "../../../Assets/Logins Inactive.svg";
-import loginsActive from "../../../Assets/Logins active.svg";
-import normalFileDictionary from "../../../Assets/File Dictionary Inactive.svg";
-import FileDictionaryActive from "../../../Assets/File Dictionary active.svg";
+import homeImg from '../../../Assets/homeImg.svg';
+import homeInactive from '../../../Assets/homeinactive.svg'
+import users from '../../../Assets/usersImg.svg';
+import usersActive from '../../../Assets/customerActive.svg'
+import loginsActive from '../../../Assets/loginsActive.svg';
+import logins from '../../../Assets/Vector.svg';
+import files from '../../../Assets/akar-icons_file.svg';
+import filesactive from '../../../Assets/fileInactive.svg'
 
 
 
@@ -97,6 +97,7 @@ const HomeComp = ({ fileView, setFileView, admin, setAdmin, activeTab, setActive
                   setFileView(false);
                 }}
               >
+                <span style={{marginLeft:"-1vw",paddingRight:"0.5vw"}}><img src={activeTab === 0 ?homeImg : homeInactive} alt="home" /></span>
                 <span className="button-icon">Home</span>
               </button>
 
@@ -109,7 +110,8 @@ const HomeComp = ({ fileView, setFileView, admin, setAdmin, activeTab, setActive
                   setFileView(false);
                 }}
               >
-                <span className="button-icon">Manage Users</span>
+                <span style={{marginLeft:"-0.5vw",paddingRight:"0.5vw"}}><img src={activeTab === 1 ? usersActive :users} alt="home" /></span>
+                <span className="button-icon" style={{marginRight:"-1vw"}}>Manage Users</span>
               </button>
 
 
@@ -122,6 +124,7 @@ const HomeComp = ({ fileView, setFileView, admin, setAdmin, activeTab, setActive
                   setFileView(false);
                 }}
               >
+                <span style={{marginLeft:"-0.5vw",paddingRight:"0.5vw"}}><img src={activeTab === 2 ?loginsActive :logins} alt="home" /></span>
                 <span className="button-icon">Logins</span>
               </button>
 
@@ -134,20 +137,22 @@ const HomeComp = ({ fileView, setFileView, admin, setAdmin, activeTab, setActive
                   setFileView(false);
                 }}
               >
-                <span className="button-icon">File Dictionary</span>
+                <span style={{marginLeft:"-0.5vw",paddingRight:"0.5vw"}}><img src={activeTab === 3 ?filesactive:files} alt="home" /></span>
+                <span className="button-icon" style={{marginRight:"-1vw"}} >File Dictionary</span>
               </button>
             </>
           ) : (
             <>
               <button
                 className={
-                  activeTab === 0 ? "selectedTab normalTab1" : "normalTab1"
+                  activeTab === 0 ? "selectedTab normalTab0" : "normalTab0"
                 }
                 onClick={() => {
                   setActiveTab(0);
                   setFileView(false);
                 }}
               >
+                <span style={{marginLeft:"-1vw",paddingRight:"0.5vw"}}><img src={activeTab === 0 ?homeImg : homeInactive} alt="home" /></span>
                 <span className="button-icon">Home</span>
               </button>
             </>

@@ -6,27 +6,19 @@ import grid from "../../../Assets/Tile View Icons.jpg";
 import list from "../../../Assets/Component 1.png";
 import FileContent from './FileContent/FileContent';
 import DownloadDestination from './UploadDownload/Upload/DownloadDestination';
-// import Navbar from "../../../Assets/Nav Bar.svg";
-import normalHome from "../../../Assets/Home Inactive.svg";
-import homeActive from "../../../Assets/Home Active.svg";
-
-import normalUpload from "../../../Assets/Upload Inactive.svg";
-import uploadActive from "../../../Assets/Upload active.svg";
-
-import normalDownload from "../../../Assets/Download Inactive.svg";
-import downloadActive from "../../../Assets/Download active.svg";
-
-import normalManageUser from "../../../Assets/Manage Users Inactive.svg";
-import manageUSerActive from "../../../Assets/Manage Users Active.svg";
-
-import normalLogins from "../../../Assets/Logins Inactive.svg";
-import loginsActive from "../../../Assets/Logins active.svg";
-
-import normalFileDictionary from "../../../Assets/File Dictionary Inactive.svg";
-import FileDictionaryActive from "../../../Assets/File Dictionary active.svg";
 import "./FileView.css"
 import CenterDownload from './UploadDownload/Download/CenterDownload';
-import Folder from '../main/FolderView/Folder';
+
+//images of the button
+
+import homeImg from '../../../Assets/homeImg.svg';
+import homeInactive from '../../../Assets/homeinactive.svg'
+import users from '../../../Assets/usersImg.svg';
+import usersActive from '../../../Assets/customerActive.svg';
+import loginsActive from '../../../Assets/loginsActive.svg';
+import logins from '../../../Assets/Vector.svg';
+import files from '../../../Assets/akar-icons_file.svg';
+import filesactive from '../../../Assets/fileInactive.svg';
 
 
 const FileView = ({ activeTab, setActiveTab, fileView, setFileView }) => {
@@ -43,95 +35,96 @@ const FileView = ({ activeTab, setActiveTab, fileView, setFileView }) => {
             <>
               <button
                 className={
-                  activeTab === 0 ? "selectedTab normalTab1" : "normalTab1"
+                  activeTab === 0 ? "selectedTabs normalTabs0" : "normalTabs0"
                 }
                 onClick={() => {
                   setActiveTab(0);
                   setFileView(false);
                 }}
               >
-
-                <img src={activeTab === 0 ? homeActive : normalHome} alt="" />
+                <span style={{ marginLeft: "-1vw", paddingRight: "0.5vw" }}><img src={activeTab === 0 ? homeImg : homeInactive} alt="home" /></span>
+                <span className="button-icon">Home</span>
               </button>
 
 
               <button
                 className={
-                  activeTab === 5 ? "selectedTab normalTab5" : "normalTab5"
+                  activeTab === 5 ? "selectedTabs normalTabs5" : "normalTabs5"
                 }
                 onClick={() => {
                   setActiveTab(5);
                 }}
               >
+                <span className="button-icon">Upload</span>
 
-                <img src={activeTab === 5 ? uploadActive : normalUpload} alt="" />
               </button>
 
               <button
                 className={
-                  activeTab === 6 ? "selectedTab normalTab6" : "normalTab6"
+                  activeTab === 6 ? "selectedTabs normalTabs6" : "normalTabs6"
                 }
                 onClick={() => {
                   setActiveTab(6);
                 }}
               >
 
-                <img src={activeTab === 6 ? downloadActive : normalDownload} alt="" />
+                <span className="button-icon">Download</span>
               </button>
 
 
               <button
                 className={
-                  activeTab === 1 ? "selectedTab normalTab20" : "normalTab20"
+                  activeTab === 1 ? "selectedTabs normalTabs1" : "normalTabs1"
                 }
                 onClick={() => {
                   setActiveTab(1);
                   setFileView(false);
                 }}
               >
-                <img src={activeTab === 1 ? manageUSerActive : normalManageUser} alt="" />
-
+                <span style={{ marginLeft: "-0.5vw", paddingRight: "0.5vw" }}><img src={activeTab === 1 ? usersActive : users} alt="home" /></span>
+                <span className="button-icon" style={{ marginRight: "-1vw" }}>Manage Users</span>
               </button>
+
+
               <button
                 className={
-                  activeTab === 2 ? "selectedTab normalTab30" : "normalTab30"
+                  activeTab === 2 ? "selectedTabs normalTabs2" : "normalTabs2"
                 }
                 onClick={() => {
                   setActiveTab(2);
                   setFileView(false);
                 }}
               >
-
-                <img src={activeTab === 2 ? loginsActive : normalLogins} alt="" />
-
+                <span style={{ marginLeft: "-0.5vw", paddingRight: "0.5vw" }}><img src={activeTab === 2 ? loginsActive : logins} alt="home" /></span>
+                <span className="button-icon">Logins</span>
               </button>
+
               <button
                 className={
-                  activeTab === 3 ? "selectedTab normalTab40" : "normalTab40"
+                  activeTab === 3 ? "selectedTabs normalTabs3" : "normalTabs3"
                 }
                 onClick={() => {
                   setActiveTab(3);
                   setFileView(false);
                 }}
               >
-
-                <img src={activeTab === 3 ? FileDictionaryActive : normalFileDictionary} alt="" />
-
+                <span style={{ marginLeft: "-0.5vw", paddingRight: "0.5vw" }}><img src={activeTab === 3 ? filesactive : files} alt="home" /></span>
+                <span className="button-icon" style={{ marginRight: "-1vw" }} >File Dictionary</span>
               </button>
             </>
           ) : (
             <>
               <button
                 className={
-                  activeTab === 0 ? "selectedTab normalTab1" : "normalTab1"
+                  activeTab === 0 ? "selectedTabs normalTabs0" : "normalTabs0"
                 }
                 onClick={() => {
                   setActiveTab(0);
                   setFileView(false);
                 }}
               >
-
-                <img src={activeTab === 0 ? homeActive : normalHome} alt="" />
+                <span style={{ marginLeft: "-1vw", paddingRight: "0.5vw" }}><img src={activeTab === 0 ? homeImg : homeInactive} alt="home" /></span>
+                <span className="button-icon">Home</span>
               </button>
             </>
           )}
@@ -164,14 +157,6 @@ const FileView = ({ activeTab, setActiveTab, fileView, setFileView }) => {
           }
         </div>
       </div>
-
-      {/* {activeTab === 0 ? <Folder/> : activeTab === 5 ? (
-        <DownloadDestination gridView={gridView} advance={advance} setAdvance={setAdvance} />
-      ) : activeTab === 6 ? (
-        <CenterDownload gridView={gridView} advance={advance} setAdvance={setAdvance} setActiveTab={setActiveTab} />
-      ) : (
-        <FileContent admin={admin} gridView={gridView} />
-      )} */}
 
       {activeTab === 5 ? (
         <DownloadDestination gridView={gridView} advance={advance} setAdvance={setAdvance} />

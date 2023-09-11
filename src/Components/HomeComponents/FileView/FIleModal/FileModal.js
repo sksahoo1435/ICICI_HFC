@@ -20,22 +20,23 @@ const FileModal = (props) => {
   const FileName = sessionStorage.getItem("filename");
   const user = sessionStorage.getItem("loginId");
   const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(1000);
+  const [numRows, setNumRows] = useState(1)
 
-  const userId=sessionStorage.getItem('userId');
+  const userId = sessionStorage.getItem('userId');
 
   const fetchContentInFiles = async () => {
     try {
-      const getContentInFilesApiUrl = `https://localhost:7062/api/ReportingModule/GetFilesInFolder/${userId}/${FileName}`;
+      const getContentInFilesApiUrl = `https://localhost:7062/api/ReportingModule/GetFilesInFolder/${userId}/${FileName}/${page}/1000`;
       const filesResponse = await axios.get(getContentInFilesApiUrl, {
         withCredentials: true,
       });
       console.log(FileName + user);
-      const content = filesResponse.data;
+      // const content = filesResponse.data;
       let pro = filesResponse.data;
 
       setPdata(pro);
-      console.log(`Content in Files  ${FileName}:`, content);
+      console.log(`Content in Files  `, pro);
+      setNumRows(pro.length)
     } catch (error) {
       console.error("Error fetching files in folder:", error);
     }
@@ -46,10 +47,10 @@ const FileModal = (props) => {
   }, []);
 
   const handleChange = (event, value) => {
-    setPage(value);
+    setPage(Number(value));
   };
 
-
+  console.log("+++++++++", Math.floor(numRows / 1000) * 10)
 
   const handleFileDownload = async (e) => {
 
@@ -198,14 +199,19 @@ const FileModal = (props) => {
 
         <div className='paginationNbutton'>
 
-          <div style={{ display: "flex", flexDirection: "row", gap: "1vw",marginTop:"2vh",width:"86%" }}>
-            <div style={{ marginTop: "2.5vh" ,marginLeft:"0.5vw"}}> Rows per Page: 1000</div>
+          <div style={{ display: "flex", flexDirection: "row", gap: "1vw", marginTop: "2vh", width: "86%" }}>
+            {Math.floor(numRows / 1000) * 10 >= 0 ? "" :
+              (
+                <div style={{display:"flex",flexDirection:"row"}}>
+                  <div style={{ marginTop: "2.5vh", marginLeft: "0.5vw" }}> Rows per Page: 1000</div>
 
-            <div style={{marginTop:"2vh"}}>
-              <Stack spacing={2}>
-                <Pagination count={10} page={page} onChange={handleChange} />
-              </Stack>
-            </div>
+                  <div style={{ marginTop: "2vh" }}>
+                    <Stack spacing={1}>
+                      <Pagination count={Math.floor(numRows / 1000) * 10} page={page} onChange={handleChange} />
+                    </Stack>
+                  </div>
+                </div>
+              )}
           </div>
 
           <div className='btnSec'>

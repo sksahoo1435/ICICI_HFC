@@ -41,7 +41,7 @@
 }
 
 .selectedTab {
-  background-color: #f37e20;
+  background: linear-gradient(180deg, #F8A716 0%, #E75126 120.93%);
   color: #fff;
   width: 8vw;
   height: 5.01vh;
@@ -59,7 +59,7 @@
   transform: translateY(-50%);
   height: 5vh;
   width: 7vw;
-  background-image: url('../../../Assets/activeLeft.png');
+  background-image: url('../../../Assets/activeLeft.svg');
   background-repeat: repeat-y;
   left: -1.5vw;
   z-index: 2;
@@ -86,7 +86,7 @@
   transform: translateY(-50%);
   height: 5vh;
   width: 7vw;
-  background-image: url('../../../Assets/tabLeft.png');
+  background-image: url('../../../Assets/tabLeft.svg');
   background-repeat: repeat-y;
   left: -1.5vw;
   z-index: 0;

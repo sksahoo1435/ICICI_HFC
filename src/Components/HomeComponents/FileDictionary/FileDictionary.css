@@ -36,7 +36,6 @@
 
 .search-inputforFile {
   background: #FFFFFF;
-  /* Grey(Outline) */
   height: 4.8vh;
   margin-top: 0vh;
   position: relative;
@@ -70,11 +69,12 @@
   height: 85%;
   align-items: center;
   display: flex;
+  margin-left: 2.5vw;
   justify-content: center;
 }
 
 .tableContainer {
-  width: 25%;
+  width: 100%;
   margin-top: 8%;
   border: 1px solid #a1a2a3;
   overflow: hidden;
@@ -85,7 +85,7 @@
 .tableInnerContainer {
   width: 100%;
   padding-right: 0vw;
-  overflow-y: scroll; 
+  overflow: scroll;
   max-height: 62vh;
   border-radius: 1rem;
 }
@@ -105,20 +105,21 @@
   padding: 1rem;
   text-align: center;
   font-family: Arial;
-  font-size: 1.3cqw;
+  font-size: 1.1cqw;
   font-weight: 400;
   line-height: 1.1rem;
   letter-spacing: 0em;
+  margin-bottom: 0.5vh;
 }
 
 .tableBodyFileTd {
-  padding: 1rem;
+  padding: 0.9rem;
   border-bottom: 1px solid #ccc;
   text-align: center;
   font-family: Arial;
   font-size: 1cqw;
   font-weight: 400;
-  line-height: 1.1rem;
+  line-height: 1rem;
   letter-spacing: 0em;
   color: #36556B;
 }
@@ -129,7 +130,7 @@
 }
 
 .tableInnerContainer::-webkit-scrollbar {
-  width: 10px;
+  width: 0.8vw !important;
   border-radius: 1rem;
 }
 
@@ -145,4 +146,35 @@
 .tableInnerContainer {
   scrollbar-width: thin;
   scrollbar-color: rgba(186, 186, 186, 0.682) #E5E5E5;
+}
+
+.scrollable-section {
+  max-height: 20vh;
+  overflow: scroll;
+}
+
+.scrollable-section label {
+  font-size: 0.9cqw;
+}
+
+.scrollable-section::-webkit-scrollbar {
+  width: 2px;
+}
+
+.tableInnerContainer::-webkit-scrollbar {
+  width: 0.8vw;
+}
+
+.tableInnerContainer::-webkit-scrollbar-thumb {
+  background-color: rgba(186, 186, 186, 0.682);
+  border-radius: 1rem;
+  height: 2px;
+}
+
+
+.tableInnerContainer::-webkit-scrollbar-horizontal {
+  height: 2px;
+  
+  background-color: rgba(186, 186, 186, 0.682);
+  border-radius: 1rem;
 }
