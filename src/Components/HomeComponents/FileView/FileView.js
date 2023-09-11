@@ -9,17 +9,19 @@ import DownloadDestination from './UploadDownload/Upload/DownloadDestination';
 import "./FileView.css"
 import CenterDownload from './UploadDownload/Download/CenterDownload';
 
-//images of the button
-
-import homeImg from '../../../Assets/homeImg.svg';
-import homeInactive from '../../../Assets/homeinactive.svg'
-import users from '../../../Assets/usersImg.svg';
-import usersActive from '../../../Assets/customerActive.svg';
-import loginsActive from '../../../Assets/loginsActive.svg';
-import logins from '../../../Assets/Vector.svg';
-import files from '../../../Assets/akar-icons_file.svg';
-import filesactive from '../../../Assets/fileInactive.svg';
-
+//files are here for navbar
+import activeHome from '../../../Assets/Home Active.svg';
+import inactiveHome from '../../../Assets/Home Inactive.svg';
+import activeManageUser from '../../../Assets/Manage Users Active.svg';
+import inactiveManageUser from '../../../Assets/Manage Users Inactive.svg';
+import activeLogins from '../../../Assets/Logins active.svg';
+import inactiveLogins from '../../../Assets/Logins Inactive.svg';
+import activeFileDictionary from '../../../Assets/File Dictionary active.svg'
+import inactiveFileDictionary from '../../../Assets/File Dictionary Inactive.svg'
+import activeUpload from '../../../Assets/Upload active.svg';
+import inactiveUpload from '../../../Assets/Upload Inactive.svg';
+import activeDownload from '../../../Assets/Download active.svg';
+import inactiveDownload from '../../../Assets/Download Inactive.svg';
 
 const FileView = ({ activeTab, setActiveTab, fileView, setFileView }) => {
   const [admin, setAdmin] = useState(true);
@@ -42,8 +44,7 @@ const FileView = ({ activeTab, setActiveTab, fileView, setFileView }) => {
                   setFileView(false);
                 }}
               >
-                <span style={{ marginLeft: "-1vw", paddingRight: "0.5vw" }}><img src={activeTab === 0 ? homeImg : homeInactive} alt="home" /></span>
-                <span className="button-icon">Home</span>
+                <img src={activeTab === 0 ? activeHome : inactiveHome} alt="" />
               </button>
 
 
@@ -55,7 +56,7 @@ const FileView = ({ activeTab, setActiveTab, fileView, setFileView }) => {
                   setActiveTab(5);
                 }}
               >
-                <span className="button-icon">Upload</span>
+                <img src={activeTab === 5 ? activeUpload : inactiveUpload} alt="" />
 
               </button>
 
@@ -68,7 +69,7 @@ const FileView = ({ activeTab, setActiveTab, fileView, setFileView }) => {
                 }}
               >
 
-                <span className="button-icon">Download</span>
+                <img src={activeTab === 6 ? activeDownload : inactiveDownload} alt="" />
               </button>
 
 
@@ -81,8 +82,7 @@ const FileView = ({ activeTab, setActiveTab, fileView, setFileView }) => {
                   setFileView(false);
                 }}
               >
-                <span style={{ marginLeft: "-0.5vw", paddingRight: "0.5vw" }}><img src={activeTab === 1 ? usersActive : users} alt="home" /></span>
-                <span className="button-icon" style={{ marginRight: "-1vw" }}>Manage Users</span>
+                <img src={activeTab === 1 ? activeManageUser : inactiveManageUser} alt="" />
               </button>
 
 
@@ -95,8 +95,7 @@ const FileView = ({ activeTab, setActiveTab, fileView, setFileView }) => {
                   setFileView(false);
                 }}
               >
-                <span style={{ marginLeft: "-0.5vw", paddingRight: "0.5vw" }}><img src={activeTab === 2 ? loginsActive : logins} alt="home" /></span>
-                <span className="button-icon">Logins</span>
+                <img src={activeTab === 2 ? activeLogins : inactiveLogins} alt="" />
               </button>
 
               <button
@@ -108,8 +107,7 @@ const FileView = ({ activeTab, setActiveTab, fileView, setFileView }) => {
                   setFileView(false);
                 }}
               >
-                <span style={{ marginLeft: "-0.5vw", paddingRight: "0.5vw" }}><img src={activeTab === 3 ? filesactive : files} alt="home" /></span>
-                <span className="button-icon" style={{ marginRight: "-1vw" }} >File Dictionary</span>
+                <img src={activeTab === 3 ? activeFileDictionary : inactiveFileDictionary} alt="" />
               </button>
             </>
           ) : (
@@ -123,8 +121,7 @@ const FileView = ({ activeTab, setActiveTab, fileView, setFileView }) => {
                   setFileView(false);
                 }}
               >
-                <span style={{ marginLeft: "-1vw", paddingRight: "0.5vw" }}><img src={activeTab === 0 ? homeImg : homeInactive} alt="home" /></span>
-                <span className="button-icon">Home</span>
+                <img src={activeTab === 0 ? activeHome : inactiveHome} alt="" />
               </button>
             </>
           )}

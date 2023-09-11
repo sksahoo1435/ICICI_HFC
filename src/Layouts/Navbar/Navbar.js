@@ -27,7 +27,6 @@ const Navbar = () => {
   let username;
 
   const userName = sessionStorage.getItem('userId')
-
   username = userName
   let splituser = username.split(" ")
 

@@ -50,7 +50,6 @@ const FileModal = (props) => {
     setPage(Number(value));
   };
 
-  console.log("+++++++++", Math.floor(numRows / 1000) * 10)
 
   const handleFileDownload = async (e) => {
 

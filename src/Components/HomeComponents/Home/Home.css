@@ -19,93 +19,26 @@
 
 .normalTab0,
 .normalTab1,
-.normalTab2,
-.normalTab3 {
-  position: relative;
-  background-color: transparent;
-  border: none;
-  padding: 8px;
-  cursor: pointer;
-  text-align: center;
-  font-size: 1.2em;
-  outline: none;
+.normalTab2 {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 12vw;
-  max-width: 12vw;
-  z-index: 99;
-  margin-right: 0;
-  margin-left: 0;
-  background: #dcd9d900;
+  position: relative;
+  flex-direction: row;
+  margin-right: -2.3vw;
+  z-index: 15;
+}
+
+.normalTab1 {
+  display: flex;
+  position: relative;
+  flex-direction: row;
+  margin-right: -2.3vw;
+  z-index: 18;
 }
 
 .selectedTab {
-  background: linear-gradient(180deg, #F8A716 0%, #E75126 120.93%);
-  color: #fff;
-  width: 8vw;
-  height: 5.01vh;
-  font-size: 0.9em;
-  z-index: 1;
   position: relative;
-  border-bottom-left-radius:0.1rem ;
-  border-bottom-right-radius:0.1rem ;
-}
-
-.selectedTab::before {
-  content: "";
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  height: 5vh;
-  width: 7vw;
-  background-image: url('../../../Assets/activeLeft.svg');
-  background-repeat: repeat-y;
-  left: -1.5vw;
-  z-index: 2;
-}
-
-.selectedTab::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  height: 5vh;
-  width: 7vw;
-  background-image: url('../../../Assets/activeRight.png');
-  background-repeat: repeat-y;
-  left: 8vw; 
-  opacity: 10;
-  z-index: 200; 
-}
-
-.normalTab0 .button-icon::before {
-  content: "";
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  height: 5vh;
-  width: 7vw;
-  background-image: url('../../../Assets/tabLeft.svg');
-  background-repeat: repeat-y;
-  left: -1.5vw;
-  z-index: 0;
-}
-
-.normalTab0 .button-icon::after,
-.normalTab1 .button-icon::after,
-.normalTab2 .button-icon::after,
-.normalTab3 .button-icon::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  height: 5vh;
-  width: 7vw;
-  background-image: url('../../../Assets/tabRight_icon.png');
-  background-repeat: repeat-y;
-  right: -6vw;
-  z-index: 1;
+  margin-right: -2.5vw;
+  z-index: 99;
 }
 
 .search-inputforHome {

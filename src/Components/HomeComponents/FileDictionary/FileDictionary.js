@@ -9,6 +9,8 @@ import { Dropdown } from "antd";
 import axios from "axios";
 import ErrorBoundary from "./ErrorBoundary";
 import Papa from 'papaparse';
+import Pagination from "@mui/material/Pagination";
+import Stack from "@mui/material/Stack";
 
 const FileDictionary = () => {
 
@@ -18,6 +20,8 @@ const FileDictionary = () => {
   const [fileChildren, setFileChildren] = useState({});
   const [checkedCheckboxes, setCheckedCheckboxes] = useState([]);
   const [selectedParentFolder, setSelectedParentFolder] = useState(null);
+  const [page, setPage] = useState(1);
+  const [numRows, setNumRows] = useState(1)
 
   const getFilesName = async () => {
     try {
@@ -36,6 +40,10 @@ const FileDictionary = () => {
       console.error('Error fetching data from API:', error);
     }
   }
+
+  const handleChange = (event, value) => {
+    setPage(Number(value));
+  };
 
   useEffect(() => {
     getFilesName();
@@ -95,7 +103,7 @@ const FileDictionary = () => {
         columnNamesParams.push(`ColumnNames=${columnName}`);
       }
       const columnNamesQueryString = columnNamesParams.join('&');
-      const apiUrl = `${baseUrl}?TableName=${tabletoSend}&${columnNamesQueryString}&Page=1&PageSize=10`;
+      const apiUrl = `${baseUrl}?TableName=${tabletoSend}&${columnNamesQueryString}&Page=${page}&PageSize=100`;
 
       const response = await axios.get(apiUrl, {
         withCredentials: true,
@@ -103,6 +111,7 @@ const FileDictionary = () => {
 
       if (response.status === 200) {
         setDatas(response.data)
+        setNumRows(response.data.length)
       } else {
         console.log("Error");
       }
@@ -270,7 +279,7 @@ const FileDictionary = () => {
               </div>
             ) : (
               <div className="tableContainer">
-                <div className="tableInnerContainer">
+
                   <table className="tableFile">
                     <thead className="tableHeadFile">
                       {data.map((items) => (
@@ -291,7 +300,26 @@ const FileDictionary = () => {
                       ))}
                     </tbody>
                   </table>
-                </div>
+
+
+                  <div className='paginationNbutton'>
+
+                    <div style={{ display: "flex", flexDirection: "row", gap: "1vw", marginTop: "2vh", width: "86%" }}>
+                      {Math.floor(numRows / 100) * 10 >= 0 ? "" :
+                        (
+                          <div style={{ display: "flex", flexDirection: "row" }}>
+                            <div style={{ marginTop: "2.5vh", marginLeft: "0.5vw" }}> Rows per Page: 100</div>
+
+                            <div style={{ marginTop: "2vh" }}>
+                              <Stack spacing={1}>
+                                <Pagination count={Math.floor(numRows / 100) * 10} page={page} onChange={handleChange} />
+                              </Stack>
+                            </div>
+                          </div>
+                        )}
+                    </div>
+
+                  </div>
               </div>
             )}
           </div>

@@ -53,7 +53,7 @@ const LoginFormPart = () => {
                 } else if (userid === "" || password === "") {
                     setOpen(true);
                 } else {
-                    sessionStorage.setItem("userId", response.data.username);
+                    
                     navigate("/home");
                 }
             } else {

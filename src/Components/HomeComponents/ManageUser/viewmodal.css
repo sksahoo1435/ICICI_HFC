@@ -1,0 +1,153 @@
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 3000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-contents {
+    background: white;
+    height: 60vh;
+    width: 20vw;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px rgba(179, 178, 178, 0.171);
+    text-align: center;
+    color: black;
+    border-radius: 1rem;
+}
+
+.modal.open {
+    display: flex;
+}
+
+.headersSectionModal {
+    display: flex;
+    position: relative;
+    flex-direction: row;
+    height: 10%;
+    justify-content: space-between;
+}
+
+.headersSectionModalText p {
+    font-family: Arial;
+    font-size: 1cqw;
+    font-weight: 600;
+    line-height: 1rem;
+    letter-spacing: 0em;
+    text-align: left;
+    color: #36556B;
+
+}
+
+.headersSectionModalBodysec {
+    position: relative;
+    height: 75%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5vh;
+    margin-top: 2vh;
+    overflow-y: auto;
+}
+
+.headersSectionModalBodysecColumns{
+    position: relative;
+    height: 75%;
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+    margin-top: 1vh;
+}
+
+.headersSectionModalBodysecColumnsOverflow{
+    position: relative;
+    height: 65%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5vh;
+    margin-top: 2vh;
+    overflow-y: auto;
+}
+.headersSectionModalBodysecSubdivColumns{
+    width: 99%;
+    height: 6vh;
+    left: 2%;
+    padding-top: 1vh;
+    border-bottom: 1px solid #F1F1F1;
+    border: 2px 0px 2px 0px;
+}
+
+.headersSectionModalBodysec::-webkit-scrollbar {
+    display: none;
+}
+
+.headersSectionModalBottomsec {
+    position: relative;
+    width: 15%;
+    display: flex;
+    flex-direction: row;
+    gap: 1vw;
+    width: 80%;
+    left: 8%;
+    top: 5%;
+}
+
+.cancelButton button{
+    width: 7vw;
+    height: 5vh;
+    padding: 1vh 1vw;
+    border-radius: 2rem;
+    border: 1.5px solid #F36523;
+    color: #F36523;
+}
+
+.saveButton button{
+    width: 7vw;
+    height: 5vh;
+    padding: 1vh 1vw;
+    border-radius: 2rem;
+    background: linear-gradient(180deg, #F8A716 0%, #E75126 120.93%);
+    color: white;
+
+}
+
+.headersSectionModalBodysecSubdiv {
+    width: 99%;
+    height: 6vh;
+    left: 2%;
+    padding-top: 1vh;
+    background: #F6F6F6;
+    border-radius: 0.5rem;
+    border: 0px 0px 2px 0px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    cursor: pointer;
+}
+
+.close-button {
+    border: none;
+    cursor: pointer;
+    color: black;
+    font-size: 2cqw;
+    float: right;
+    margin-top: -1.5vh;
+}
+
+.headersSectionModalBodysecSubdiv p {
+    font-family: Arial;
+    font-size: 1cqw;
+    font-weight: 400;
+    line-height: 1rem;
+    letter-spacing: 0em;
+    text-align: left;
+    color: #36556B;
+    padding-top: 0.9vh;
+}

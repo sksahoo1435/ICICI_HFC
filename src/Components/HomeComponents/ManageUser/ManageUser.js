@@ -3,17 +3,21 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import '../ManageUser/ManageUser.css';
 import axios from 'axios';
 import Papa from 'papaparse';
-import { ToastContainer,toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import ViewModal from './ViewModal';
+
 
 const ManageUser = ({ setActiveTab }) => {
   const [data, setData] = useState([]);
   const [savedata, setSaveData] = useState([]);
-  const [recall,setRecall] =useState('false')
+  const [recall, setRecall] = useState('false');
+  const [viewModalData, setViewModalData] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
   const fetchUsersToManage = async () => {
     try {
-      const userApi = `https://localhost:7062/api/Admin`;
+      const userApi = `https://localhost:7062/api/Admin/UserManger`;
       const response = await axios.get(userApi, {
         withCredentials: true,
       });
@@ -26,50 +30,48 @@ const ManageUser = ({ setActiveTab }) => {
   };
 
   const updateUserAccess = async (item) => {
-    
+
     try {
-      const userApi = `https://localhost:7062/api/Admin/UpdateUserManage/${item.userid}`;
+      const userApi = `https://localhost:7062/api/Admin/UpdateUserManage`;
       const response = await axios.post(
         userApi,
         {
-          ...item,
-          view: item.view ? 1 : 0,
+          username: item.username,
           upload: item.upload ? 1 : 0,
-          download: item.download ? 1 : false,
+          download: item.download ? 1 : 0,
         },
         {
           withCredentials: true,
         }
       );
 
-      if (response.status === 204 || response.status === 200 ) {
-        toast.success(`${item.username} access updated successfuly..`,{theme:"colored"})
+      if (response.status === 204 || response.status === 200) {
+        toast.success(`${item.username} access updated successfuly..`, { theme: "colored" })
       } else {
-        toast.error(`Something went wrong..`,{theme:"colored"})
+        toast.error(`Something went wrong..`, { theme: "colored" })
       }
       console.log('Updated user access:', response);
 
-      
-      
+
+
     } catch (error) {
       console.error('Error updating user access:', error);
-      toast.error(`Something went wrong..`,{theme:"colored"})
+      toast.error(`Something went wrong..`, { theme: "colored" })
     }
   };
 
   useEffect(() => {
     fetchUsersToManage();
   }, []);
-  
+
   useEffect(() => {
     fetchUsersToManage();
   }, [recall]);
 
   useEffect(() => {
     for (const item of savedata) {
-      const originalItem = data.find((d) => d.userid === item.userid);
+      const originalItem = data.find((d) => d.username === item.username);
       if (
-        originalItem.view !== item.view ||
         originalItem.upload !== item.upload ||
         originalItem.download !== item.download
       ) {
@@ -81,7 +83,7 @@ const ManageUser = ({ setActiveTab }) => {
   const handleCheckboxChange = (item, checkValue) => {
     setSaveData((prevData) => {
       const updatedData = prevData.map((prevItem) =>
-        prevItem.userid === item.userid
+        prevItem.username === item.username
           ? { ...prevItem, [checkValue]: !prevItem[checkValue] }
           : prevItem
       );
@@ -92,7 +94,7 @@ const ManageUser = ({ setActiveTab }) => {
 
   const handleSave = async () => {
     setRecall(true)
-    toast.success("Items are saved successfully...!",{theme: "colored",})
+    toast.success("Items are saved successfully...!", { theme: "colored", })
   }
 
   const handleDownload = () => {
@@ -115,6 +117,11 @@ const ManageUser = ({ setActiveTab }) => {
 
   }
 
+  const handleView = (item) => {
+    setViewModalData(item);
+    setModalOpen(true);
+  }
+
   return (
     <>
       <div className="px-[5vw]">
@@ -133,7 +140,7 @@ const ManageUser = ({ setActiveTab }) => {
             Back To Home Page
           </div>
         </div>
-        <ToastContainer/>
+        <ToastContainer />
 
         <div
 
@@ -142,51 +149,56 @@ const ManageUser = ({ setActiveTab }) => {
           <table className="table">
             <thead className="tableHead">
               <tr>
-                <th className="tableHeadTh">User ID</th>
                 <th className="tableHeadTh">Username</th>
                 <th className="tableHeadTh">Last Logged In</th>
                 <th className="tableHeadTh">Access</th>
               </tr>
             </thead>
+
+            {modalOpen && (
+              <div className="overlay open">
+                <ViewModal
+                  data={viewModalData}
+                  modalOpen={modalOpen}
+                  setModalOpen={setModalOpen}
+                />
+              </div>
+            )}
+
             <tbody className='tableBody'>
               {data.map((item) => (
                 <tr
                   key={item.id}
                   className={item.id % 2 === 0 ? 'bg-gray-100' : 'bg-white'}
                 >
-                  <td className="tableBodyTd">{item.userid}</td>
                   <td className="tableBodyTd">{item.username}</td>
-                  <td className="tableBodyTd">{item.lastloggedIn}</td>
+                  <td className="tableBodyTd">{new Date(item.lastLoggedIn).toLocaleDateString(
+                    "en-GB"
+                  )}</td>
                   <td className="tableBodyTdSubdiv">
                     <span>
-                      <input
-                        type="checkbox"
-                        id={`view-${item.userid}`}
-                        className="mr-2"
-                        checked={savedata.find((d) => d.userid === item.userid).view}
-                        onChange={() => handleCheckboxChange(item, 'view')}
-                      />
-                      <label htmlFor={`view-${item.userid}`}>View</label>
+
+                      <button htmlFor={`view-${item.username}`} onClick={() => handleView(item)} ><p>{`View  >`}</p></button>
                     </span>
                     <span>
                       <input
                         type="checkbox"
-                        id={`upload-${item.userid}`}
+                        id={`upload-${item.username}`}
                         className="mr-2"
-                        checked={savedata.find((d) => d.userid === item.userid).upload}
+                        checked={savedata.find((d) => d.username === item.username).upload}
                         onChange={() => handleCheckboxChange(item, 'upload')}
                       />
-                      <label htmlFor={`upload-${item.userid}`}>Upload</label>
+                      <label htmlFor={`upload-${item.username}`}>Upload</label>
                     </span>
                     <span>
                       <input
                         type="checkbox"
-                        id={`download-${item.userid}`}
+                        id={`download-${item.username}`}
                         className="mr-2"
-                        checked={savedata.find((d) => d.userid === item.userid).download}
+                        checked={savedata.find((d) => d.username === item.username).download}
                         onChange={() => handleCheckboxChange(item, 'download')}
                       />
-                      <label htmlFor={`download-${item.userid}`}>Download</label>
+                      <label htmlFor={`download-${item.username}`}>Download</label>
                     </span>
                   </td>
                 </tr>
@@ -209,6 +221,7 @@ const ManageUser = ({ setActiveTab }) => {
             </button>
           </div>
         </div>
+
       </div>
     </>
   );

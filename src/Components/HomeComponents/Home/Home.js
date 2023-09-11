@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./Home.css";
 import Input from "@mui/material/Input";
 import { InputAdornment } from "@mui/material";
@@ -12,15 +12,17 @@ import LogIns from "../Logins/LogIns";
 import downArrow from "../../../Assets/Union 2.svg";
 import FilterImg from '../../../Assets/filter.svg'
 import FileDictionary from "../FileDictionary/FileDictionary";
-import homeImg from '../../../Assets/homeImg.svg';
-import homeInactive from '../../../Assets/homeinactive.svg'
-import users from '../../../Assets/usersImg.svg';
-import usersActive from '../../../Assets/customerActive.svg'
-import loginsActive from '../../../Assets/loginsActive.svg';
-import logins from '../../../Assets/Vector.svg';
-import files from '../../../Assets/akar-icons_file.svg';
-import filesactive from '../../../Assets/fileInactive.svg'
+// navbar images are here
 
+import activeHome from '../../../Assets/Home Active.svg';
+import inactiveHome from '../../../Assets/Home Inactive.svg';
+import activeManageUser from '../../../Assets/Manage Users Active.svg';
+import inactiveManageUser from '../../../Assets/Manage Users Inactive.svg';
+import activeLogins from '../../../Assets/Logins active.svg';
+import inactiveLogins from '../../../Assets/Logins Inactive.svg';
+import activeFileDictionary from '../../../Assets/File Dictionary active.svg'
+import inactiveFileDictionary from '../../../Assets/File Dictionary Inactive.svg'
+import axios from "axios";
 
 
 const HomeComp = ({ fileView, setFileView, admin, setAdmin, activeTab, setActiveTab, gridView, setGridView, selectDrop, setSelectDrop, selectFilter, setSelectFilter }) => {
@@ -56,7 +58,7 @@ const HomeComp = ({ fileView, setFileView, admin, setAdmin, activeTab, setActive
     // }
 
   ];
-  // Active , Inactive , File Type , Text File , Excel File , JSON file , CSv,Tab 
+
   const items = [
     {
       key: '0',
@@ -82,6 +84,29 @@ const HomeComp = ({ fileView, setFileView, admin, setAdmin, activeTab, setActive
 
   ];
 
+  const fetchUserName = async () =>{
+    try{
+
+      const APItoUse = `https://localhost:7062/api/ReportingModule/GetUsername`
+
+      const response = await axios.get(APItoUse,{
+        withCredentials:true,
+      })
+
+      if(response.status === 200){
+        // sessionStorage.setItem("userId", response.data.username);
+        sessionStorage.setItem("userId", 'shetej');
+      }
+
+    }catch(err){
+      console.log("API Error",err)
+    }
+  }
+
+  useEffect(()=>{
+    fetchUserName();
+  })
+
   return (
     <>
       <div className="overalTabs">
@@ -97,8 +122,9 @@ const HomeComp = ({ fileView, setFileView, admin, setAdmin, activeTab, setActive
                   setFileView(false);
                 }}
               >
-                <span style={{marginLeft:"-1vw",paddingRight:"0.5vw"}}><img src={activeTab === 0 ?homeImg : homeInactive} alt="home" /></span>
-                <span className="button-icon">Home</span>
+
+                <img src={activeTab === 0 ? activeHome : inactiveHome} alt="" />
+
               </button>
 
               <button
@@ -110,8 +136,7 @@ const HomeComp = ({ fileView, setFileView, admin, setAdmin, activeTab, setActive
                   setFileView(false);
                 }}
               >
-                <span style={{marginLeft:"-0.5vw",paddingRight:"0.5vw"}}><img src={activeTab === 1 ? usersActive :users} alt="home" /></span>
-                <span className="button-icon" style={{marginRight:"-1vw"}}>Manage Users</span>
+                <img src={activeTab === 1 ? activeManageUser : inactiveManageUser} alt="" />
               </button>
 
 
@@ -124,8 +149,7 @@ const HomeComp = ({ fileView, setFileView, admin, setAdmin, activeTab, setActive
                   setFileView(false);
                 }}
               >
-                <span style={{marginLeft:"-0.5vw",paddingRight:"0.5vw"}}><img src={activeTab === 2 ?loginsActive :logins} alt="home" /></span>
-                <span className="button-icon">Logins</span>
+                <img src={activeTab === 2 ? activeLogins : inactiveLogins} alt="" />
               </button>
 
               <button
@@ -137,8 +161,7 @@ const HomeComp = ({ fileView, setFileView, admin, setAdmin, activeTab, setActive
                   setFileView(false);
                 }}
               >
-                <span style={{marginLeft:"-0.5vw",paddingRight:"0.5vw"}}><img src={activeTab === 3 ?filesactive:files} alt="home" /></span>
-                <span className="button-icon" style={{marginRight:"-1vw"}} >File Dictionary</span>
+                <img src={activeTab === 3 ? activeFileDictionary : inactiveFileDictionary} alt="" />
               </button>
             </>
           ) : (
@@ -152,8 +175,7 @@ const HomeComp = ({ fileView, setFileView, admin, setAdmin, activeTab, setActive
                   setFileView(false);
                 }}
               >
-                <span style={{marginLeft:"-1vw",paddingRight:"0.5vw"}}><img src={activeTab === 0 ?homeImg : homeInactive} alt="home" /></span>
-                <span className="button-icon">Home</span>
+                <img src={activeTab === 0 ? activeHome : inactiveHome} alt="" />
               </button>
             </>
           )}
