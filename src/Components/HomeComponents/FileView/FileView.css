@@ -2,7 +2,7 @@
   display: flex;
   position: relative;
   flex-direction: row;
-  margin-right: -2.3vw;
+  margin-right: -3vw;
   z-index: 20;
 }
 .normalTabs2{
@@ -17,7 +17,7 @@
   display: flex;
   position: relative;
   flex-direction: row;
-  margin-right: -2.3vw;
+  margin-right: -4vw;
   z-index: 18;
 }
 
@@ -25,7 +25,7 @@
   display: flex;
   position: relative;
   flex-direction: row;
-  margin-right: -2.3vw;
+  margin-right: -2.8vw;
   z-index: 17;
 }
 

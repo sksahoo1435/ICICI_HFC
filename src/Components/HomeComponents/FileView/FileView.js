@@ -24,16 +24,23 @@ import activeDownload from '../../../Assets/Download active.svg';
 import inactiveDownload from '../../../Assets/Download Inactive.svg';
 
 const FileView = ({ activeTab, setActiveTab, fileView, setFileView }) => {
-  const [admin, setAdmin] = useState(true);
+
   const [gridView, setGridView] = useState(true);
   const [advance, setAdvance] = useState(false);
+
+  let userRole = sessionStorage.getItem("userRole");
+
+  let userDownload = sessionStorage.getItem("userDownload");
+  let userUpload = sessionStorage.getItem("userUpload");
+
+  console.log("----------------", userDownload, userUpload)
 
   return (
     <div>
       <div className="overalTabs">
-        {console.log("check admin and set admin", setAdmin, admin)}
+
         <div className="mainTabs">
-          {admin ? (
+          {userRole !== 'User' ? (
             <>
               <button
                 className={
@@ -123,9 +130,34 @@ const FileView = ({ activeTab, setActiveTab, fileView, setFileView }) => {
               >
                 <img src={activeTab === 0 ? activeHome : inactiveHome} alt="" />
               </button>
+
+              {userUpload === '1' ? (<button
+                className={
+                  activeTab === 5 ? "selectedTabs normalTabs5" : "normalTabs5"
+                }
+                onClick={() => {
+                  setActiveTab(5);
+                }}
+              >
+                <img src={activeTab === 5 ? activeUpload : inactiveUpload} alt="" />
+
+              </button>) : ""}
+
+              {userDownload === '1' ? (<button
+                className={
+                  activeTab === 6 ? "selectedTabs normalTabs6" : "normalTabs6"
+                }
+                onClick={() => {
+                  setActiveTab(6);
+                }}
+              >
+                <img src={activeTab === 6 ? activeDownload : inactiveDownload} alt="" />
+              </button>) : ""}
+
             </>
           )}
         </div>
+
         <div className='endingDIv'>
           <div className="searchDiv">
             <Input
@@ -141,26 +173,16 @@ const FileView = ({ activeTab, setActiveTab, fileView, setFileView }) => {
               type="text"
             ></Input>
           </div>
-          {!advance && <div className="gridViewDiv">
-            {/* gridView/listView image */}
-            <img
-              src={gridView ? grid : list}
-              alt=""
-              onClick={() => {
-                setGridView(!gridView);
-              }}
-            />
-          </div>
-          }
+          
         </div>
       </div>
 
-      {activeTab === 5 ? (
+      {activeTab === 5 && userUpload === '1' ? (
         <DownloadDestination gridView={gridView} advance={advance} setAdvance={setAdvance} />
-      ) : activeTab === 6 ? (
+      ) : activeTab === 6 && userDownload === '1' ? (
         <CenterDownload gridView={gridView} advance={advance} setAdvance={setAdvance} setActiveTab={setActiveTab} />
       ) : (
-        <FileContent admin={admin} gridView={gridView} />
+        <FileContent admin={userRole === 'Admin'} gridView={gridView} />
       )}
 
     </div>

@@ -139,6 +139,8 @@ const FileModal = (props) => {
     },
   ];
 
+  let userRole = sessionStorage.getItem("userRole");
+
   return (
     <Modal centered
 
@@ -186,10 +188,10 @@ const FileModal = (props) => {
 
           </div>
 
-          {/* <div className='endHead'>
+          {userRole === 'User' ? <div className='endHead'>
             <button className="requestAccessBtnforModal">Request Access</button>
 
-          </div> */}
+          </div> : ""}
 
         </div>
         <div className='tableContent'>
@@ -201,7 +203,7 @@ const FileModal = (props) => {
           <div style={{ display: "flex", flexDirection: "row", gap: "1vw", marginTop: "2vh", width: "86%" }}>
             {Math.floor(numRows / 1000) * 10 >= 0 ? "" :
               (
-                <div style={{display:"flex",flexDirection:"row"}}>
+                <div style={{ display: "flex", flexDirection: "row" }}>
                   <div style={{ marginTop: "2.5vh", marginLeft: "0.5vw" }}> Rows per Page: 1000</div>
 
                   <div style={{ marginTop: "2vh" }}>

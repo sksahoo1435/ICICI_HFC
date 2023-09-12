@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import icon from "../../Assets/image 1.png"
 import "./Navbar.css"
 import { Dropdown } from 'antd';
@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import settings from "../../Assets/Vector.png"
 import logout from "../../Assets/Vector (1).png"
 import downArrow from "../../Assets/Union 2.png";
+import axios from 'axios';
 
 const Navbar = () => {
   let navigate = useNavigate();
@@ -21,13 +22,33 @@ const Navbar = () => {
 
     },
   ];
+  const fetchUserName = async () =>{
+    try{
+
+      const APItoUse = `https://localhost:7062/api/ReportingModule/GetUsername`
+
+      const response = await axios.get(APItoUse,{
+        withCredentials:true,
+      })
+
+      if(response.status === 200){
+        // sessionStorage.setItem("userId", response.data.username);
+       
+        sessionStorage.setItem("userId", 'shetej');
+      }
+
+    }catch(err){
+      console.log("API Error",err)
+    }
+  }
+  
 
 
   let userIcon;
   let username;
 
   const userName = sessionStorage.getItem('userId')
-  username = userName
+  username = userName === null ? 'shetej':userName
   let splituser = username.split(" ")
 
   let z = splituser.length - 1
@@ -36,6 +57,8 @@ const Navbar = () => {
   let l = splituser[z]
 
   userIcon = f[0] + l[0];
+
+  useEffect(()=>{fetchUserName();},[])
 
   return (
     <>

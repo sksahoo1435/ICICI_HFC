@@ -84,26 +84,33 @@ const HomeComp = ({ fileView, setFileView, admin, setAdmin, activeTab, setActive
 
   ];
 
-  const fetchUserName = async () =>{
-    try{
+  const fetchUserName = async () => {
+    try {
 
       const APItoUse = `https://localhost:7062/api/ReportingModule/GetUsername`
 
-      const response = await axios.get(APItoUse,{
-        withCredentials:true,
+      const response = await axios.get(APItoUse, {
+        withCredentials: true,
       })
 
-      if(response.status === 200){
+      if (response.status === 200) {
         // sessionStorage.setItem("userId", response.data.username);
         sessionStorage.setItem("userId", 'shetej');
+       
+        sessionStorage.setItem("userRole", response.data.role);
+
+        sessionStorage.setItem("userDownload", response.data.download);
+        sessionStorage.setItem("userUpload", response.data.upload);
+
       }
 
-    }catch(err){
-      console.log("API Error",err)
+    } catch (err) {
+      console.log("API Error", err)
     }
   }
+  let userRole = sessionStorage.getItem("userRole");
 
-  useEffect(()=>{
+  useEffect(() => {
     fetchUserName();
   })
 
@@ -111,7 +118,7 @@ const HomeComp = ({ fileView, setFileView, admin, setAdmin, activeTab, setActive
     <>
       <div className="overalTabs">
         <div className="mainTabs">
-          {admin ? (
+          {userRole !== 'User' ? (
             <>
               <button
                 className={
@@ -197,11 +204,13 @@ const HomeComp = ({ fileView, setFileView, admin, setAdmin, activeTab, setActive
                   type="text"
                 ></Input>
               </div>
-              <div className="requestDiv" style={{ height: "5vh" }}>
-                <button className="requestAccessBtn">Request Access</button>
-              </div>
+
+              {userRole === 'User' ?
+                <div className="requestDiv" style={{ height: "5vh" }}>
+                  <button className="requestAccessBtn">Request Access</button>
+                </div> : ""}
+
               <div className="gridViewDiv">
-                {/* gridView/listView image */}
                 <img
                   src={gridView ? grid : list} height={50} width={50}
                   alt=""
