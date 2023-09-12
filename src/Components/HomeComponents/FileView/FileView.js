@@ -33,8 +33,6 @@ const FileView = ({ activeTab, setActiveTab, fileView, setFileView }) => {
   let userDownload = sessionStorage.getItem("userDownload");
   let userUpload = sessionStorage.getItem("userUpload");
 
-  console.log("----------------", userDownload, userUpload)
-
   return (
     <div>
       <div className="overalTabs">
@@ -173,16 +171,25 @@ const FileView = ({ activeTab, setActiveTab, fileView, setFileView }) => {
               type="text"
             ></Input>
           </div>
-          
+          {!advance && <div className="gridViewDiv">
+            <img
+              src={gridView ? grid : list} height={50} width={50}
+              alt=""
+              onClick={() => {
+                setGridView(!gridView);
+              }}
+            />
+          </div>
+          }
         </div>
       </div>
 
       {activeTab === 5 && userUpload === '1' ? (
         <DownloadDestination gridView={gridView} advance={advance} setAdvance={setAdvance} />
       ) : activeTab === 6 && userDownload === '1' ? (
-        <CenterDownload gridView={gridView} advance={advance} setAdvance={setAdvance} setActiveTab={setActiveTab} />
+        <CenterDownload advance={advance} setAdvance={setAdvance} setActiveTab={setActiveTab} />
       ) : (
-        <FileContent admin={userRole === 'Admin'} gridView={gridView} />
+        <FileContent admin={userRole === 'Admin'} gridView={gridView} setGridView={setGridView} />
       )}
 
     </div>

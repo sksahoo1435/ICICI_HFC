@@ -1,24 +1,22 @@
-.singleRow{
+.singleRow {
     color: #063E67;
-font-family: Noto Sans;
-font-size: 1.7vh;
-font-style: normal;
-font-weight: 400;
-line-height: normal;
-height: 5vh;
-}
-.singleRow:hover{
-    background-color: #EEF6FF;
+    font-family: Noto Sans;
+    font-size: 1.7vh;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    height: 8vh;
 }
 
-.nameDiv{
+
+.nameDiv {
     display: flex;
     align-self: center;
-align-items: center;
-vertical-align: middle;
+    align-items: center;
+    vertical-align: middle;
 }
 
-.sourceImg{
-    height: 3vh;
-    width: 1.5vw;
+.sourceImg {
+    height: 7vh;
+    width: 5vw;
 }

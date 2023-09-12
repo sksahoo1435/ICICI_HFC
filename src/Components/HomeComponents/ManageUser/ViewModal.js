@@ -60,11 +60,11 @@ function ViewModal({ data, modalOpen, setModalOpen }) {
             console.log("API ERROR", error)
         }
     }
-    const userName = sessionStorage.getItem('userId')
+    // const userName = sessionStorage.getItem('userId')
 
     const getColumns = async (items) => {
         try {
-            const ApiToUse = `https://localhost:7062/api/Admin/GetFileFields?username=${userName}&contentId=${items.contentId}`
+            const ApiToUse = `https://localhost:7062/api/Admin/GetFileFields?username=${data.username}&contentId=${items.contentId}`
 
             const response = await axios.get(ApiToUse, {
                 withCredentials: true,

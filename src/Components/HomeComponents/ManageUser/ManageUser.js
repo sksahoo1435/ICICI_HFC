@@ -167,11 +167,13 @@ const ManageUser = ({ setActiveTab }) => {
 
             <tbody className='tableBody'>
               {data.map((item) => (
+                
                 <tr
                   key={item.id}
                   className={item.id % 2 === 0 ? 'bg-gray-100' : 'bg-white'}
                 >
                   <td className="tableBodyTd">{item.username}</td>
+                  
                   <td className="tableBodyTd">{new Date(item.lastLoggedIn).toLocaleDateString(
                     "en-GB"
                   )}</td>

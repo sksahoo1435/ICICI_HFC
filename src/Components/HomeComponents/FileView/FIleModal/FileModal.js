@@ -21,6 +21,7 @@ const FileModal = (props) => {
   const user = sessionStorage.getItem("loginId");
   const [page, setPage] = useState(1);
   const [numRows, setNumRows] = useState(1)
+  const [accessGranted, setAccessGranted] = useState(true);
 
   const userId = sessionStorage.getItem('userId');
 
@@ -30,13 +31,13 @@ const FileModal = (props) => {
       const filesResponse = await axios.get(getContentInFilesApiUrl, {
         withCredentials: true,
       });
-      console.log(FileName + user);
-      // const content = filesResponse.data;
-      let pro = filesResponse.data;
-
-      setPdata(pro);
-      console.log(`Content in Files  `, pro);
-      setNumRows(pro.length)
+      if (filesResponse.data === "You dont have access to this data") {
+        setAccessGranted(false);
+      } else {
+        let pro = filesResponse.data;
+        setPdata(pro);
+        setNumRows(pro.length);
+      }
     } catch (error) {
       console.error("Error fetching files in folder:", error);
     }
@@ -195,7 +196,13 @@ const FileModal = (props) => {
 
         </div>
         <div className='tableContent'>
-          <TableFile data={pdata} />
+          {accessGranted ? (
+            <TableFile data={pdata} />
+          ) : (
+            <div className='accessDeniedMessage'>
+              <p className='titleReport' style={{ fontSize: '15px' }}>You don't have access to this data.</p>
+            </div>
+          )}
         </div>
 
         <div className='paginationNbutton'>

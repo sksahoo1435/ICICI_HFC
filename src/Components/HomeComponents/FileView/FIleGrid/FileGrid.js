@@ -34,7 +34,6 @@ const FileGrid = () => {
 
     <div className='folderContent'>
 
-
       <div style={{ marginLeft: "3vw" }}>
         <Box sx={{ flexGrow: 1 }}>
           <Grid
