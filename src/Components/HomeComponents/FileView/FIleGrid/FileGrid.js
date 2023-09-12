@@ -1,38 +1,20 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext } from 'react'
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import SingleFileGrid from './SingleFileGrid/SingleFileGrid';
 import folder from "../../../../Assets/folderImg.svg";
-import axios from 'axios';
+import Statecontext from '../../../Context/Statecontext';
+import './FileGrid.css';
+
 
 const FileGrid = () => {
-  const [pdata, setPdata] = useState([{}]);
-  const folderName = sessionStorage.getItem("foldername");
 
-  const fetchFilesInFolder = async () => {
-    try {
-      const getFilesInFolderApiUrl = `https://localhost:7062/api/ReportingModule/GetFilesInFolder/${folderName}`;
-      const filesResponse = await axios.get(getFilesInFolderApiUrl, {
-        withCredentials: true,
-      });
+  const { filesinFolder } = useContext(Statecontext);
 
-      const files = filesResponse.data;
-      let pro = filesResponse.data;
-      sessionStorage.setItem("filename", pro);
-      setPdata(pro);
-      console.log(`Files in folder ${folderName}:`, files);
-    } catch (error) {
-      console.error("Error fetching files in folder:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchFilesInFolder();
-  }, []);
 
   return (
 
-    <div className='folderContent'>
+    <div className='folderContentFiles'>
 
       <div style={{ marginLeft: "3vw" }}>
         <Box sx={{ flexGrow: 1 }}>
@@ -43,13 +25,17 @@ const FileGrid = () => {
             style={{ paddingBottom: "3vh" }}
           >
 
-            <Grid item xs={2} sm={2} md={2}>
-              {pdata.map((item) => (
+            {filesinFolder.map((item, ind) => {
+              return (
+                <div className='filesDegin'>
+                  <Grid item xs={2} sm={2} md={2} key={ind}>
 
-                <SingleFileGrid source={folder} title={`${item}`} />
+                    <SingleFileGrid source={folder} title={`${item}`} />
 
-              ))}
-            </Grid>
+                  </Grid>
+                </div>
+              )
+            })}
 
           </Grid>
         </Box>

@@ -47,15 +47,13 @@ const List = ({ fileView, setFileView }) => {
 
           </thead>
           <tbody>
-            {pdata.map((item) => {
-              console.log(item);
-
-
+            {pdata.map((item,k) => {
+              console.log("------------->",item);
               return (
                 //column
 
-                <SingleRow heading={item.folderName} onClick={() => { setFileView(true) }} dateModified={item.lastModifiedDate} type={"File Folder"} />
-
+                <SingleRow heading={item.folderName} onClick={() => { setFileView(true) }} 
+                dateModified={item.lastModifiedDate} type={"File Folder"} key={k} />
               );
             })}
 

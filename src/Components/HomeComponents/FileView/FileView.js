@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import Input from "@mui/material/Input";
 import { InputAdornment } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
@@ -23,7 +23,11 @@ import inactiveUpload from '../../../Assets/Upload Inactive.svg';
 import activeDownload from '../../../Assets/Download active.svg';
 import inactiveDownload from '../../../Assets/Download Inactive.svg';
 
+
 const FileView = ({ activeTab, setActiveTab, fileView, setFileView }) => {
+
+
+
 
   const [gridView, setGridView] = useState(true);
   const [advance, setAdvance] = useState(false);

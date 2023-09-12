@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import "./Folder.css";
 import { Dropdown } from "antd";
 import downArrow from "../../../../Assets/Union 2.svg";
@@ -7,15 +7,21 @@ import Grid from "@mui/material/Grid";
 import Singlegrid from "./SingleGrid/Singlegrid";
 import List from "../ListView/List";
 import axios from "axios";
+import Statecontext from "../../../Context/Statecontext";
 
 const Folder = ({ gridView, fileView, setFileView }) => {
-  const [admin, setAdmin] = useState(true);
+  const { filesinFolder,setFilesInfolder } = useContext(Statecontext);
+
   const [selectDrop, setSelectDrop] = useState(0);
-  const [windowsUsername, setWindowsUsername] = useState("");
+
+  // const [filetoshow, setFilesToShow] = useState([]);
+
+  // const [filesComponent, setFilesComponent] = useState(false);
 
   const [pdata, setPdata] = useState([{}]);
 
   const fetchFilesInFolder = async (folderName) => {
+
     try {
       const getFilesInFolderApiUrl = `https://localhost:7062/api/ReportingModule/GetFilesInFolder/${folderName}`;
       const filesResponse = await axios.get(getFilesInFolderApiUrl, {
@@ -24,7 +30,9 @@ const Folder = ({ gridView, fileView, setFileView }) => {
 
       const files = filesResponse.data;
       console.log(`Files in ${folderName}:`, files);
-
+      // setFilesToShow(files)
+      // setFilesComponent(true);
+      setFilesInfolder(files)
       console.log("needded files", files);
 
       // Handle the files data as needed...
@@ -34,33 +42,7 @@ const Folder = ({ gridView, fileView, setFileView }) => {
   };
 
   useEffect(() => {
-    const usernameApiUrl =
-      "https://localhost:7062/api/ReportingModule/GetUsername";
-
-    async function fetchData() {
-      try {
-        const response = await axios.get(usernameApiUrl, {
-          withCredentials: true,
-        });
-
-        const username = response.data.username;
-        setWindowsUsername(username);
-        sessionStorage.setItem("username", response.data.username);
-        console.log("Windows Login Username:", username);
-
-        // Fetch other data here...
-      } catch (error) {
-        // Handle error if necessary
-        console.error("Error fetching username:", error);
-      }
-    }
-
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    const files =
-      "https://localhost:7062/api/ReportingModule/GetFoldersWithPermissions";
+    const files = "https://localhost:7062/api/ReportingModule/GetFoldersWithPermissions";
 
     async function fetchData() {
       try {
@@ -70,16 +52,14 @@ const Folder = ({ gridView, fileView, setFileView }) => {
 
         let pro = result1.data;
         setPdata(pro);
-        console.log("pdata:", pdata);
       } catch (error) {
-        // Handle error if necessary
         console.error("Error fetching data:", error);
       }
     }
 
     fetchData();
   }, []);
-  console.log("Windows Login Username:", windowsUsername);
+
 
   const items = [
     {
@@ -132,7 +112,7 @@ const Folder = ({ gridView, fileView, setFileView }) => {
         </button>
       ),
     },
-    
+
     // {
     //   key: "5",
     //   label: (
@@ -143,7 +123,7 @@ const Folder = ({ gridView, fileView, setFileView }) => {
     //   ),
     // },
   ];
-  
+
   return (
     <>
       <div className="FolderMainDiv">
@@ -175,19 +155,15 @@ const Folder = ({ gridView, fileView, setFileView }) => {
                   columns={{ xs: 4, sm: 8, md: 16 }}
                   style={{ paddingBottom: "3vh" }}
                 >
-                  {pdata.map((item) => {
-                    console.log("item", item);
-                    // console.log("item.title",item.title);
-
-                    sessionStorage.setItem("foldername", item.folderName);
+                  {pdata.map((item, ind) => {
                     return (
                       //column
-                      <Grid item xs={2} sm={2} md={2}>
+                      <Grid item xs={2} sm={2} md={2} key={ind}>
+                        {/* {console.log("show the files name====>",filetoshow)} */}
                         <Singlegrid
-                          title={item.folderName}
+                          datas={item.folderName}
                           onClick={() => {
                             fetchFilesInFolder(item.folderName);
-
                             setFileView(true);
                           }}
                         />

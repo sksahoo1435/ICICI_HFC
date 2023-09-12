@@ -8,7 +8,15 @@
 .singleGrids {
 
     width: 8vw;
-    height: 12vh;
+    gap: 5vw;
+    height: 15vh;
+    display: flex;
+
+}
+
+.folderIcon{
+    max-width: 8vw;
+    max-height: 12vh;
 }
 
 .folderImge {

@@ -1,0 +1,19 @@
+.folderContentFiles {
+    display: flex;
+    flex-direction: row;
+    gap: 4vw;
+
+}
+
+.folderContentFiles .Grid {
+    display: flex;
+    gap: 2vw;
+}
+
+.filesDegin{
+    display: flex;
+    margin-left: 2vw;
+    flex-direction: row;
+    gap: 2vw;
+    
+}
