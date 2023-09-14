@@ -10,18 +10,13 @@ import axios from "axios";
 import Statecontext from "../../../Context/Statecontext";
 
 const Folder = ({ gridView, fileView, setFileView }) => {
-  const { filesinFolder,setFilesInfolder } = useContext(Statecontext);
+  const {setFilesInfolder } = useContext(Statecontext);
 
   const [selectDrop, setSelectDrop] = useState(0);
-
-  // const [filetoshow, setFilesToShow] = useState([]);
-
-  // const [filesComponent, setFilesComponent] = useState(false);
 
   const [pdata, setPdata] = useState([{}]);
 
   const fetchFilesInFolder = async (folderName) => {
-
     try {
       const getFilesInFolderApiUrl = `https://localhost:7062/api/ReportingModule/GetFilesInFolder/${folderName}`;
       const filesResponse = await axios.get(getFilesInFolderApiUrl, {
@@ -29,13 +24,9 @@ const Folder = ({ gridView, fileView, setFileView }) => {
       });
 
       const files = filesResponse.data;
-      console.log(`Files in ${folderName}:`, files);
-      // setFilesToShow(files)
-      // setFilesComponent(true);
       setFilesInfolder(files)
       console.log("needded files", files);
 
-      // Handle the files data as needed...
     } catch (error) {
       console.error("Error fetching files in folder:", error);
     }
@@ -159,7 +150,6 @@ const Folder = ({ gridView, fileView, setFileView }) => {
                     return (
                       //column
                       <Grid item xs={2} sm={2} md={2} key={ind}>
-                        {/* {console.log("show the files name====>",filetoshow)} */}
                         <Singlegrid
                           datas={item.folderName}
                           onClick={() => {

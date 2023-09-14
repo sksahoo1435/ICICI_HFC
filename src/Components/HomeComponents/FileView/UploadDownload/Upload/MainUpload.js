@@ -34,6 +34,8 @@ const MainUpload = () => {
     const [previewShow, setPreviewShow] = useState(false);
     const [showProgress, setShowProgress] = useState(false);
     const [showProgressApiSucces, setShowProgressApiSucces] = useState(false);
+    const [prv,setPrev] = useState(true);
+
 
     const [rowCount, setRowCount] = useState(0);
     const [colCount, setColCount] = useState(0);
@@ -59,9 +61,11 @@ const MainUpload = () => {
                 progress: 0,
                 isBigFile: false
             });
+            setPrev(true)
         } else {
             setPreviewShow(e);
             setShowProgress(true);
+            setPrev(false)
         }
 
         console.log("the modal", e, btn)
@@ -89,6 +93,7 @@ const MainUpload = () => {
             progress: 0,
             isBigFile: false,
         });
+        setPrev(true)
 
         if (e.target.files[0].type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
             const x = e.target.files[0].size;
@@ -183,7 +188,7 @@ const MainUpload = () => {
                 </div>
             )}
 
-            {file !== null && !isBigFile && showProgress === true && (
+            {file !== null && !isBigFile && showProgress === true && prv === false && (
                 <div className="progressContent">
 
                     <div style={{ display: "flex", flexDirection: "row", width: "100%", marginBottom: "2vh" }}>
@@ -197,10 +202,10 @@ const MainUpload = () => {
                                     <p>{file.name}</p>
                                 </div>
                                 <div className="fileSize">
-                                    <p>{`${parseInt((file.size) / 1000)} kb  Rows: ${rowCount}  Columns: ${colCount}`}</p>
+                                    <p>{`${parseInt((file.size) / 1000)} kb  Rows: ${rowCount-1}  Columns: ${colCount}`}</p>
                                 </div>
                                 <div style={{ display: "flex", flexDirection: "row", marginTop: "5vh" }}>
-                                    <div class="progress" style={{ width: "73vw", marginLeft: "1vw", height: "1.4vh", marginTop: "-3.5vh" }}>
+                                    <div className="progress" style={{ width: "73vw", marginLeft: "1vw", height: "1.4vh", marginTop: "-3.5vh" }}>
                                         <div
                                             style={{
                                                 width: `${progress}%`,
@@ -238,7 +243,7 @@ const MainUpload = () => {
                 </div>
             )}
 
-            {file !== null && showProgress === true && (
+            {file !== null && showProgress === true && prv === false && (
                 <div style={{ display: "flex", justifyContent: "left", marginLeft: "1vw", marginTop: "10vh" }} >
                     <button className="downloadButton" onClick={downloadFile} >
                         <img src={xcel} className='sourceImg' alt="" />  <p> {file.name}</p> <FileDownloadOutlinedIcon />

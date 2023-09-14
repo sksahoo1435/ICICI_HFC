@@ -1,5 +1,5 @@
 import { Dropdown, Modal } from 'antd';
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import "./FileModal.css"
 import downArrow from "../../../../Assets/Union 2.svg";
 import axios from 'axios';
@@ -7,18 +7,18 @@ import TableFile from './TableFile/TableFile';
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
 import * as XLSX from 'xlsx';
-// import { PDFDownloadLink, Document, Page, Text, StyleSheet } from '@react-pdf/renderer';
 import FilterImg from '../../../../Assets/filter.svg'
 import Papa from 'papaparse';
+import Statecontext from '../../../Context/Statecontext';
 
 const FileModal = (props) => {
   const { modalOpen, setModalOpen } = props;
-  // const [admin, setAdmin] = useState(true);
+  const {fileNameTosend} = useContext(Statecontext);
+
   const [pdata, setPdata] = useState([{}]);
   const [selectDrop, setSelectDrop] = useState(0);
   const [selectFilter, setSelectFilter] = useState(0);
-  const FileName = sessionStorage.getItem("filename");
-  const user = sessionStorage.getItem("loginId");
+  
   const [page, setPage] = useState(1);
   const [numRows, setNumRows] = useState(1)
   const [accessGranted, setAccessGranted] = useState(true);
@@ -26,8 +26,11 @@ const FileModal = (props) => {
   const userId = sessionStorage.getItem('userId');
 
   const fetchContentInFiles = async () => {
+
+    console.log("************---->",userId,fileNameTosend);
+
     try {
-      const getContentInFilesApiUrl = `https://localhost:7062/api/ReportingModule/GetFilesInFolder/${userId}/${FileName}/${page}/1000`;
+      const getContentInFilesApiUrl = `https://localhost:7062/api/ReportingModule/GetFilesInFolder/${userId}/${fileNameTosend}/${page}/1000`;
       const filesResponse = await axios.get(getContentInFilesApiUrl, {
         withCredentials: true,
       });
@@ -39,13 +42,13 @@ const FileModal = (props) => {
         setNumRows(pro.length);
       }
     } catch (error) {
-      console.error("Error fetching files in folder:", error);
+      console.error("Error fetching files in the folder:", error);
     }
   };
 
   useEffect(() => {
     fetchContentInFiles();
-  }, []);
+  }, [fileNameTosend]);
 
   const handleChange = (event, value) => {
     setPage(Number(value));

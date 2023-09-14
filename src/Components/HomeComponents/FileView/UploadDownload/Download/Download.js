@@ -21,7 +21,6 @@ const Download = () => {
 
 
   const handleapplicationSelection = async (e) => {
-
     try {
       const ApiToFetch = `https://localhost:7062/api/ReportingModule/GetFilesInFolder/${e}`;
       const response = await axios.get(ApiToFetch, {

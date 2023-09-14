@@ -1,11 +1,14 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import './preview.css';
 import * as XLSX from 'xlsx';
 import axios from 'axios';
+import Statecontext from '../../../../Context/Statecontext';
 
 const PreviewFile = ({ handlePreview, file, progressbarHandler }) => {
 
     const [data, setData] = useState([]);
+
+    const {fileNameForUpload} = useContext(Statecontext)
 
     const columns = [
         { Header: 'AccountHolder', accessor: 'AccountHolder' },
@@ -46,9 +49,9 @@ const PreviewFile = ({ handlePreview, file, progressbarHandler }) => {
 
     const handleConfirm = async () => {
 
-        const filename = sessionStorage.getItem('FileName');
+        const filename = fileNameForUpload;
         const userId = sessionStorage.getItem('userId');
-
+        console.log("****************-->",filename)
         const fdata = data.map(item => {
             const convertedItem = {};
             for (const key in item) {
@@ -132,23 +135,7 @@ const PreviewFile = ({ handlePreview, file, progressbarHandler }) => {
                     </tbody>
                 </table>
 
-                {/* <table>
-                    <thead>
-                        <tr>
-                            <th>AccountHolder</th>
-                            <th>TransactionType</th>
-                            <th>Amount</th>
-                            <th>TransactionDate</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {Object.values(data).map((ele, ind) =>
-                            <tr key={ind}>
-                                {Object.values(ele).map(item => <td>{item}</td>)}
-
-                            </tr>)}
-                    </tbody>
-                </table> */}
+                
             </div>
 
             <div className='previewButton'>

@@ -1,15 +1,15 @@
-.downloadButton:hover{
+.downloadButton:hover {
     background-color: rgb(215, 223, 223);
 }
 
-.circleImg{
+.circleImg {
     border-radius: 50%;
     height: 2vh;
     width: 1vw;
     background-color: blue;
 }
 
-.completedText{
+.completedText {
     color: #21A366;
 }
 
@@ -21,53 +21,104 @@
 
 
 .progressContent,
-.importModalBody{
+.importModalBody {
     width: 88vw;
 }
 
-.notes{
+.notes {
     margin-left: 1.5vw;
     margin-bottom: 2vh;
 }
 
-@media (min-width:780px) and (max-width:1300px) {
-    .circleImg{
+.filesSamplebox p {
+    font-size: 1.1cqw;
+    width: 55%;
+    display: flex;
+    position: relative;
+    white-space: nowrap;
+}
+
+@media (min-width:1001px) and (max-width:1300px) {
+    .circleImg {
         border-radius: 50%;
         height: 1.5vh;
         margin-top: 0.2vh;
         width: 0.8vw;
         background-color: blue;
     }
-    .invalidtext{
-        font-size: 0.9rem;
+
+    .invalidtext {
+        font-size: 1cqw;
         line-height: 1rem;
         white-space: nowrap;
+        margin-top: 1vh;
     }
-    .fileImg{
+
+    .fileImg {
         width: 3vw;
         height: 6vh;
+        padding-top: 2vh;
     }
-    .downloadbutton{
-        height: 10;
-        width: 10;
+
+    .downloadbutton {
+        height: 3.2vh;
+        width: 2.7vw;
+    }
+}
+
+@media (min-width:780px) and (max-width:1000px) {
+    .circleImg {
+        border-radius: 50%;
+        height: 1.5vh;
+        margin-top: 0.2vh;
+        width: 0.8vw;
+        background-color: blue;
+    }
+
+    .invalidtext {
+        font-size: 1cqw;
+        line-height: 1rem;
+        white-space: nowrap;
+        margin-top: 2vh;
+    }
+
+    .fileImg {
+        width: 3vw;
+        height: 6vh;
+        padding-top: 2vh;
+    }
+
+    .downloadbutton {
+        height: 3.2vh;
+        width: 2.7vw;
     }
 }
 
 @media (min-width:380px) and (max-width:779px) {
-    .circleImg{
+    .circleImg {
         border-radius: 50%;
         height: 1.2vh;
         width: 0.9vw;
         margin-top: 0.5vh;
         background-color: blue;
     }
-    .invalidtext{
-        font-size: 0.8rem;
+
+    .invalidtext {
+        font-size: 0.8cqw;
         line-height: 1rem;
+        margin-top: 3vh;
         white-space: nowrap;
     }
-    .fileImg{
+
+    .fileImg {
         width: 2.5vw;
         height: 5vh;
+        padding-top: 4vh;
     }
+
+    .downloadbutton {
+        height: 2.8vh;
+        width: 2vw;
+    }
+
 }
