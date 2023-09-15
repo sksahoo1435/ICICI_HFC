@@ -94,10 +94,7 @@ const HomeComp = ({ fileView, setFileView, admin, setAdmin, activeTab, setActive
       })
 
       if (response.status === 200) {
-        // sessionStorage.setItem("userId", response.data.username);
-        sessionStorage.setItem("userId", 'shetej');
-       
-        // sessionStorage.setItem("userId", 'hp');
+        sessionStorage.setItem("userId", response.data.username);
        
         sessionStorage.setItem("userRole", response.data.role);
 

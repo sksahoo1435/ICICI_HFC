@@ -14,6 +14,47 @@
 
 }
 
+.submitBtnDisable{
+    border: 1px solid #e4e2e2;
+    color:  #B3B3B3; 
+    height: 5vh;
+    width: 8vw;
+    display: flex;
+    border-radius: 2em;
+    margin-top: 1vh;
+    padding-top: 1.5vh;
+    justify-content: center;
+    font-family: Arial;
+    font-size: 1cqw;
+    font-weight: 400;
+    line-height: 1rem;
+    letter-spacing: 0em;
+}
+
+.submitBtn {
+    border: 1px solid #F36523;
+    color: #F36523;
+    height: 5vh;
+    width: 8vw;
+    display: flex;
+    border-radius: 2em;
+    margin-top: 1vh;
+    padding-top: 1.5vh;
+    justify-content: center;
+    font-family: Arial;
+    font-size: 1cqw;
+    font-weight: 400;
+    line-height: 1rem;
+    letter-spacing: 0em;
+}
+
+.prviewDownloadTable{
+    position: relative;
+    max-width: 56vw;
+    max-height: 30vh;
+    margin-left: 2.5%;
+}
+
 .downloadContainer_border {
     border-right: 1px solid rgb(177, 175, 175);
     height: 50vh;
@@ -54,9 +95,10 @@
 
 
 .downloadContainer_right {
-    position: relative;
+    position: absolute;
     width: 65%;
     height: 100%;
+    margin-left: 35%;
 }
 
 .text_blank {

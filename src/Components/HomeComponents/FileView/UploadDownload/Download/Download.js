@@ -10,14 +10,15 @@ import { Input } from 'antd';
 import { SearchOutlined } from '@mui/icons-material';
 import axios from 'axios';
 import Papa from 'papaparse';
+import PreviewDownload from './PreviewDownload';
 
 const Download = () => {
   const [selected, setSelected] = useState('');
   const [foldername, setFolderName] = useState([]);
   const [filesName, setFilesName] = useState([]);
-  const [showAgreementNo, setShowAgreementNo] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [checkedFileName, setCheckedFileName] = useState('');
+  const [previewData, setPreviewData] = useState([])
 
 
   const handleapplicationSelection = async (e) => {
@@ -63,37 +64,33 @@ const Download = () => {
     handleapplicationSelection(selected);
   }, [selected]);
 
-  const handleCheckboxChange = (e) => {
-    setShowAgreementNo(e.target.checked);
-    if (!e.target.checked) {
-      setInputValue('');
-      setCheckedFileName('');
-    }
-    console.log(showAgreementNo)
-  };
 
   const handleInputValueChange = (e) => {
     setInputValue(e.target.value);
-    console.log("check the function", handleCheckboxChange)
+    console.log("check the function", e.target.value)
   };
 
   const userName = sessionStorage.getItem('userId');
 
   const handleDownload = async () => {
 
-    if (inputValue === null || inputValue === '' || inputValue === undefined) {
+    if (inputValue === null || inputValue === '') {
       alert('please enter the value first....');
       return
     } else {
+
+      const dataArray = inputValue.split(',')
+      const formattedDataArray = dataArray.map(item => `AGREEMENTNO=${item}`);
+      const queryParameters = formattedDataArray.join('&');
+
       try {
-        const Api = `https://localhost:7062/api/ReportingModule/GetFileDataByFilter/${userName}/${checkedFileName}/${inputValue}`
+        const Api = `https://localhost:7062/api/ReportingModule/GetFileDataByFilter/${userName}/${checkedFileName}?${queryParameters}`
 
         const response = await axios.get(Api, {
           withCredentials: true,
         })
 
         if (response.status === 200) {
-          // setDataToDownload(response.data)
 
           const csv = Papa.unparse(response.data);
           const blob = new Blob([csv], { type: 'text/csv' });
@@ -103,6 +100,8 @@ const Download = () => {
           a.download = `${checkedFileName}.csv`;
           a.click();
           URL.revokeObjectURL(url);
+
+          setPreviewData([]);
 
         } else {
           console.log("API error");
@@ -114,6 +113,33 @@ const Download = () => {
 
 
   };
+
+  const handlePreviw = async () => {
+    if (inputValue === null || inputValue === '') {
+      alert('please enter the value first....');
+      return
+    } else {
+
+      const dataArray = inputValue.split(',')
+      const formattedDataArray = dataArray.map(item => `AGREEMENTNO=${item}`);
+      const queryParameters = formattedDataArray.join('&');
+
+      try {
+        const Api = `https://localhost:7062/api/ReportingModule/GetFileDataByFilter/${userName}/${checkedFileName}?${queryParameters}`
+
+        const response = await axios.get(Api, {
+          withCredentials: true,
+        })
+        if (response.status === 200) {
+          setPreviewData(response.data)
+        } else {
+          console.log("API error");
+        }
+      } catch (err) {
+        console.log("API error", err)
+      }
+    }
+  }
 
   const items = [
     // {
@@ -216,22 +242,36 @@ const Download = () => {
 
         <div className="downloadContainer_right">
           {filesName && filesName.length > 0 ? (
-            <div>
+            <div style={{ display: "flex", flexDirection: "column", gap: "1vh" }}>
+
               <div id="field-lists" className="grid mx-5">
                 <p style={{
                   color: '#36556B', fontSize: '1.2cqw', lineHeight: '1rem',
                   fontWeight: '500', marginBottom: '1vh'
                 }}>AGREEMENT_NO*</p>
-                <input
-                  type="text"
-                  placeholder="Enter Text Here"
-                  className="border px-3 mt-2 w-[25%] h-[5vh] outline-none rounded-full"
-                  value={inputValue}
-                  onChange={handleInputValueChange}
-                />
+                <div style={{ display: "flex", flexDirection: "row", gap: "2vw" }}>
+                  <input
+                    type="text"
+                    placeholder="Enter Text Here"
+                    className="border px-3 mt-2 w-[25%] h-[5vh] outline-none rounded-full"
+                    value={inputValue}
+                    onChange={handleInputValueChange}
+                  />
+
+                  {inputValue === '' ? <button className='submitBtnDisable' disabled>Submit</button> :
+                    <button className='submitBtn' onClick={handlePreviw}>Submit</button>}
+
+                </div>
+
               </div>
 
-              <div className="my-4 absolute bottom-[-40vh] right-[1.5vw]">
+              {previewData && previewData.length > 0 &&
+                <div className='prviewDownloadTable'>
+                  <PreviewDownload data={previewData} />
+                </div>
+              }
+
+              <div style={{position:"absolute",right:"0",bottom:"0"}}>
                 <button className="border py-2 px-9 mx-2 rounded-full text-white bg-gradient-to-t from-[#E75126] to-[#F8A716]"
                   onClick={handleDownload}>
                   Download

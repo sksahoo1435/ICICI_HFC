@@ -15,13 +15,13 @@ import Stack from "@mui/material/Stack";
 const FileDictionary = () => {
 
   const [datas, setDatas] = useState([]);
-
   const [filesName, setFilesName] = useState([]);
   const [fileChildren, setFileChildren] = useState({});
-  const [checkedCheckboxes, setCheckedCheckboxes] = useState([]);
+  const [checkedCheckboxes, setCheckedCheckboxes] = useState({});
   const [selectedParentFolder, setSelectedParentFolder] = useState(null);
   const [page, setPage] = useState(1);
-  const [numRows, setNumRows] = useState(1)
+  const [numRows, setNumRows] = useState(1);
+  const [keyToRemount, setKeyToRemount] = useState(0);
 
   const getFilesName = async () => {
     try {
@@ -69,7 +69,7 @@ const FileDictionary = () => {
     }
   }
 
-  const handleCheckboxChange = (tableName, fileName, index) => {
+  const handleCheckboxChange = (tableName, fileName) => {
     const checkboxKey = `${fileName}`;
 
     if (checkedCheckboxes[checkboxKey]) {
@@ -81,7 +81,6 @@ const FileDictionary = () => {
         ...prevCheckboxes,
         [checkboxKey]: tableName,
       }));
-      setSelectedParentFolder(tableName);
     }
   }
 
@@ -122,6 +121,11 @@ const FileDictionary = () => {
   }
 
   useEffect(() => {
+    setCheckedCheckboxes({});
+    setKeyToRemount((prevKey) => prevKey + 1);
+  }, [selectedParentFolder]);
+
+  useEffect(() => {
     if (selectedParentFolder) {
 
       tableToShow(selectedParentFolder, checkedCheckboxes);
@@ -138,7 +142,7 @@ const FileDictionary = () => {
             <input
               type="checkbox"
               id={`checkbox-${fileName}-${childIndex}`}
-              checked={checkedCheckboxes[`${child}-${childIndex}`]}
+              checked={checkedCheckboxes[`${fileName}-${child}`]}
               onChange={() => handleCheckboxChange(`${fileName}-${child}-${childIndex}`, childIndex)}
             />
             <label htmlFor={`checkbox-${fileName}-${childIndex}`} style={{ paddingLeft: "0.5vw" }}>{child}</label>
@@ -148,7 +152,7 @@ const FileDictionary = () => {
     ) : (
       <div>Loading...</div>
     ),
-    onClick: () => loadFileChildren(fileName),
+    onClick: () => { loadFileChildren(fileName); setSelectedParentFolder(fileName) },
   }));
 
   const items = [
@@ -191,7 +195,7 @@ const FileDictionary = () => {
   return (
     <>
       <ErrorBoundary>
-        <div className="fileDictionary_container">
+        <div className="fileDictionary_container" key={keyToRemount}>
           <div className="fileDictionary_container_left">
             <div className="fileDictionary_container_left_dataSec">
               <div>
@@ -280,46 +284,46 @@ const FileDictionary = () => {
             ) : (
               <div className="tableContainer">
 
-                  <table className="tableFile">
-                    <thead className="tableHeadFile">
-                      {data.map((items) => (
-                        <th className="tableHeadFileTh" key={items}>
-                          {items}
-                        </th>
-                      ))}
-                    </thead>
-                    <tbody className="tableBodyFile">
-                      {datas.map((item, index) => (
-                        <tr key={index}>
-                          {data.map((key) => (
-                            <td className="tableBodyFileTd" key={key}>
-                              <p>{item[key] === '' ? '' : item[key]}</p>
-                            </td>
-                          ))}
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                <table className="tableFile">
+                  <thead className="tableHeadFile">
+                    {data.map((items) => (
+                      <th className="tableHeadFileTh" key={items}>
+                        {items}
+                      </th>
+                    ))}
+                  </thead>
+                  <tbody className="tableBodyFile">
+                    {datas.map((item, index) => (
+                      <tr key={index}>
+                        {data.map((key) => (
+                          <td className="tableBodyFileTd" key={key}>
+                            <p>{item[key] === '' ? '' : item[key]}</p>
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
 
 
-                  <div className='paginationNbutton'>
+                <div className='paginationNbutton'>
 
-                    <div style={{ display: "flex", flexDirection: "row", gap: "1vw", marginTop: "2vh", width: "86%" }}>
-                      {Math.floor(numRows / 100) * 10 >= 0 ? "" :
-                        (
-                          <div style={{ display: "flex", flexDirection: "row" }}>
-                            <div style={{ marginTop: "2.5vh", marginLeft: "0.5vw" }}> Rows per Page: 100</div>
+                  <div style={{ display: "flex", flexDirection: "row", gap: "1vw", marginTop: "2vh", width: "86%" }}>
+                    {Math.floor(numRows / 100) * 10 >= 0 ? "" :
+                      (
+                        <div style={{ display: "flex", flexDirection: "row" }}>
+                          <div style={{ marginTop: "2.5vh", marginLeft: "0.5vw" }}> Rows per Page: 100</div>
 
-                            <div style={{ marginTop: "2vh" }}>
-                              <Stack spacing={1}>
-                                <Pagination count={Math.floor(numRows / 100) * 10} page={page} onChange={handleChange} />
-                              </Stack>
-                            </div>
+                          <div style={{ marginTop: "2vh" }}>
+                            <Stack spacing={1}>
+                              <Pagination count={Math.floor(numRows / 100) * 10} page={page} onChange={handleChange} />
+                            </Stack>
                           </div>
-                        )}
-                    </div>
-
+                        </div>
+                      )}
                   </div>
+
+                </div>
               </div>
             )}
           </div>
@@ -330,4 +334,3 @@ const FileDictionary = () => {
 }
 
 export default FileDictionary;
-

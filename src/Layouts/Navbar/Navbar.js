@@ -30,11 +30,9 @@ const Navbar = () => {
       const response = await axios.get(APItoUse,{
         withCredentials:true,
       })
-
       if(response.status === 200){
-        // sessionStorage.setItem("userId", response.data.username);
+        sessionStorage.setItem("userId", response.data.username);
        
-        sessionStorage.setItem("userId", 'shetej');
       }
 
     }catch(err){

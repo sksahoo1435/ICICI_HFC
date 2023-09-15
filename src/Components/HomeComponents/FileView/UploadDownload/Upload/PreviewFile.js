@@ -51,7 +51,7 @@ const PreviewFile = ({ handlePreview, file, progressbarHandler }) => {
 
         const filename = fileNameForUpload;
         const userId = sessionStorage.getItem('userId');
-        console.log("****************-->",filename)
+       
         const fdata = data.map(item => {
             const convertedItem = {};
             for (const key in item) {
@@ -61,7 +61,7 @@ const PreviewFile = ({ handlePreview, file, progressbarHandler }) => {
                 }
                 else if (key === "TransactionDate") {
                     const transactionDate = new Date(item[key]);
-                    const formattedTransactionDate = transactionDate.toISOString(); // or use any other desired format
+                    const formattedTransactionDate = transactionDate.toISOString();
                     convertedValue = formattedTransactionDate;
 
                 }

@@ -51,12 +51,12 @@ const LogIns = ({ setActiveTab }) => {
           onClick={() => {
             setActiveTab(0);
           }}
-          style={{ width: "10vw" }}
+          style={{ width: "13vw" }}
         >
           <div>
             <ArrowBackIosIcon style={{ height: "2vh", color: "#063E67" }} />
           </div>
-          <div className="text-sm mt-1 font-semibold text-[#063E67]">
+          <div className="back_home_page" style={{marginTop:"2vh"}}>
             Back To Home Page
           </div>
         </div>

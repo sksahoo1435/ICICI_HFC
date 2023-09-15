@@ -57,7 +57,7 @@ const FileView = ({ activeTab, setActiveTab, fileView, setFileView }) => {
               </button>
 
 
-              <button
+              {userUpload === '1' ? (<button
                 className={
                   activeTab === 5 ? "selectedTabs normalTabs5" : "normalTabs5"
                 }
@@ -67,9 +67,9 @@ const FileView = ({ activeTab, setActiveTab, fileView, setFileView }) => {
               >
                 <img src={activeTab === 5 ? activeUpload : inactiveUpload} alt="" />
 
-              </button>
+              </button>) : ""}
 
-              <button
+              {userDownload === '1' ? (<button
                 className={
                   activeTab === 6 ? "selectedTabs normalTabs6" : "normalTabs6"
                 }
@@ -77,9 +77,8 @@ const FileView = ({ activeTab, setActiveTab, fileView, setFileView }) => {
                   setActiveTab(6);
                 }}
               >
-
                 <img src={activeTab === 6 ? activeDownload : inactiveDownload} alt="" />
-              </button>
+              </button>) : ""}
 
 
               <button

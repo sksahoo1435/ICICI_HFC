@@ -17,14 +17,37 @@
   height: 5vh;
 }
 
-.normalTab0,
-.normalTab1,
+.normalTab0 {
+  display: flex;
+  position: relative;
+  flex-direction: row;
+  margin-right: -2.4vw;
+  z-index: 20;
+}
+
+.normalTab1 {
+  display: flex;
+  position: relative;
+  flex-direction: row;
+  margin-right: -3vw;
+  z-index: 15;
+}
+
 .normalTab2 {
   display: flex;
   position: relative;
   flex-direction: row;
-  margin-right: -2.3vw;
+  margin-right: -3vw;
   z-index: 15;
+}
+
+@media (min-width:600px) and (max-width:920) {
+  .normalTab3 {
+    margin-top: 0vh;
+    display: flex !important;
+    position: absolute;
+    width: 29vw;
+  }
 }
 
 .normalTab1 {

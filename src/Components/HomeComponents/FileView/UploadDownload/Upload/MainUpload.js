@@ -209,7 +209,7 @@ const MainUpload = () => {
                                         <div
                                             style={{
                                                 width: `${progress}%`,
-                                                background: 'linear-gradient(270.11deg, rgb(104 44 165) 0%, rgb(22 47 248 / 71%) 100%)',
+                                                background: '#21A366',
                                                 borderRadius: '34px',
                                             }}
                                         ></div>
@@ -246,7 +246,7 @@ const MainUpload = () => {
             {file !== null && showProgress === true && prv === false && (
                 <div style={{ display: "flex", justifyContent: "left", marginLeft: "1vw", marginTop: "10vh" }} >
                     <button className="downloadButton" onClick={downloadFile} >
-                        <img src={xcel} className='sourceImg' alt="" />  <p> {file.name}</p> <FileDownloadOutlinedIcon />
+                        <img src={xcel} className='sourceImg' alt=""  height={100} width={100}/>  <p> {file.name}</p> <FileDownloadOutlinedIcon />
                     </button>
                 </div>
             )}
