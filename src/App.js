@@ -13,13 +13,16 @@ function App() {
 
   const [fileNameForUpload,setFileNameForUpload] = useState('')
 
+  const [isUploadTrue,setIsUploadTrue] = useState(false)
+
   // useEffect(() => {
   //   disableContextMenuAndShortcuts();
   // }, []);
 
 
   return (
-    <Statecontext.Provider value={{ filesinFolder, setFilesInfolder,fileNameTosend,setFileNameTosend,fileNameForUpload,setFileNameForUpload }} >
+    <Statecontext.Provider value={{ filesinFolder, setFilesInfolder,fileNameTosend,setFileNameTosend,
+    fileNameForUpload,setFileNameForUpload,isUploadTrue,setIsUploadTrue }} >
       <RouterProvider router={router} />
     </Statecontext.Provider>
   );

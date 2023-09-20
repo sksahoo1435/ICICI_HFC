@@ -1,7 +1,7 @@
 import { Box, Grid } from '@mui/material';
 import { Dropdown } from 'antd';
 import React, { useContext, useEffect, useState } from 'react'
-import downArrow from "../../../../../Assets/Union 2.png";
+import downArrow from "../../../../../Assets/Union 2.svg";
 import Singlegrid from '../../../main/FolderView/SingleGrid/Singlegrid';
 import SingleRow from '../../../main/ListView/singleRow/SingleRow';
 import Center from './Center';
@@ -37,26 +37,17 @@ const DownloadDestination = ({ gridView, advance, setAdvance }) => {
   useEffect(() => { fetchFolderForUpload(); }, [])
 
   const items = [
-    {
-      key: '0',
-      label: <button className={selectDrop > 0 ? 'cancelButton dropdownButtonSort' : 'vanishButton'} onClick={() => { setSelectDrop(0) }}> {'x'} Clear Options </button>,
-
-    },
+    
     {
       key: '1',
-      label: <button className={selectDrop === 1 ? 'selectedButton dropdownButtonSort' : 'dropdownButtonSort'} onClick={() => { setSelectDrop(1) }} >Name {'('}A to Z {')'} </button>,
+      label: <button  onClick={() => { setSelectDrop(1) }} >A to Z </button>,
 
     },
     {
       key: '2',
-      label: <button className={selectDrop === 2 ? 'selectedButton dropdownButtonSort' : 'dropdownButtonSort'} onClick={() => { setSelectDrop(2) }} >Name {'('}Z to A {')'} </button>,
+      label: <button onClick={() => { setSelectDrop(2) }} >Z to A </button>,
 
     },
-    // {
-    //   key: '5',
-    //   label: <button className={admin ? 'dropdownButtonSort' : 'vanishButton'} > {'+'} Add Options </button>,
-
-    // },
 
   ];
 

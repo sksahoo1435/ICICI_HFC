@@ -1,12 +1,12 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext } from 'react'
 import "./List.css"
 import SingleRow from './singleRow/SingleRow'
 import axios from 'axios';
 import Statecontext from "../../../Context/Statecontext";
 
 
-const List = ({ fileView, setFileView }) => {
-  const [pdata, setPdata] = useState([{}]);
+const List = ({ setFileView,updateData }) => {
+
   const { setFilesInfolder } = useContext(Statecontext);
 
 
@@ -26,30 +26,6 @@ const List = ({ fileView, setFileView }) => {
     }
   };
 
-  const fetchData = async () => {
-    try {
-
-      let result1 = await axios.get(
-        `https://localhost:7062/api/ReportingModule/GetFoldersWithPermissions`,
-        {
-          withCredentials: true
-        }
-      );
-
-      console.log("data to show", result1.data);
-      let pro = result1.data;
-      setPdata(pro);
-      console.log("pdata:", pdata);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  }
-
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
   return (
     <>
       <div className="listView">
@@ -59,12 +35,10 @@ const List = ({ fileView, setFileView }) => {
               <th>Name</th>
               <th>Date Modified</th>
               <th>Type</th>
-
             </tr>
-
           </thead>
           <tbody>
-            {pdata.map((item, k) => {
+            {updateData.map((item, k) => {
               return (
                 <SingleRow heading={item.folderName} onClick={() => { setFileView(true); fetchFilesInFolder(item.folderName); }}
                   dateModified={item.lastModifiedDate} type={"File Folder"} key={k} />

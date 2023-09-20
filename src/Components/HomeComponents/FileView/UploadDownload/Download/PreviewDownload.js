@@ -1,9 +1,38 @@
 import React from 'react';
 import './previewdownload.css';
 import dropdownImg from '../../../../../Assets/dropdwonImg.svg';
+import { Dropdown } from "antd";
 
 const PreviewDownload = ({ data }) => {
   const headers = data.length > 0 ? Object.keys(data[0]) : [];
+
+  const items = [
+    {
+      key: '1',
+      label: <button >{'('}A to Z {')'} </button>,
+
+    },
+    {
+      key: '2',
+      label: <button >{'('}Z to A {')'} </button>,
+
+    },
+
+  ];
+
+  // const itemsDate = [
+  //   {
+  //     key: '1',
+  //     label: <button >{'('}A to Z {')'} </button>,
+
+  //   },
+  //   {
+  //     key: '2',
+  //     label: <button >{'('}Z to A {')'} </button>,
+
+  //   },
+
+  // ];
 
   return (
     <div className="table-container">
@@ -13,7 +42,14 @@ const PreviewDownload = ({ data }) => {
             {headers.map((header, index) => (
               <th key={index} className="table-container_table_th">
                 {header}
-                <img src={dropdownImg} alt="Dropdown" className="dropdown-icon" />
+                <Dropdown menu={{
+                  items,
+                }}
+                  trigger={['click']}
+                >
+                  <img src={dropdownImg} alt="Dropdown" className="dropdown-icon" />
+                </Dropdown>
+
               </th>
             ))}
           </tr>

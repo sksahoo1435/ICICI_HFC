@@ -16,12 +16,15 @@ const FileDictionary = () => {
 
   const [datas, setDatas] = useState([]);
   const [filesName, setFilesName] = useState([]);
+  const [filesNameForSearch, setFilesNameForSearch] = useState([]);
   const [fileChildren, setFileChildren] = useState({});
   const [checkedCheckboxes, setCheckedCheckboxes] = useState({});
   const [selectedParentFolder, setSelectedParentFolder] = useState(null);
   const [page, setPage] = useState(1);
   const [numRows, setNumRows] = useState(1);
   const [keyToRemount, setKeyToRemount] = useState(0);
+  const [sortbyname, setSortByName] = useState('');
+  const [searchText, setSearchText] = useState("");
 
   const getFilesName = async () => {
     try {
@@ -32,6 +35,7 @@ const FileDictionary = () => {
 
       if (response.status === 200) {
         setFilesName(response.data);
+        setFilesNameForSearch(response.data)
       } else {
         console.log("Something went wrong", response);
       }
@@ -120,6 +124,34 @@ const FileDictionary = () => {
     }
   }
 
+  const fetchFilesBySearch = async (searchText) => {
+    if (searchText === '') {
+      setFilesName(filesNameForSearch);
+    } else {
+      try {
+        const apiToFetch = `https://localhost:7062/api/AdminFilter/GetFileNamesBySearchInDictionary?searchString=${searchText}`;
+        const response = await axios.get(apiToFetch, {
+          withCredentials: true,
+        });
+
+        if (response.status === 200) {
+          setFilesName(response.data);
+        } else {
+          console.log("Something went wrong", response);
+        }
+      } catch (error) {
+        console.error('Error fetching data from API:', error);
+      }
+    }
+
+  }
+
+  const handleSearchInputChange = (event) => {
+    const inputValue = event.target.value;
+    setSearchText(inputValue);
+    fetchFilesBySearch(inputValue);
+  }
+
   useEffect(() => {
     setCheckedCheckboxes({});
     setKeyToRemount((prevKey) => prevKey + 1);
@@ -155,26 +187,38 @@ const FileDictionary = () => {
     onClick: () => { loadFileChildren(fileName); setSelectedParentFolder(fileName) },
   }));
 
+  useEffect(() => {
+
+    const fetchData = async () => {
+      try {
+        const ApiToFetch = `https://localhost:7062/api/AdminFilter/GetFileNamesForDictionarySortBy?sortOrder=${sortbyname}`;
+
+        const response = await axios.get(ApiToFetch, {
+          withCredentials: true,
+        });
+        if (response.status === 200) {
+          setFilesName(response.data)
+        } else {
+          console.log('API response error', response.status);
+        }
+      } catch (err) {
+        console.log('Error in API', err);
+      }
+    };
+
+    fetchData();
+  }, [sortbyname]);
+
   const items = [
     {
-      key: "0",
-      label: <button> Dummy Data </button>,
+      key: '1',
+      label: 'A-Z',
+      onClick: () => setSortByName('A-Z')
     },
     {
-      key: "1",
-      label: (
-        <button>
-          Name {"("}A to Z {")"}{" "}
-        </button>
-      ),
-    },
-    {
-      key: "2",
-      label: (
-        <button>
-          Name {"("}Z to A {")"}{" "}
-        </button>
-      ),
+      key: '2',
+      label: 'Z-A',
+      onClick: () => setSortByName('Z-A')
     },
   ];
 
@@ -218,6 +262,8 @@ const FileDictionary = () => {
                     }
                     placeholder="Enter Text Here"
                     type="text"
+                    value={searchText}
+                    onChange={handleSearchInputChange}
                   ></Input>
                 </div>
                 <div

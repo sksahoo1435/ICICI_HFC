@@ -25,12 +25,10 @@ const FileModal = (props) => {
 
   const userId = sessionStorage.getItem('userId');
 
-  const fetchContentInFiles = async () => {
-
-    console.log("************---->",userId,fileNameTosend);
+  const fetchContentInFiles = async (e) => {
 
     try {
-      const getContentInFilesApiUrl = `https://localhost:7062/api/ReportingModule/GetFilesInFolder/${userId}/${fileNameTosend}/${page}/1000`;
+      const getContentInFilesApiUrl = `https://localhost:7062/api/ReportingModule/GetFilesInFolder/${userId}/${e}/${page}/1000`;
       const filesResponse = await axios.get(getContentInFilesApiUrl, {
         withCredentials: true,
       });
@@ -40,6 +38,7 @@ const FileModal = (props) => {
         let pro = filesResponse.data;
         setPdata(pro);
         setNumRows(pro.length);
+        setAccessGranted(true);
       }
     } catch (error) {
       console.error("Error fetching files in the folder:", error);
@@ -47,7 +46,7 @@ const FileModal = (props) => {
   };
 
   useEffect(() => {
-    fetchContentInFiles();
+    fetchContentInFiles(fileNameTosend);
   }, [fileNameTosend]);
 
   const handleChange = (event, value) => {
@@ -229,9 +228,7 @@ const FileModal = (props) => {
             <select className='customSelect' placeholder='Download' value='Download' onChange={(e) => handleFileDownload(e.target.value)}>
               <option hidden>Download</option>
               <option value='csv'>CSV</option>
-              {/* <option value='pdf'>PDF</option> */}
               <option value='xlsx'>XLSX</option>
-              {/* <option value='json'>JSON</option> */}
             </select>
           </div>
         </div>

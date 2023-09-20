@@ -6,14 +6,19 @@ import Papa from 'papaparse';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ViewModal from './ViewModal';
+import dropdownImg from '../../../../src/Assets/dropdwonImg.svg';
+import { Menu, Dropdown } from "antd";
 
 
 const ManageUser = ({ setActiveTab }) => {
   const [data, setData] = useState([]);
   const [savedata, setSaveData] = useState([]);
+  const [sortedData, setSortedData] = useState([])
   const [recall, setRecall] = useState('false');
   const [viewModalData, setViewModalData] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [sortbyname, setSortByName] = useState('');
+  const [sortbyOrder, setSortByOrder] = useState('')
 
   const fetchUsersToManage = async () => {
     try {
@@ -24,6 +29,7 @@ const ManageUser = ({ setActiveTab }) => {
       const initialData = response.data.map((item) => ({ ...item, isChecked: false }));
       setData(initialData);
       setSaveData(initialData);
+      setSortedData(initialData)
     } catch (error) {
       console.error('Error fetching data from api:', error);
     }
@@ -78,7 +84,7 @@ const ManageUser = ({ setActiveTab }) => {
         updateUserAccess(item);
       }
     }
-  }, [savedata, data]);
+  }, [savedata, data, sortedData]);
 
   const handleCheckboxChange = (item, checkValue) => {
     setSaveData((prevData) => {
@@ -92,6 +98,7 @@ const ManageUser = ({ setActiveTab }) => {
   };
 
 
+
   const handleSave = async () => {
     setRecall(true)
     toast.success("Items are saved successfully...!", { theme: "colored", })
@@ -99,8 +106,8 @@ const ManageUser = ({ setActiveTab }) => {
 
   const handleDownload = () => {
 
-    const removeIsCheckedProperty = (data) => {
-      const { isChecked, ...updatedUserObject } = data;
+    const removeIsCheckedProperty = (sortedData) => {
+      const { isChecked, ...updatedUserObject } = sortedData;
       return updatedUserObject;
     };
 
@@ -121,6 +128,78 @@ const ManageUser = ({ setActiveTab }) => {
     setViewModalData(item);
     setModalOpen(true);
   }
+
+  useEffect(() => {
+
+    const fetchData = async () => {
+      try {
+        const ApiToFetch = `https://localhost:7062/api/AdminFilter/UserMangerFilterByName?sortingOrder=${sortbyname}`;
+
+        const response = await axios.get(ApiToFetch, {
+          withCredentials: true,
+        });
+        if (response.status === 200) {
+
+          setSortedData(response.data);
+        } else {
+          console.log('API response error', response.status);
+        }
+      } catch (err) {
+        console.log('Error in API', err);
+      }
+    };
+
+    fetchData();
+  }, [sortbyname]);
+
+  useEffect(() => {
+
+    const fetchData = async () => {
+      try {
+        const ApiToFetch = `https://localhost:7062/api/AdminFilter/UserMangerFilterByDate?sortingOrder=${sortbyOrder}`;
+
+        const response = await axios.get(ApiToFetch, {
+          withCredentials: true,
+        });
+
+        if (response.status === 200) {
+          setSortedData(response.data);
+        } else {
+          console.log('API response error', response.status);
+        }
+      } catch (err) {
+        console.log('Error in API', err);
+      }
+    };
+
+    fetchData();
+  }, [sortbyOrder]);
+
+  const itemsName = [
+    {
+      key: '1',
+      label: 'A-Z',
+      onClick: () => setSortByName('A-Z')
+    },
+    {
+      key: '2',
+      label: 'Z-A',
+      onClick: () => setSortByName('Z-A')
+    },
+  ]
+
+  const itemsOrder = [
+    {
+      key: '1',
+      label: 'Ascending',
+      onClick: () => setSortByOrder('ASC')
+    },
+    {
+      key: '2',
+      label: 'Descending',
+      onClick: () => setSortByOrder('DESC')
+    },
+  ]
 
   return (
     <>
@@ -149,8 +228,30 @@ const ManageUser = ({ setActiveTab }) => {
           <table className="table">
             <thead className="tableHead">
               <tr>
-                <th className="tableHeadTh">Username</th>
-                <th className="tableHeadTh">Last Logged In</th>
+                <th className="tableHeadTh">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: "2vw" }}>
+                    Username
+                    <Dropdown overlay={<Menu>{itemsName.map(item => (
+                      <Menu.Item key={item.key} onClick={item.onClick}>
+                        {item.label}
+                      </Menu.Item>
+                    ))}</Menu>}>
+                      <img src={dropdownImg} alt="Dropdown" className="dropdown-icon" />
+                    </Dropdown>
+                  </div>
+                </th>
+                <th className="tableHeadTh">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: "2vw" }}>
+                    Last Logged In
+                    <Dropdown overlay={<Menu>{itemsOrder.map(item => (
+                      <Menu.Item key={item.key} onClick={item.onClick}>
+                        {item.label}
+                      </Menu.Item>
+                    ))}</Menu>}>
+                      <img src={dropdownImg} alt="Dropdown" className="dropdown-icon" />
+                    </Dropdown>
+                  </div>
+                </th>
                 <th className="tableHeadTh">Access</th>
               </tr>
             </thead>
@@ -166,14 +267,14 @@ const ManageUser = ({ setActiveTab }) => {
             )}
 
             <tbody className='tableBody'>
-              {data.map((item) => (
-                
+              {sortedData.map((item) => (
+
                 <tr
                   key={item.id}
                   className={item.id % 2 === 0 ? 'bg-gray-100' : 'bg-white'}
                 >
                   <td className="tableBodyTd">{item.username}</td>
-                  
+
                   <td className="tableBodyTd">{new Date(item.lastLoggedIn).toLocaleDateString(
                     "en-GB"
                   )}</td>

@@ -1,157 +1,154 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState } from 'react';
 import './preview.css';
 import * as XLSX from 'xlsx';
 import axios from 'axios';
 import Statecontext from '../../../../Context/Statecontext';
 
-const PreviewFile = ({ handlePreview, file, progressbarHandler }) => {
 
+const PreviewFile = ({ handlePreview, file, progressbarHandler, columnForPrev }) => {
     const [data, setData] = useState([]);
 
-    const {fileNameForUpload} = useContext(Statecontext)
+    const { fileNameForUpload,setIsUploadTrue } = useContext(Statecontext);
 
-    const columns = [
-        { Header: 'AccountHolder', accessor: 'AccountHolder' },
-        { Header: 'TransactionType', accessor: 'TransactionType' },
-        { Header: 'Amount', accessor: 'Amount' },
-        { Header: 'TransactionDate', accessor: 'TransactionDate' },
-    ];
-
-    const btnHanlder = (e) => {
-        console.log(columns)
+    const btnHandler = (e) => {
         const resultbtn = e === 'back' ? true : false;
-
-        handlePreview(resultbtn, e)
-    }
+        handlePreview(resultbtn, e);
+    };
 
     if (file) {
         const reader = new FileReader();
-        // console.log(columns)
         reader.onload = async (event) => {
             const binaryString = event.target.result;
             const workbook = XLSX.read(binaryString, { type: 'binary' });
             const sheetName = workbook.SheetNames[0];
             const worksheet = workbook.Sheets[sheetName];
             const excelData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-
-            const formattedData = excelData.slice(1).map((row) => ({
-                AccountHolder: row[0],
-                TransactionType: row[1],
-                Amount: row[2],
-                TransactionDate: row[3],
-            }));
-
+            const formattedData = excelData.slice(1).map((row) => {
+                const formattedRow = {};
+                columnForPrev.forEach((column, index) => {
+                    formattedRow[column.columnName] = row[index];
+                });
+                return formattedRow;
+            });
             setData(formattedData);
-
-        }
+        };
         reader.readAsBinaryString(file);
     }
 
-    const handleConfirm = async () => {
+    const dateColumns = columnForPrev
+        .filter((column) => column.dataType === 'date')
+        .map((column) => column.columnName);
 
+    const handleConfirm = async () => {
         const filename = fileNameForUpload;
         const userId = sessionStorage.getItem('userId');
-       
-        const fdata = data.map(item => {
-            const convertedItem = {};
-            for (const key in item) {
-                let convertedValue = item[key];
-                if (key === "Amount") {
-                    convertedValue = JSON.stringify(item[key]);
-                }
-                else if (key === "TransactionDate") {
-                    const transactionDate = new Date(item[key]);
-                    const formattedTransactionDate = transactionDate.toISOString();
-                    convertedValue = formattedTransactionDate;
 
+        const excludedColumns = ["Username", "UploadedDate"];
+
+        const formattedDataWithoutExcludedColumns = data.map((item) => {
+            const convertedItem = {};
+
+            for (const key in item) {
+                if (!excludedColumns.includes(key)) {
+                    let convertedValue = item[key];
+                    const column = columnForPrev.find((col) => col.columnName === key);
+
+                    if (column) {
+                        if (column.dataType === 'date') {
+                            const transactionDate = new Date(item[key]);
+                            const formattedTransactionDate = transactionDate.toISOString();
+                            convertedValue = `${formattedTransactionDate}`;
+                        } else if (column.dataType !== 'string') {
+                            convertedValue = `${JSON.stringify(item[key])}`;
+                        } else {
+                            convertedValue = `${item[key]}`;
+                        }
+                    } else {
+                        convertedValue = `${item[key]}`;
+                    }
+
+                    convertedItem[key] = convertedValue;
                 }
-                convertedItem[key] = convertedValue;
             }
+
             return convertedItem;
         });
-
-
         const sendFileToDb = `https://localhost:7062/api/ReportingModule/InsertUploadData/${userId}/${filename}`;
 
         try {
-            const response = await axios.post(
-                sendFileToDb,
-                fdata,
-                {
-                    withCredentials: true,
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                }
-            );
-    
+            const response = await axios.post(sendFileToDb, formattedDataWithoutExcludedColumns, {
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
             if (response.status === 200) {
-                
                 progressbarHandler(true);
+                setIsUploadTrue(true);
             } else {
-               
                 progressbarHandler(false);
-                new Error('This file is not matched with the API')
-                
+                new Error('This file is not matched with the API');
+                setIsUploadTrue(true)
             }
         } catch (error) {
             console.error('Error:', error);
-    
-            // Handle the error gracefully without crashing the app
             progressbarHandler(false);
-            new Error('This file is not matched with the API')
+            new Error('This file is not matched with the API');
+            setIsUploadTrue(false);
+           
         }
     };
 
 
-    return (
-        <div className='previewContainer'>
 
-            <div className='previewtext'>
+    return (
+        <div className="previewContainer">
+            <div className="previewtext">
                 <p>Preview</p>
             </div>
-
-            <div className='previewTable'>
-
-                <table className="w-full border-collapse border rounded-xl overflow-hidden shadow-lg" >
-                    <thead className="bg-[#F36523] text-white ">
+            
+            <div className="previewTable">
+                <table className="w-full border-collapse border rounded-xl overflow-hidden shadow-lg">
+                    <thead className="bg-[#F36523] text-white">
                         <tr>
-                            <th className="py-2 px-4 border">AccountHolder</th>
-                            <th className="py-2 px-4 border">TransactionType</th>
-                            <th className="py-2 px-4 border">Amount</th>
-                            <th className="py-2 px-4 border">TransactionDate</th>
+                            {columnForPrev.map((column, index) => (
+                                <th className="py-2 px-4 border" key={index}>
+                                    {column.columnName}
+                                </th>
+                            ))}
                         </tr>
                     </thead>
                     <tbody>
-                        {Object.values(data).map((ele, ind) =>
-                            <tr key={ind}>
-
-                                {Object.entries(ele).map(([keys, item]) =>
-                                    <td className="py-2 px-4 border"  >
-                                        <p style={{ display: "flex", justifyContent: "center" }}>{keys === 'TransactionDate' ? new Date(item).toLocaleDateString() : item}</p>
-                                    </td>)}
-
-                            </tr>)}
+                        {data.map((row, rowIndex) => (
+                            <tr key={rowIndex}>
+                                {columnForPrev.map((column, colIndex) => (
+                                    <td className="py-2 px-4 border" key={colIndex}>
+                                        <p style={{ display: 'flex', justifyContent: 'center' }}>
+                                            {dateColumns.includes(column.columnName)
+                                                ? new Date(row[column.columnName]).toLocaleDateString()
+                                                : row[column.columnName]
+                                            }
+                                        </p>
+                                    </td>
+                                ))}
+                            </tr>
+                        ))}
                     </tbody>
                 </table>
-
-                
             </div>
 
-            <div className='previewButton'>
-
-                <div className='back-btn'>
-                    <button onClick={(e) => { btnHanlder('back') }}>Back</button>
+            <div className="previewButton">
+                <div className="back-btn">
+                    <button onClick={() => btnHandler('back')}>Back</button>
                 </div>
 
-                <div className='con-btn'>
-                    <button onClick={(e) => { btnHanlder('confirm'); handleConfirm(); }} >Confirm</button>
+                <div className="con-btn">
+                    <button onClick={() => { btnHandler('confirm'); handleConfirm(); }}>Confirm</button>
                 </div>
-
             </div>
-
         </div>
-    )
-}
+    );
+};
 
-export default PreviewFile
+export default PreviewFile;

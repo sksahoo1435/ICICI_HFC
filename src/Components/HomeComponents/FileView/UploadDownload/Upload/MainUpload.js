@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import upload from '../../../../../Assets/uploadSymbole.svg';
 import xsl from '../../../../../Assets/xslImg.svg';
 import xcel from "../../../../../Assets/vscode-icons_file-type-excel.png";
@@ -9,19 +9,11 @@ import * as FileSaver from 'file-saver';
 import PreviewFile from './PreviewFile';
 import ErrorBoundary from './ErrorBoundary/ErrorBoundary';
 import completedImg from '../../../../../Assets/completedImg.svg'
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import './mainUpload.css';
-
-export const generateDummyXLSX = () => {
-    const data = [['AccountHolder', 'TransactionType', 'Amount', 'TransactionDate']];
-    const ws = XLSX.utils.aoa_to_sheet(data);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
-    const blob = new Blob([XLSX.write(wb, { bookType: 'xlsx', type: 'array' })], {
-        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    });
-    return blob;
-};
+import axios from 'axios';
+import Statecontext from '../../../../Context/Statecontext';
 
 const MainUpload = () => {
     const [fileData, setFileData] = useState({
@@ -34,23 +26,45 @@ const MainUpload = () => {
     const [previewShow, setPreviewShow] = useState(false);
     const [showProgress, setShowProgress] = useState(false);
     const [showProgressApiSucces, setShowProgressApiSucces] = useState(false);
-    const [prv,setPrev] = useState(true);
+    const [prv, setPrev] = useState(true);
+    const [dataForFile, setDataForFile] = useState([]);
 
-
+    const { fileNameForUpload, isUploadTrue } = useContext(Statecontext);
     const [rowCount, setRowCount] = useState(0);
     const [colCount, setColCount] = useState(0);
 
-    const deleteBox = () => {
-        setFileData({
-            file: null,
-            progress: 0,
-            isBigFile: false,
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const ApiToFetch = `https://localhost:7062/api/ReportingModule/GetColumnNamesAndDataTypes?tableName=${fileNameForUpload}`;
+
+                const response = await axios.get(ApiToFetch, {
+                    withCredentials: true,
+                });
+
+                if (response.status === 200) {
+                    setDataForFile(response.data);
+                } else {
+                    console.log('API response error', response.status);
+                }
+            } catch (err) {
+                console.log('Error in API', err);
+            }
+        };
+
+        fetchData();
+    }, [])
+
+    const generateDummyXLSX = () => {
+        const columnNameValues = dataForFile.map(column => column.columnName)
+        const data = [columnNameValues]
+        const ws = XLSX.utils.aoa_to_sheet(data);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+        const blob = new Blob([XLSX.write(wb, { bookType: 'xlsx', type: 'array' })], {
+            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         });
-        setFileKey(Math.random().toString(36));
-        inputFileRef.current.value = '';
-        setShowProgress(false);
-        setRowCount(0);
-        setColCount(0);
+        return blob;
     };
 
     const handlePreview = (e, btn) => {
@@ -63,9 +77,18 @@ const MainUpload = () => {
             });
             setPrev(true)
         } else {
-            setPreviewShow(e);
-            setShowProgress(true);
-            setPrev(false)
+            if (isUploadTrue) {
+                setPreviewShow(e);
+                setShowProgress(true);
+                setPrev(false);
+                toast.success("uploaded successfully...", { theme: "colored", })
+            } else {
+                setPrev(true);
+                setPreviewShow(e);
+                setShowProgress(false);
+                toast.error("something went wrong...", { theme: "colored", })
+            }
+
         }
 
         console.log("the modal", e, btn)
@@ -141,6 +164,7 @@ const MainUpload = () => {
 
     return (
         <div>
+            <ToastContainer />
             {previewShow === false ? (
                 <div className="importModalBody">
                     <input
@@ -171,6 +195,7 @@ const MainUpload = () => {
                             handlePreview={(e, text) => handlePreview(e, text)}
                             progressbarHandler={(e) => setShowProgressApiSucces(e)}
                             file={file}
+                            columnForPrev={dataForFile}
                         />
                     </ErrorBoundary>
                 </div>
@@ -178,7 +203,7 @@ const MainUpload = () => {
 
             {(file === null || isBigFile) && <p className="notes"> Note: File Should Only Be Uploaded In xlsx Format</p>}
 
-            {file === null && (
+            {(file === null || isUploadTrue === false) && (
                 <div className="filesSamplebox">
                     <img src={xsl} alt='file pic' height={50} width={50} style={{ marginTop: "1vh", marginLeft: "0.5vw" }} className='fileImg'></img>
                     <p className="invalidtext">Sample Tamplate.xlsx</p>
@@ -202,7 +227,7 @@ const MainUpload = () => {
                                     <p>{file.name}</p>
                                 </div>
                                 <div className="fileSize">
-                                    <p>{`${parseInt((file.size) / 1000)} kb  Rows: ${rowCount-1}  Columns: ${colCount}`}</p>
+                                    <p>{`${parseInt((file.size) / 1000)} kb  Rows: ${rowCount - 1}  Columns: ${colCount}`}</p>
                                 </div>
                                 <div style={{ display: "flex", flexDirection: "row", marginTop: "5vh" }}>
                                     <div className="progress" style={{ width: "73vw", marginLeft: "1vw", height: "1.4vh", marginTop: "-3.5vh" }}>
@@ -215,7 +240,7 @@ const MainUpload = () => {
                                         ></div>
                                     </div>
                                     <div style={{ marginTop: "-4vh", marginLeft: "1vw" }}>
-                                        {progress < 100 && <span>{`${progress}%`}</span>}
+                                        {progress < 100 && <span style={{marginTop:"-1vh",position: "absolute"}}>{`${progress}%`}</span>}
                                         {progress >= 100 && (
                                             <span style={{ display: "flex", flexDirection: "row", gap: "0.3vw" }}>
                                                 <img src={completedImg} alt='complete' />
@@ -246,7 +271,9 @@ const MainUpload = () => {
             {file !== null && showProgress === true && prv === false && (
                 <div style={{ display: "flex", justifyContent: "left", marginLeft: "1vw", marginTop: "10vh" }} >
                     <button className="downloadButton" onClick={downloadFile} >
-                        <img src={xcel} className='sourceImg' alt=""  height={100} width={100}/>  <p> {file.name}</p> <FileDownloadOutlinedIcon />
+                        <img src={xcel} className='sourceImg' alt="" height={100} width={100} />
+                        <p style={{marginLeft:"4vw"}}> {file.name}</p>
+                        <FileDownloadOutlinedIcon />
                     </button>
                 </div>
             )}

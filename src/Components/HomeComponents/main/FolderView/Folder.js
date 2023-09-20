@@ -10,11 +10,11 @@ import axios from "axios";
 import Statecontext from "../../../Context/Statecontext";
 
 const Folder = ({ gridView, fileView, setFileView }) => {
-  const {setFilesInfolder } = useContext(Statecontext);
+  const { setFilesInfolder } = useContext(Statecontext);
 
-  const [selectDrop, setSelectDrop] = useState(0);
+  const [selectDrop, setSelectDrop] = useState('');
 
-  const [pdata, setPdata] = useState([{}]);
+  const [updatedpdata, setUpdatedPdata] = useState([{}]);
 
   const fetchFilesInFolder = async (folderName) => {
     try {
@@ -42,7 +42,7 @@ const Folder = ({ gridView, fileView, setFileView }) => {
         });
 
         let pro = result1.data;
-        setPdata(pro);
+        setUpdatedPdata(pro);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -51,24 +51,30 @@ const Folder = ({ gridView, fileView, setFileView }) => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const ApiToFetch = `https://localhost:7062/api/ReportingModuleFilter/GetFoldersWithPermissions?sortOrder=${selectDrop}`;
+
+        const response = await axios.get(ApiToFetch, {
+          withCredentials: true,
+        });
+        if (response.status === 200) {
+          console.log("updated data ---->", response.data)
+          setUpdatedPdata(response.data);
+        } else {
+          console.log('API response error', response.status);
+        }
+      } catch (err) {
+        console.log('Error in API', err);
+      }
+    };
+
+    fetchData();
+  }, [selectDrop]);
+
 
   const items = [
-    {
-      key: "0",
-      label: (
-        <button
-          className={
-            selectDrop > 0 ? "cancelButton dropdownButtonSort" : "vanishButton"
-          }
-          onClick={() => {
-            setSelectDrop(0);
-          }}
-        >
-          {" "}
-          {"x"} Clear Options{" "}
-        </button>
-      ),
-    },
     {
       key: "1",
       label: (
@@ -79,10 +85,10 @@ const Folder = ({ gridView, fileView, setFileView }) => {
               : "dropdownButtonSort"
           }
           onClick={() => {
-            setSelectDrop(1);
+            setSelectDrop('A-Z');
           }}
         >
-          Name {"("}A to Z {")"}{" "}
+          A to Z
         </button>
       ),
     },
@@ -96,23 +102,14 @@ const Folder = ({ gridView, fileView, setFileView }) => {
               : "dropdownButtonSort"
           }
           onClick={() => {
-            setSelectDrop(2);
+            setSelectDrop('Z-A');
           }}
         >
-          Name {"("}Z to A {")"}{" "}
+          Z to A
         </button>
       ),
     },
 
-    // {
-    //   key: "5",
-    //   label: (
-    //     <button className={admin ? "dropdownButtonSort" : "vanishButton"}>
-    //       {" "}
-    //       {"+"} Add Options{" "}
-    //     </button>
-    //   ),
-    // },
   ];
 
   return (
@@ -146,7 +143,7 @@ const Folder = ({ gridView, fileView, setFileView }) => {
                   columns={{ xs: 4, sm: 8, md: 16 }}
                   style={{ paddingBottom: "3vh" }}
                 >
-                  {pdata.map((item, ind) => {
+                  {updatedpdata.map((item, ind) => {
                     return (
                       //column
                       <Grid item xs={2} sm={2} md={2} key={ind}>
@@ -164,7 +161,7 @@ const Folder = ({ gridView, fileView, setFileView }) => {
               </Box>
             </div>
           ) : (
-            <List fileView={fileView} setFileView={setFileView} />
+            <List fileView={fileView} setFileView={setFileView} updateData ={updatedpdata} />
           )}
         </div>
       </div>
