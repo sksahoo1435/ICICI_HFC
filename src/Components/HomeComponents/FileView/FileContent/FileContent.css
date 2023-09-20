@@ -8,6 +8,7 @@
     height: 5vh;
     display: flex;
     justify-content: space-between;
+    margin-bottom: 2vh;
 }
 .starting{
     margin-left: 5vw;

@@ -1,8 +1,8 @@
-.table-container {
+.table-containers {
     border-radius: 1rem;
     overflow: auto;
-    max-height: 45vh;
-    height: 45vh;
+    max-height: 50vh;
+    height: 43vh;
     max-width: 100%;
 }
 
@@ -81,8 +81,8 @@
 }
 
 @media (max-height: 600px) {
-    .table-container {
-        max-height: 30vh;
+    .table-containers {
+        max-height: 35vh;
     }
 }
 

@@ -31,7 +31,7 @@
 }
 
 .btnSec {
-    width: 15%;
+    width: 18%;
     float: right;
     position: relative;
     display: flex;
@@ -40,7 +40,7 @@
 }
 
 .btnSec select {
-    width: 8vw;
+    width: 8.5vw;
     height: 5vh;
     color: #36556B;
     border: 1px solid #36556B;
@@ -100,7 +100,7 @@
     appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-  background: url('../../../../Assets/Union\ 2.svg') no-repeat calc(100% - 0.8vw) center; /* Adjust the gap as needed */
+  background: url('../../../../Assets/Union\ 2.svg') no-repeat calc(100% - 0.9vw) center;
   padding-right: 1vw;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -110,7 +110,6 @@
 
 .search-inputforModal {
     background: #FFFFFF;
-    /* Grey(Outline) */
     height: 5vh;
     position: relative;
     border: 1px solid #36556B;

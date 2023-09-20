@@ -13,15 +13,18 @@ import Statecontext from '../../../Context/Statecontext';
 
 const FileModal = (props) => {
   const { modalOpen, setModalOpen } = props;
-  const {fileNameTosend} = useContext(Statecontext);
+  const { fileNameTosend } = useContext(Statecontext);
 
   const [pdata, setPdata] = useState([{}]);
   const [selectDrop, setSelectDrop] = useState(0);
   const [selectFilter, setSelectFilter] = useState(0);
-  
+
   const [page, setPage] = useState(1);
   const [numRows, setNumRows] = useState(1)
   const [accessGranted, setAccessGranted] = useState(true);
+
+  const [sortColumn, setSortColumn] = useState('');
+  const [sortOrder, setSortOrder] = useState(''); 
 
   const userId = sessionStorage.getItem('userId');
 
@@ -47,6 +50,7 @@ const FileModal = (props) => {
 
   useEffect(() => {
     fetchContentInFiles(fileNameTosend);
+    console.log(sortColumn,sortOrder);
   }, [fileNameTosend]);
 
   const handleChange = (event, value) => {
@@ -94,6 +98,31 @@ const FileModal = (props) => {
     }
   }
 
+
+  const handleSort = (column, order) => {
+
+    setSortColumn(column);
+    setSortOrder(order);
+
+    fetchSortedData(column, order);
+    console.log("///////////////////", column, order);
+  };
+
+  const fetchSortedData = async (column, order) => {
+    try {
+
+      const sortedDataResponse = await axios.get(`https://localhost:7062/api/ReportingModuleFilter/GetFilesInFolderUsingFilter/${userId}/${fileNameTosend}/${page}/1000/${column}/${order}`, {
+        withCredentials: true,
+      });
+      setPdata(sortedDataResponse.data);
+      setNumRows(sortedDataResponse.data.length);
+      setAccessGranted(true);
+    } catch (error) {
+      console.error("Error fetching sorted data:", error);
+    }
+  };
+
+
   const filterItems = [
     {
       key: '0',
@@ -123,24 +152,20 @@ const FileModal = (props) => {
     // }
 
   ];
-  // Active , Inactive , File Type , Text File , Excel File , JSON file , CSv,Tab 
-  const items = [
-    {
-      key: '0',
-      label: <button className={selectDrop > 0 ? 'cancelButton dropdownButtonSort' : 'vanishButton'} onClick={() => { setSelectDrop(0) }}> {'x'} Clear Options </button>,
 
-    },
+  const items = [
+
     {
       key: '1',
-      label: <button className={selectDrop === 1 ? 'selectedButton dropdownButtonSort' : 'dropdownButtonSort'} onClick={() => { setSelectDrop(1) }} >Name {'('}A to Z {')'} </button>,
-
+      label: <button className={selectDrop === 1 ? 'selectedButton dropdownButtonSort' : 'dropdownButtonSort'} onClick={() => { setSelectDrop(1) }} >A to Z </button>,
     },
     {
       key: '2',
-      label: <button className={selectDrop === 2 ? 'selectedButton dropdownButtonSort' : 'dropdownButtonSort'} onClick={() => { setSelectDrop(2) }} >Name {'('}Z to A {')'} </button>,
-
+      label: <button className={selectDrop === 2 ? 'selectedButton dropdownButtonSort' : 'dropdownButtonSort'} onClick={() => { setSelectDrop(2) }} >Z to A </button>,
     },
   ];
+
+
 
   let userRole = sessionStorage.getItem("userRole");
 
@@ -199,7 +224,7 @@ const FileModal = (props) => {
         </div>
         <div className='tableContent'>
           {accessGranted ? (
-            <TableFile data={pdata} />
+            <TableFile data={pdata} onSort={handleSort} />
           ) : (
             <div className='accessDeniedMessage'>
               <p className='titleReport' style={{ fontSize: '15px' }}>You don't have access to this data.</p>
