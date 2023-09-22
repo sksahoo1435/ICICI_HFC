@@ -4,7 +4,7 @@ const ErrorBoundary = ({ children }) => {
   const [hasError, setHasError] = useState(false);
 
   const handleError = (error, errorInfo) => {
-    console.error(error, errorInfo);
+   
     setHasError(true);
   };
 

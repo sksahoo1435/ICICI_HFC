@@ -11,17 +11,32 @@ import { SearchOutlined } from '@mui/icons-material';
 import axios from 'axios';
 import Papa from 'papaparse';
 import PreviewDownload from './PreviewDownload';
+import ReactDatePicker from "react-datepicker";
+import 'react-datepicker/dist/react-datepicker.css';
+import { format } from "date-fns";
 
 const Download = () => {
   const [selected, setSelected] = useState('');
   const [foldername, setFolderName] = useState([]);
   const [filesName, setFilesName] = useState([]);
+  const [filesNameForSearch, setFilesNameForSearch] = useState([]);
+  const [selectedFolder, setSelectedFolder] = useState('');
   const [inputValue, setInputValue] = useState('');
   const [checkedFileName, setCheckedFileName] = useState('');
-  const [previewData, setPreviewData] = useState([])
+  const [previewData, setPreviewData] = useState([]);
+  const [startDatefilter, setStartDatefilter] = useState(new Date());
+  const [endDatefilter, setEndDatefilter] = useState(new Date());
+  const [startDatefilterStatus, setStartDatefilterStatus] = useState(false);
+  const [endDatefilterStatus, setEndDatefilterStatus] = useState(false);
+  const [selectedCheckbox, setSelectedCheckbox] = useState('');
+  const [searchString, setSearchString] = useState('');
+  const [sortbyname, setSortByName] = useState('');
+  const [downloadActive, setDownloadActive] = useState(false)
 
+  const [columnName, setColumnName] = useState('')
 
   const handleapplicationSelection = async (e) => {
+    setSelectedFolder(e)
     try {
       const ApiToFetch = `https://localhost:7062/api/ReportingModule/GetFilesInFolder/${e}`;
       const response = await axios.get(ApiToFetch, {
@@ -30,6 +45,7 @@ const Download = () => {
 
       if (response.status === 200) {
         setFilesName(response.data);
+        setFilesNameForSearch(response.data)
       } else {
         console.log('api status', response.status);
       }
@@ -57,13 +73,33 @@ const Download = () => {
   };
 
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const ApiToFetch = `https://localhost:7062/api/ReportingModuleFilter/filterFieldNames?tableName=${selectedFolder}`;
+
+        const response = await axios.get(ApiToFetch, {
+          withCredentials: true,
+        });
+        if (response.status === 200) {
+          setColumnName(response.data)
+        } else {
+          console.log('API response error', response.status);
+        }
+      } catch (err) {
+        console.log('Error in API', err);
+      }
+    };
+
+    fetchData();
+  }, [selectedFolder])
+
+  useEffect(() => {
     getFolder();
   }, []);
 
   useEffect(() => {
     handleapplicationSelection(selected);
   }, [selected]);
-
 
   const handleInputValueChange = (e) => {
     setInputValue(e.target.value);
@@ -73,99 +109,147 @@ const Download = () => {
   const userName = sessionStorage.getItem('userId');
 
   const handleDownload = async () => {
-
     if (inputValue === null || inputValue === '') {
       alert('please enter the value first....');
       return
     } else {
 
+      const csv = Papa.unparse(previewData);
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${checkedFileName}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      setPreviewData([]);
+      setDownloadActive(false);
+    }
+  };
+
+  const handlePreviw = async () => {
+    if (startDatefilterStatus && endDatefilterStatus && (inputValue !== null || inputValue !== '')) {
       const dataArray = inputValue.split(',')
-      const formattedDataArray = dataArray.map(item => `AGREEMENTNO=${item}`);
-      const queryParameters = formattedDataArray.join('&');
+      const formattedDataArray = dataArray.map(item => item);
+
+      const formattedStartDate = startDatefilterStatus ? format(startDatefilter, 'yyyy-MM-dd', new Date()) : null;
+      const formattedEndDate = endDatefilterStatus ? format(endDatefilter, 'yyyy-MM-dd', new Date()) : null;
+
+      const sendFileToDb = `https://localhost:7062/api/ReportingModuleFilter/downloadwithcolumnanddate?username=${userName}&filename=${selectedFolder}&startDate=${formattedStartDate}&endDate=${formattedEndDate}&columnName=${columnName}`
 
       try {
-        const Api = `https://localhost:7062/api/ReportingModule/GetFileDataByFilter/${userName}/${checkedFileName}?${queryParameters}`
-
-        const response = await axios.get(Api, {
+        const response = await axios.post(sendFileToDb, formattedDataArray, {
           withCredentials: true,
-        })
-
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
         if (response.status === 200) {
-
-          const csv = Papa.unparse(response.data);
-          const blob = new Blob([csv], { type: 'text/csv' });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = `${checkedFileName}.csv`;
-          a.click();
-          URL.revokeObjectURL(url);
-
-          setPreviewData([]);
-
+          setPreviewData(response.data)
+          console.log("this is on date filter", response.data)
+          setDownloadActive(true);
         } else {
           console.log("API error");
         }
       } catch (err) {
         console.log("API error", err)
       }
-    }
-
-
-  };
-
-  const handlePreviw = async () => {
-    if (inputValue === null || inputValue === '') {
-      alert('please enter the value first....');
+    } else if (startDatefilterStatus && endDatefilterStatus && (inputValue === null || inputValue === '')) {
+      alert("please enter the value to column...");
       return
     } else {
+      if (inputValue === null || inputValue === '') {
+        alert('please enter the value first....');
+        return
+      } else {
+        const dataArray = inputValue.split(',')
+        const formattedDataArray = dataArray.map(item => item);
 
-      const dataArray = inputValue.split(',')
-      const formattedDataArray = dataArray.map(item => `AGREEMENTNO=${item}`);
-      const queryParameters = formattedDataArray.join('&');
+        const sendFileToDb = `https://localhost:7062/api/ReportingModuleFilter/downloadwithcolumn?username=${userName}&filename=${selectedFolder}&columnName=${columnName}`
 
-      try {
-        const Api = `https://localhost:7062/api/ReportingModule/GetFileDataByFilter/${userName}/${checkedFileName}?${queryParameters}`
-
-        const response = await axios.get(Api, {
-          withCredentials: true,
-        })
-        if (response.status === 200) {
-          setPreviewData(response.data)
-        } else {
-          console.log("API error");
+        try {
+          const response = await axios.post(sendFileToDb, formattedDataArray, {
+            withCredentials: true,
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+          if (response.status === 200) {
+            setPreviewData(response.data)
+            setDownloadActive(true);
+          } else {
+            console.log("API error");
+          }
+        } catch (err) {
+          console.log("API error", err)
         }
-      } catch (err) {
-        console.log("API error", err)
+      }
+    }
+
+  }
+
+  const items = [
+    {
+      key: '1',
+      label: 'A-Z',
+      onClick: () => setSortByName('A-Z')
+    },
+    {
+      key: '2',
+      label: 'Z-A',
+      onClick: () => setSortByName('Z-A')
+    },
+  ];
+
+
+  const searchFiles = async (subStr) => {
+    if (searchString === '') {
+      setFilesName(filesNameForSearch);
+    } else {
+      try {
+        const apiToFetch = `https://localhost:7062/api/ReportingModuleFilter/GetFilesInFolderSearch/${selectedFolder}/${subStr}`;
+        const response = await axios.get(apiToFetch, {
+          withCredentials: true,
+        });
+
+        if (response.status === 200) {
+          setFilesName(response.data);
+        } else {
+          console.log("Something went wrong", response);
+        }
+      } catch (error) {
+        console.error('Error fetching data from API:', error);
       }
     }
   }
 
-  const items = [
-    // {
-    //   key: '0',
-    //   label: <button > Clear Options </button>,
+  useEffect(() => {
+    searchFiles(searchString)
+  }, [searchString])
 
-    // },
-    {
-      key: '1',
-      label: <button  >Name {'('}A to Z {')'} </button>,
+  useEffect(() => {
 
-    },
-    {
-      key: '2',
-      label: <button  >Name {'('}Z to A {')'} </button>,
+    const fetchData = async () => {
+      setSearchString('');
+      try {
+        const ApiToFetch = `https://localhost:7062/api/ReportingModuleFilter/GetFilesInFolderSortBy/${selectedFolder}/${sortbyname}`;
 
-    },
+        const response = await axios.get(ApiToFetch, {
+          withCredentials: true,
+        });
+        if (response.status === 200) {
+          setFilesName(response.data);
 
-    // {
-    //   key: '5',
-    //   label: <button className={admin ? 'dropdownButtonSort' : 'vanishButton'} > {'+'} Add Options </button>,
+        } else {
+          console.log('API response error', response.status);
+        }
+      } catch (err) {
+        console.log('Error in API', err);
+      }
+    };
 
-    // },
-
-  ];
-
+    fetchData();
+  }, [sortbyname]);
 
   return (
     <>
@@ -196,36 +280,48 @@ const Download = () => {
             </div>
           </div>
 
-          <div id="filternSearchSec">
-            <p className="text-[#36556B] mt-3 text-lg font-semibold">Files</p>
-            <div className="search_btn_sec">
-              <div className="search_btn">
-                <Input size="large" placeholder="Enter Text To Search..." style={{ width: '20vw', borderRadius: '5rem' }} prefix={<SearchOutlined />} />
-              </div>
+          {selectedFolder !== '' &&
+            <div id="filternSearchSec">
+              <p className="text-[#36556B] mt-3 text-lg font-semibold">Files</p>
+              <div className="search_btn_sec">
 
-              <div style={{ marginLeft: '0vw', marginTop: '0vh', maxHeight: '5vh', height: '5.5vh' }}>
-                <Dropdown menu={{ items }}>
-                  <div
-                    className="sortBtn"
-                    onClick={(e) => {
-                      e.preventDefault();
-                    }}
-                    style={{ width: '6.5vw', maxHeight: '5vh', height: '5vh', border: '1px solid #36556B' }}
-                  >
-                    <p style={{ color: '#36556B', fontSize: '0.9cqw' }}>Sort By</p>
-                    <img src={downArrow} alt="" style={{ paddingLeft: '-1vw' }} />
-                  </div>
-                </Dropdown>
+                <div className="search_btn">
+                  <Input size="large" placeholder="Enter Text To Search..."
+                    style={{ width: '20vw', borderRadius: '5rem' }}
+                    prefix={<SearchOutlined />} value={searchString} onChange={(e) => setSearchString(e.target.value)} />
+                </div>
+
+                <div style={{ marginLeft: '0vw', marginTop: '0vh', maxHeight: '5vh', height: '5.5vh' }}>
+                  <Dropdown menu={{ items }}>
+                    <div
+                      className="sortBtn"
+                      onClick={(e) => {
+                        e.preventDefault();
+                      }}
+                      style={{ width: '6.5vw', maxHeight: '5vh', height: '5vh', border: '1px solid #36556B' }}
+                    >
+                      <p style={{ color: '#36556B', fontSize: '0.9cqw' }}>Sort By</p>
+                      <img src={downArrow} alt="" style={{ paddingLeft: '-1vw' }} />
+                    </div>
+                  </Dropdown>
+                </div>
               </div>
             </div>
-          </div>
+          }
 
           <div id="chck-list" className="mt-3">
             {filesName && filesName.length > 0 ? (
               <>
                 {filesName.map((item) => (
                   <div id="checboxs" key={item}>
-                    <input type="checkbox" onChange={() => setCheckedFileName(item)} />
+                    <input
+                      type="checkbox"
+                      onChange={() => {
+                        setSelectedCheckbox(item);
+                        setCheckedFileName(item === selectedCheckbox ? '' : item);
+                      }}
+                      checked={item === selectedCheckbox}
+                    />
                     <label className="mx-2" htmlFor="" style={{ fontSize: '1cqw' }}>
                       {item}
                     </label>
@@ -241,14 +337,13 @@ const Download = () => {
         <div className="downloadContainer_border"></div>
 
         <div className="downloadContainer_right">
-          {filesName && filesName.length > 0 ? (
+          {checkedFileName !== '' ? (
             <div style={{ display: "flex", flexDirection: "column", gap: "1vh" }}>
-
               <div id="field-lists" className="grid mx-5">
                 <p style={{
                   color: '#36556B', fontSize: '1.2cqw', lineHeight: '1rem',
                   fontWeight: '500', marginBottom: '1vh'
-                }}>AGREEMENT_NO*</p>
+                }}>{`${columnName}*`}</p>
                 <div style={{ display: "flex", flexDirection: "row", gap: "2vw" }}>
                   <input
                     type="text"
@@ -257,25 +352,63 @@ const Download = () => {
                     value={inputValue}
                     onChange={handleInputValueChange}
                   />
+                  <div className="dateInputsDownloadSec">
+                    <div className="dateInputsDownload">
 
+                      <div style={{ display: "flex", flexDirection: "column", gap: "1.5vh" }}>
+                        <p style={{ color: "#36556B", fontSize: "1cqw" }}>Start Date</p>
+                        <ReactDatePicker className="datepickerDownload"
+                          selected={startDatefilter}
+                          onChange={(date) => {
+                            if (date) {
+                              setStartDatefilter(date);
+                              setStartDatefilterStatus(true);
+                            } else {
+                              setStartDatefilter(null);
+                              setStartDatefilterStatus(false);
+                            }
+                          }}
+                          isClearable
+                          placeholderText="Enter date..!"
+                        />
+                      </div>
+
+                      <div style={{ display: "flex", flexDirection: "column", gap: "1.5vh" }}>
+                        <p style={{ color: "#36556B", fontSize: "1cqw" }}>End Date</p>
+                        <ReactDatePicker className="datepickerDownload"
+                          selected={endDatefilter}
+                          onChange={(date) => {
+                            if (date) {
+                              setEndDatefilter(date); setEndDatefilterStatus(true)
+                            }
+                            else {
+                              setEndDatefilter(null);
+                              setEndDatefilterStatus(false);
+                            }
+                          }}
+                          isClearable
+                          placeholderText="Enter date..!"
+                        />
+                      </div>
+
+                    </div>
+                  </div>
                   {inputValue === '' ? <button className='submitBtnDisable' disabled>Submit</button> :
                     <button className='submitBtn' onClick={handlePreviw}>Submit</button>}
-
                 </div>
-
               </div>
-
               {previewData && previewData.length > 0 &&
                 <div className='prviewDownloadTable'>
                   <PreviewDownload data={previewData} />
                 </div>
               }
-
-              <div style={{position:"absolute",right:"0",bottom:"0"}}>
-                <button className="border py-2 px-9 mx-2 rounded-full text-white bg-gradient-to-t from-[#E75126] to-[#F8A716]"
+              <div style={{ position: "absolute", right: "0", bottom: "0" }}>
+                {downloadActive ? <button className="border py-2 px-9 mx-2 rounded-full text-white bg-gradient-to-t from-[#E75126] to-[#F8A716]"
                   onClick={handleDownload}>
                   Download
-                </button>
+                </button> : <button className="border py-2 px-9 mx-2 rounded-full text-white bg-gradient-to-t from-[#E75126] to-[#F8A716]" disabled>
+                  Download
+                </button>}
               </div>
             </div>
           ) : (

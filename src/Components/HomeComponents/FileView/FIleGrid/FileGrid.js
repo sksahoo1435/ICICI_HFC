@@ -9,7 +9,7 @@ import './FileGrid.css';
 
 const FileGrid = () => {
 
-  const { filesinFolder } = useContext(Statecontext);
+  const {filesinFolder } = useContext(Statecontext);
 
 
   return (

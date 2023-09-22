@@ -8,6 +8,7 @@ import FileContent from './FileContent/FileContent';
 import DownloadDestination from './UploadDownload/Upload/DownloadDestination';
 import "./FileView.css"
 import CenterDownload from './UploadDownload/Download/CenterDownload';
+import { Tooltip } from '@mui/material';
 
 //files are here for navbar
 import activeHome from '../../../Assets/Home Active.svg';
@@ -53,7 +54,9 @@ const FileView = ({ activeTab, setActiveTab, fileView, setFileView }) => {
                   setFileView(false);
                 }}
               >
-                <img src={activeTab === 0 ? activeHome : inactiveHome} alt="" />
+                <Tooltip title="Explore all folders" arrow enterDelay={1000}>
+                  <img src={activeTab === 0 ? activeHome : inactiveHome} alt="" />
+                </Tooltip>
               </button>
 
 
@@ -65,8 +68,9 @@ const FileView = ({ activeTab, setActiveTab, fileView, setFileView }) => {
                   setActiveTab(5);
                 }}
               >
-                <img src={activeTab === 5 ? activeUpload : inactiveUpload} alt="" />
-
+                <Tooltip title=" Upload a file" arrow enterDelay={1000}>
+                  <img src={activeTab === 5 ? activeUpload : inactiveUpload} alt="" />
+                </Tooltip>
               </button>) : ""}
 
               {userDownload === '1' ? (<button
@@ -77,7 +81,9 @@ const FileView = ({ activeTab, setActiveTab, fileView, setFileView }) => {
                   setActiveTab(6);
                 }}
               >
-                <img src={activeTab === 6 ? activeDownload : inactiveDownload} alt="" />
+                <Tooltip title=" Download custom fields" arrow enterDelay={1000}>
+                  <img src={activeTab === 6 ? activeDownload : inactiveDownload} alt="" />
+                </Tooltip>
               </button>) : ""}
 
 
@@ -90,7 +96,9 @@ const FileView = ({ activeTab, setActiveTab, fileView, setFileView }) => {
                   setFileView(false);
                 }}
               >
-                <img src={activeTab === 1 ? activeManageUser : inactiveManageUser} alt="" />
+                <Tooltip title=" Manage user roles and access" arrow enterDelay={1000}>
+                  <img src={activeTab === 1 ? activeManageUser : inactiveManageUser} alt="" />
+                </Tooltip>
               </button>
 
 
@@ -103,7 +111,9 @@ const FileView = ({ activeTab, setActiveTab, fileView, setFileView }) => {
                   setFileView(false);
                 }}
               >
-                <img src={activeTab === 2 ? activeLogins : inactiveLogins} alt="" />
+                <Tooltip title=" View all login activities" arrow enterDelay={1000} >
+                  <img src={activeTab === 2 ? activeLogins : inactiveLogins} alt="" />
+                </Tooltip>
               </button>
 
               <button
@@ -115,7 +125,9 @@ const FileView = ({ activeTab, setActiveTab, fileView, setFileView }) => {
                   setFileView(false);
                 }}
               >
-                <img src={activeTab === 3 ? activeFileDictionary : inactiveFileDictionary} alt="" />
+                <Tooltip title="View headers of all files" arrow enterDelay={1000}>
+                  <img src={activeTab === 3 ? activeFileDictionary : inactiveFileDictionary} alt="" />
+                </Tooltip>
               </button>
             </>
           ) : (
@@ -129,7 +141,9 @@ const FileView = ({ activeTab, setActiveTab, fileView, setFileView }) => {
                   setFileView(false);
                 }}
               >
-                <img src={activeTab === 0 ? activeHome : inactiveHome} alt="" />
+                <Tooltip title="Explore all folders" arrow enterDelay={1000}>
+                  <img src={activeTab === 0 ? activeHome : inactiveHome} alt="" />
+                </Tooltip>
               </button>
 
               {userUpload === '1' ? (<button
@@ -140,8 +154,9 @@ const FileView = ({ activeTab, setActiveTab, fileView, setFileView }) => {
                   setActiveTab(5);
                 }}
               >
-                <img src={activeTab === 5 ? activeUpload : inactiveUpload} alt="" />
-
+                <Tooltip title="Upload a file " arrow enterDelay={1000}>
+                  <img src={activeTab === 5 ? activeUpload : inactiveUpload} alt="" />
+                </Tooltip>
               </button>) : ""}
 
               {userDownload === '1' ? (<button
@@ -152,7 +167,9 @@ const FileView = ({ activeTab, setActiveTab, fileView, setFileView }) => {
                   setActiveTab(6);
                 }}
               >
-                <img src={activeTab === 6 ? activeDownload : inactiveDownload} alt="" />
+                <Tooltip title="Download custom fields" arrow enterDelay={1000}>
+                  <img src={activeTab === 6 ? activeDownload : inactiveDownload} alt="" />
+                </Tooltip>
               </button>) : ""}
 
             </>

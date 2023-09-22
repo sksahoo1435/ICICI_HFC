@@ -13,7 +13,7 @@ const DownloadDestination = ({ gridView, advance, setAdvance }) => {
   const { setFileNameForUpload } = useContext(Statecontext);
 
   const [folders, setFolders] = useState([]);
-  const [selectDrop, setSelectDrop] = useState(0);
+  const [selectDrop, setSelectDrop] = useState('');
 
   const fetchFolderForUpload = async () => {
     const ApiTouse = `https://localhost:7062/api/ReportingModule/GetUploadFileNames`
@@ -36,16 +36,39 @@ const DownloadDestination = ({ gridView, advance, setAdvance }) => {
 
   useEffect(() => { fetchFolderForUpload(); }, [])
 
+  useEffect(()=>{
+    const fetchData = async (data) => {
+      try {
+        const ApiToFetch = `https://localhost:7062/api/ReportingModuleFilter/GetUploadFileNamesBySorting?sortOrder=${data}`;
+
+        const response = await axios.get(ApiToFetch, {
+          withCredentials: true,
+        });
+
+        if (response.status === 200) {
+         
+          setFolders(response.data);
+        } else {
+          console.log('API response error', response.status);
+        }
+      } catch (err) {
+        console.log('Error in API', err);
+      }
+    };
+
+    fetchData(selectDrop);
+  },[selectDrop])
+
   const items = [
     
     {
       key: '1',
-      label: <button  onClick={() => { setSelectDrop(1) }} >A to Z </button>,
+      label: <button  onClick={() => { setSelectDrop('A-Z') }} >A to Z </button>,
 
     },
     {
       key: '2',
-      label: <button onClick={() => { setSelectDrop(2) }} >Z to A </button>,
+      label: <button onClick={() => { setSelectDrop('Z-A') }} >Z to A </button>,
 
     },
 
@@ -56,7 +79,7 @@ const DownloadDestination = ({ gridView, advance, setAdvance }) => {
       <div className='folderTitle'>
         <p> Please Select A Folder For Input File </p>
 
-        <div>
+        <div style={{marginRight:"2vw",width:"10vw"}}>
           <Dropdown menu={{
             items,
           }}

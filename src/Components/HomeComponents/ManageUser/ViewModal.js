@@ -13,7 +13,13 @@ function ViewModal({ data, modalOpen, setModalOpen }) {
     const [showFiles, setFiles] = useState(false);
     const [filesName, setFilesName] = useState([]);
     const [showColumns, setShowColumns] = useState(false);
-    const [columnName, setColumnName] = useState([])
+    const [columnName, setColumnName] = useState([]);
+    const [searchText, setSearchText] = useState("");
+    const [searchcolumnName, setSearchcolumnName] = useState([]);
+
+    const [contentIdForsearch, SetcontentIdForsearch] = useState('');
+
+    const [userNameForsearch, SetuserNameForsearch] = useState('');
 
 
 
@@ -73,7 +79,10 @@ function ViewModal({ data, modalOpen, setModalOpen }) {
             if (response.status === 200) {
 
                 setColumnName(response.data);
+                SetcontentIdForsearch(data.username);
+                SetuserNameForsearch(items.contentId)
                 setFiles(false);
+                setSearchcolumnName(response.data);
                 setShowColumns(true);
             } else {
                 console.log("error", response)
@@ -104,7 +113,7 @@ function ViewModal({ data, modalOpen, setModalOpen }) {
             });
 
             if (response.status === 200) {
-                toast.success(`${items.fieldName === "*" ? 'all columns' : items.fieldName} access updated successfully.`, { theme: "colored" });
+                toast.success(`Access Successfully Updated`, { theme: "colored" });
 
                 setColumnName((prevColumnName) =>
                     prevColumnName.map((ele) =>
@@ -121,11 +130,37 @@ function ViewModal({ data, modalOpen, setModalOpen }) {
         }
     };
 
+    // const handleSearchInputChange = (event) => {
+    //     const inputValue = event.target.value;
+    //     setSearchText(inputValue);
+    //     fetchFilesBySearch(inputValue);
+    //   };
 
+    useEffect(() => { fetchFilesBySearch(searchText) }, [searchText])
+
+    const fetchFilesBySearch = async (searchText) => {
+        if (searchText === '') {
+            setSearchcolumnName(columnName);
+        } else {
+            try {
+                const apiToFetch = `https://localhost:7062/api/AdminFilter/GetColumnNamesBySearch?username=${contentIdForsearch}&contentId=${userNameForsearch}&filter=${searchText}`;
+                const response = await axios.get(apiToFetch, {
+                    withCredentials: true,
+                });
+                if (response.status === 200) {
+                    setSearchcolumnName(response.data);
+                } else {
+                    console.log("Something went wrong", response);
+                }
+            } catch (error) {
+                console.error('Error fetching data from API:', error);
+            }
+        }
+    };
 
 
     const handleSave = () => {
-        toast.success(`access updated successfuly..`, { theme: "colored" });
+        toast.success(`Access Successfully Updated`, { theme: "colored" });
         setModalOpen(false)
     }
 
@@ -201,13 +236,15 @@ function ViewModal({ data, modalOpen, setModalOpen }) {
                                 }
                                 placeholder="Enter columns name here ...."
                                 type="text"
+                                value={searchText}
+                                onChange={(e) => setSearchText(e.target.value)}
                             ></Input>
                         </div>
 
                         <div className='headersSectionModalBodysecColumnsOverflow'>
 
-                            {columnName && columnName.length > 0 &&
-                                Object.values(columnName).map((ele) =>
+                            {searchcolumnName && searchcolumnName.length > 0 &&
+                                Object.values(searchcolumnName).map((ele) =>
                                     <div className='headersSectionModalBodysecSubdivColumns'>
 
                                         <div style={{ paddingLeft: "1vw", display: "flex", flexDirection: "row", gap: "0.5vw" }}>
@@ -231,11 +268,9 @@ function ViewModal({ data, modalOpen, setModalOpen }) {
                         </div>
 
                         <div className='saveButton'>
-                            <button onClick={handleSave}>save</button>
+                            <button onClick={handleSave}>Save</button>
                         </div>
                     </div>}
-
-
             </div>
         </div>
     );

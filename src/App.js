@@ -9,11 +9,14 @@ import { useState } from 'react';
 function App() {
 
   const [filesinFolder, setFilesInfolder] = useState([]);
-  const [fileNameTosend,setFileNameTosend] = useState('')
+  const [fileNameTosend, setFileNameTosend] = useState('')
+  const [folderName, setFfolderName] = useState('')
+  const [fileNameForUpload, setFileNameForUpload] = useState('')
 
-  const [fileNameForUpload,setFileNameForUpload] = useState('')
+  const [isUploadTrue, setIsUploadTrue] = useState(false);
 
-  const [isUploadTrue,setIsUploadTrue] = useState(false)
+  const [openModal, setOpenModal] = useState(false);
+  const [filesinsearch, setFilesinSearch] = useState([]);
 
   // useEffect(() => {
   //   disableContextMenuAndShortcuts();
@@ -21,8 +24,11 @@ function App() {
 
 
   return (
-    <Statecontext.Provider value={{ filesinFolder, setFilesInfolder,fileNameTosend,setFileNameTosend,
-    fileNameForUpload,setFileNameForUpload,isUploadTrue,setIsUploadTrue }} >
+    <Statecontext.Provider value={{
+      filesinFolder, folderName, setFfolderName, setFilesInfolder, fileNameTosend,
+      setFileNameTosend, openModal, setOpenModal, filesinsearch, setFilesinSearch,
+      fileNameForUpload, setFileNameForUpload, isUploadTrue, setIsUploadTrue
+    }} >
       <RouterProvider router={router} />
     </Statecontext.Provider>
   );

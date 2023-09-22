@@ -1,19 +1,21 @@
 import React, { useEffect, useState } from "react";
-import "./FileDictionary.css";
 import Input from "@mui/material/Input";
 import { InputAdornment } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import downArrow from "../../../Assets/Union 2.svg";
 import { Collapse } from "antd";
 import { Dropdown } from "antd";
-import axios from "axios";
-import ErrorBoundary from "./ErrorBoundary";
 import Papa from 'papaparse';
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
+import axios from "axios";
+import ErrorBoundary from "./ErrorBoundary";
+import downArrow from "../../../Assets/Union 2.svg";
+import "./FileDictionary.css";
+import ReactDatePicker from "react-datepicker";
+import 'react-datepicker/dist/react-datepicker.css';
+import { format } from "date-fns";
 
 const FileDictionary = () => {
-
   const [datas, setDatas] = useState([]);
   const [filesName, setFilesName] = useState([]);
   const [filesNameForSearch, setFilesNameForSearch] = useState([]);
@@ -21,10 +23,21 @@ const FileDictionary = () => {
   const [checkedCheckboxes, setCheckedCheckboxes] = useState({});
   const [selectedParentFolder, setSelectedParentFolder] = useState(null);
   const [page, setPage] = useState(1);
-  const [numRows, setNumRows] = useState(1);
+  const [numRows, setNumRows] = useState(0);
   const [keyToRemount, setKeyToRemount] = useState(0);
   const [sortbyname, setSortByName] = useState('');
   const [searchText, setSearchText] = useState("");
+  const [startDatefilter, setStartDatefilter] = useState(new Date());
+  const [endDatefilter, setEndDatefilter] = useState(new Date());
+
+  const [isStartDate, setisStartDate] = useState(false);
+  const [isEndDate, setisEndDate] = useState(false);
+
+  const pageSize = 500;
+
+  const handleChange = (event, value) => {
+    tableToShow(selectedParentFolder, checkedCheckboxes, value);
+  };
 
   const getFilesName = async () => {
     try {
@@ -35,23 +48,14 @@ const FileDictionary = () => {
 
       if (response.status === 200) {
         setFilesName(response.data);
-        setFilesNameForSearch(response.data)
+        setFilesNameForSearch(response.data);
       } else {
         console.log("Something went wrong", response);
       }
-
     } catch (error) {
       console.error('Error fetching data from API:', error);
     }
-  }
-
-  const handleChange = (event, value) => {
-    setPage(Number(value));
   };
-
-  useEffect(() => {
-    getFilesName();
-  }, []);
 
   const loadFileChildren = async (fileName) => {
     try {
@@ -71,7 +75,7 @@ const FileDictionary = () => {
     } catch (error) {
       console.error('Error fetching children data from API:', error);
     }
-  }
+  };
 
   const handleCheckboxChange = (tableName, fileName) => {
     const checkboxKey = `${fileName}`;
@@ -86,43 +90,79 @@ const FileDictionary = () => {
         [checkboxKey]: tableName,
       }));
     }
-  }
+  };
 
-  const tableToShow = async (tableName, filesName) => {
+  const handleSearchInputChange = (event) => {
+    const inputValue = event.target.value;
+    setSearchText(inputValue);
+    fetchFilesBySearch(inputValue);
+  };
 
+  const tableToShow = async (tableName, filesName, newPage) => {
     const result = Object.values(filesName).map(value => {
       const parts = value.split('-');
       return parts[1];
     });
 
-    const tableResult = tableName.split('-')
-    const tabletoSend = tableResult[0]
+    const tableResult = tableName.split('-');
+    const tabletoSend = tableResult[0];
 
-    try {
+    if (isStartDate && isEndDate) {
+      const formattedStartDate = isStartDate ? format(startDatefilter, 'yyyy-MM-dd', new Date()) : null;
+      const formattedEndDate = isEndDate ? format(endDatefilter, 'yyyy-MM-dd', new Date()) : null;
 
-      const baseUrl = `https://localhost:7062/api/Admin/GetColumnData`;
-      const columnNamesParams = [];
-      for (const columnName of result) {
-        columnNamesParams.push(`ColumnNames=${columnName}`);
+      try {
+        const baseUrl = `https://localhost:7062/api/AdminFilter/GetColumnDataByDateFilterInDictinory`;
+        const columnNamesParams = [];
+        for (const columnName of result) {
+          columnNamesParams.push(`ColumnNames=${columnName}`);
+        }
+        const columnNamesQueryString = columnNamesParams.join('&');
+        const apiUrl = `${baseUrl}?TableName=${tabletoSend}&${columnNamesQueryString}&Page=${newPage}&PageSize=${pageSize}&StartDate=${formattedStartDate}&EndDate=${formattedEndDate}`;
+
+        const response = await axios.get(apiUrl, {
+          withCredentials: true,
+        })
+       
+        if (response.status === 200) {
+          setDatas(response.data.data)
+          setNumRows(response.data.totalCount)
+          setPage(newPage);
+        } else {
+          console.log("Error");
+        }
+
+      } catch (err) {
+        console.log("API error", err);
       }
-      const columnNamesQueryString = columnNamesParams.join('&');
-      const apiUrl = `${baseUrl}?TableName=${tabletoSend}&${columnNamesQueryString}&Page=${page}&PageSize=100`;
 
-      const response = await axios.get(apiUrl, {
-        withCredentials: true,
-      })
+    } else {
+      try {
+        const baseUrl = `https://localhost:7062/api/Admin/GetColumnData`;
+        const columnNamesParams = [];
+        for (const columnName of result) {
+          columnNamesParams.push(`ColumnNames=${columnName}`);
+        }
+        const columnNamesQueryString = columnNamesParams.join('&');
+        const apiUrl = `${baseUrl}?TableName=${tabletoSend}&${columnNamesQueryString}&Page=${newPage}&PageSize=${pageSize}`;
 
-      if (response.status === 200) {
-        setDatas(response.data)
-        setNumRows(response.data.length)
-      } else {
-        console.log("Error");
+        const response = await axios.get(apiUrl, {
+          withCredentials: true,
+        })
+
+        if (response.status === 200) {
+          setDatas(response.data.data)
+          setNumRows(response.data.totalCount)
+          setPage(newPage);
+        } else {
+          console.log("Error");
+        }
+
+      } catch (err) {
+        console.log("API error", err);
       }
-
-    } catch (err) {
-      console.log("API error", err);
     }
-  }
+  };
 
   const fetchFilesBySearch = async (searchText) => {
     if (searchText === '') {
@@ -143,26 +183,7 @@ const FileDictionary = () => {
         console.error('Error fetching data from API:', error);
       }
     }
-
-  }
-
-  const handleSearchInputChange = (event) => {
-    const inputValue = event.target.value;
-    setSearchText(inputValue);
-    fetchFilesBySearch(inputValue);
-  }
-
-  useEffect(() => {
-    setCheckedCheckboxes({});
-    setKeyToRemount((prevKey) => prevKey + 1);
-  }, [selectedParentFolder]);
-
-  useEffect(() => {
-    if (selectedParentFolder) {
-
-      tableToShow(selectedParentFolder, checkedCheckboxes);
-    }
-  }, [selectedParentFolder, checkedCheckboxes]);
+  };
 
   const collapseEle = filesName.map((fileName, index) => ({
     key: `${index + 1}`,
@@ -184,7 +205,10 @@ const FileDictionary = () => {
     ) : (
       <div>Loading...</div>
     ),
-    onClick: () => { loadFileChildren(fileName); setSelectedParentFolder(fileName) },
+    onClick: () => {
+      loadFileChildren(fileName); setSelectedParentFolder(fileName); setisEndDate(false);
+      setEndDatefilter(null); setStartDatefilter(null);; setisStartDate(false);
+    },
   }));
 
   useEffect(() => {
@@ -209,6 +233,22 @@ const FileDictionary = () => {
     fetchData();
   }, [sortbyname]);
 
+  useEffect(() => {
+    getFilesName();
+  }, []);
+
+
+  useEffect(() => {
+    setCheckedCheckboxes({});
+    setKeyToRemount((prevKey) => prevKey + 1);
+  }, [selectedParentFolder]);
+
+  useEffect(() => {
+    if (selectedParentFolder) {
+      tableToShow(selectedParentFolder, checkedCheckboxes, page);
+    }
+  }, [selectedParentFolder, checkedCheckboxes, isStartDate, isEndDate, page]);
+
   const items = [
     {
       key: '1',
@@ -231,10 +271,9 @@ const FileDictionary = () => {
     a.download = `data.csv`;
     a.click();
     URL.revokeObjectURL(url);
-  }
+  };
 
   const data = datas.length > 0 ? Object.keys(datas[0]) : [];
-
 
   return (
     <>
@@ -319,7 +358,6 @@ const FileDictionary = () => {
             </div>
           </div>
 
-
           <div className="fileDictionary_container_right">
             {datas.length === 0 ? (
               <div>
@@ -328,49 +366,85 @@ const FileDictionary = () => {
                 </h2>
               </div>
             ) : (
-              <div className="tableContainer">
+              <div className="FileDictionaryTableSecdateInputs">
 
-                <table className="tableFile">
-                  <thead className="tableHeadFile">
-                    {data.map((items) => (
-                      <th className="tableHeadFileTh" key={items}>
-                        {items}
-                      </th>
-                    ))}
-                  </thead>
-                  <tbody className="tableBodyFile">
-                    {datas.map((item, index) => (
-                      <tr key={index}>
-                        {data.map((key) => (
-                          <td className="tableBodyFileTd" key={key}>
-                            <p>{item[key] === '' ? '' : item[key]}</p>
-                          </td>
-                        ))}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-
-
-                <div className='paginationNbutton'>
-
-                  <div style={{ display: "flex", flexDirection: "row", gap: "1vw", marginTop: "2vh", width: "86%" }}>
-                    {Math.floor(numRows / 100) * 10 >= 0 ? "" :
-                      (
-                        <div style={{ display: "flex", flexDirection: "row" }}>
-                          <div style={{ marginTop: "2.5vh", marginLeft: "0.5vw" }}> Rows per Page: 100</div>
-
-                          <div style={{ marginTop: "2vh" }}>
-                            <Stack spacing={1}>
-                              <Pagination count={Math.floor(numRows / 100) * 10} page={page} onChange={handleChange} />
-                            </Stack>
-                          </div>
-                        </div>
-                      )}
+                <div className="dateInputs">
+                  <div style={{ display: "flex", flexDirection: "column", gap: "-2vh" }}>
+                    <p style={{ color: "#36556B", fontSize: "1cqw" }}>Start Date</p>
+                    <ReactDatePicker className="datepicker"
+                      selected={startDatefilter}
+                      onChange={(date) => {
+                        if (date) {
+                          setStartDatefilter(date);
+                          setisStartDate(true);
+                        } else {
+                          setStartDatefilter(null);
+                          setisStartDate(false);
+                        }
+                      }}
+                      isClearable
+                      placeholderText="Start date.."
+                    />
                   </div>
 
+                  <div style={{ display: "flex", flexDirection: "column", gap: "-2vh" }}>
+                    <p style={{ color: "#36556B", fontSize: "1cqw" }}>End Date</p>
+                    <ReactDatePicker className="datepicker"
+                      selected={endDatefilter}
+                      onChange={(date) => {
+                        if (date) {
+                          setEndDatefilter(date);
+                          setisEndDate(true);
+                        } else {
+                          setEndDatefilter(null);
+                          setisEndDate(false);
+                        }
+                      }}
+                      isClearable
+                      placeholderText="End date.."
+                    />
+                  </div>
                 </div>
+
+                <div className="tableContainer">
+                  <table className="tableFile">
+                    <thead className="tableHeadFile">
+                      {data.map((items) => (
+                        <th className="tableHeadFileTh" key={items}>
+                          {items}
+                        </th>
+                      ))}
+                    </thead>
+                    <tbody className="tableBodyFile">
+                      {datas.map((item, index) => (
+                        <tr key={index}>
+                          {data.map((key) => (
+                            <td className="tableBodyFileTd" key={key}>
+                              <p>{item[key] === '' ? '' : item[key]}</p>
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+
+                </div>
+                {numRows > 0 && (
+                  <div className='paginationNbutton'>
+                    <div style={{ display: "flex", flexDirection: "row", gap: "1vw", marginTop: "2vh", width: "100%", justifyContent: "center" }}>
+                      <div style={{ display: "flex", flexDirection: "row" }}>
+                        <div style={{ marginTop: "2.5vh", marginLeft: "1vw", fontSize: "1cqw" }}> Rows per Page: {pageSize}</div>
+                        <div style={{ marginTop: "2vh" }}>
+                          <Stack spacing={1}>
+                            <Pagination count={Math.ceil(numRows / pageSize)} page={page} onChange={handleChange} />
+                          </Stack>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
+
             )}
           </div>
         </div>

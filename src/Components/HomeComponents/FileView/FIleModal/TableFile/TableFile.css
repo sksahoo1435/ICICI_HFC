@@ -1,9 +1,10 @@
 .table-containers {
     border-radius: 1rem;
     overflow: auto;
-    max-height: 50vh;
-    height: 43vh;
+    max-height: 53vh;
+    height: 48vh;
     max-width: 100%;
+    z-index: 40;
 }
 
 .table {

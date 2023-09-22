@@ -8,7 +8,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import ViewModal from './ViewModal';
 import dropdownImg from '../../../../src/Assets/dropdwonImg.svg';
 import { Menu, Dropdown } from "antd";
-
+import Pagination from "@mui/material/Pagination";
+import Stack from "@mui/material/Stack";
 
 const ManageUser = ({ setActiveTab }) => {
   const [data, setData] = useState([]);
@@ -18,25 +19,37 @@ const ManageUser = ({ setActiveTab }) => {
   const [viewModalData, setViewModalData] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [sortbyname, setSortByName] = useState('');
-  const [sortbyOrder, setSortByOrder] = useState('')
+  const [sortbyOrder, setSortByOrder] = useState('');
+  const [page, setPage] = useState(1);
+  const [numRows, setNumRows] = useState(0);
 
-  const fetchUsersToManage = async () => {
+
+  const pageSize = 500;
+
+  const fetchUsersToManage = async (newPage) => {
     try {
-      const userApi = `https://localhost:7062/api/Admin/UserManger`;
+      const userApi = `https://localhost:7062/api/Admin/manageuserwithpagination/${pageSize}/${newPage}`;
       const response = await axios.get(userApi, {
         withCredentials: true,
       });
-      const initialData = response.data.map((item) => ({ ...item, isChecked: false }));
+  
+      const initialData = response.data.data.map((item) => ({ ...item, isChecked: false }));
       setData(initialData);
       setSaveData(initialData);
-      setSortedData(initialData)
+      setSortedData(initialData);
+      setNumRows(response.data.totalCount);
+      setPage(newPage);
     } catch (error) {
       console.error('Error fetching data from api:', error);
     }
   };
 
-  const updateUserAccess = async (item) => {
+  const handleChange = (event, value) => {
+    fetchUsersToManage(value);
+  };
 
+  const updateUserAccess = async (item) => {
+    console.log("..update access....",item,item.upload)
     try {
       const userApi = `https://localhost:7062/api/Admin/UpdateUserManage`;
       const response = await axios.post(
@@ -52,7 +65,7 @@ const ManageUser = ({ setActiveTab }) => {
       );
 
       if (response.status === 204 || response.status === 200) {
-        toast.success(`${item.username} access updated successfuly..`, { theme: "colored" })
+        toast.success(`Access Successfully Updated For ${item.username} `, { theme: "colored" })
       } else {
         toast.error(`Something went wrong..`, { theme: "colored" })
       }
@@ -67,16 +80,16 @@ const ManageUser = ({ setActiveTab }) => {
   };
 
   useEffect(() => {
-    fetchUsersToManage();
+    fetchUsersToManage(page);
   }, []);
 
   useEffect(() => {
-    fetchUsersToManage();
+    fetchUsersToManage(page);
   }, [recall]);
 
   useEffect(() => {
     for (const item of savedata) {
-      const originalItem = data.find((d) => d.username === item.username);
+      const originalItem = sortedData.find((d) => d.username === item.username);
       if (
         originalItem.upload !== item.upload ||
         originalItem.download !== item.download
@@ -93,10 +106,9 @@ const ManageUser = ({ setActiveTab }) => {
           ? { ...prevItem, [checkValue]: !prevItem[checkValue] }
           : prevItem
       );
-      return updatedData;
+      return updatedData.map(({ isChecked, ...rest }) => rest);
     });
   };
-
 
 
   const handleSave = async () => {
@@ -132,15 +144,17 @@ const ManageUser = ({ setActiveTab }) => {
   useEffect(() => {
 
     const fetchData = async () => {
+
       try {
-        const ApiToFetch = `https://localhost:7062/api/AdminFilter/UserMangerFilterByName?sortingOrder=${sortbyname}`;
+        const ApiToFetch = `https://localhost:7062/api/AdminFilter/UserMangerFilterByName/${pageSize}/${page}?sortBy=${sortbyname}`;
 
         const response = await axios.get(ApiToFetch, {
           withCredentials: true,
         });
         if (response.status === 200) {
-
-          setSortedData(response.data);
+          const initialData = response.data.data.map((item) => ({ ...item, isChecked: false }));
+          setSortedData(response.data.data);
+          setSaveData(initialData);
         } else {
           console.log('API response error', response.status);
         }
@@ -156,14 +170,16 @@ const ManageUser = ({ setActiveTab }) => {
 
     const fetchData = async () => {
       try {
-        const ApiToFetch = `https://localhost:7062/api/AdminFilter/UserMangerFilterByDate?sortingOrder=${sortbyOrder}`;
+        const ApiToFetch = `https://localhost:7062/api/AdminFilter/UserMangerFilterByDate/${pageSize}/${page}?sortingOrder=${sortbyOrder}`;
 
         const response = await axios.get(ApiToFetch, {
           withCredentials: true,
         });
 
         if (response.status === 200) {
-          setSortedData(response.data);
+          const initialData = response.data.data.map((item) => ({ ...item, isChecked: false }));
+          setSortedData(response.data.data);
+          setSaveData(initialData);
         } else {
           console.log('API response error', response.status);
         }
@@ -274,8 +290,8 @@ const ManageUser = ({ setActiveTab }) => {
                   className={item.id % 2 === 0 ? 'bg-gray-100' : 'bg-white'}
                 >
                   <td className="tableBodyTd">{item.username}</td>
-
-                  <td className="tableBodyTd">{new Date(item.lastLoggedIn).toLocaleDateString(
+                  {console.log("updated sort data",sortedData,"saved data",savedata)}
+                  <td className="tableBodyTd">{new Date(item.lastloggedin).toLocaleDateString(
                     "en-GB"
                   )}</td>
                   <td className="tableBodyTdSubdiv">
@@ -288,17 +304,17 @@ const ManageUser = ({ setActiveTab }) => {
                         type="checkbox"
                         id={`upload-${item.username}`}
                         className="mr-2"
-                        checked={savedata.find((d) => d.username === item.username).upload}
+                        checked={savedata.find((d) => d.username === item.username)?.upload || false}
                         onChange={() => handleCheckboxChange(item, 'upload')}
                       />
-                      <label htmlFor={`upload-${item.username}`}>Upload</label>
+                      <label htmlFor={`upload-${item.username}`}>upload</label>
                     </span>
                     <span>
                       <input
                         type="checkbox"
                         id={`download-${item.username}`}
                         className="mr-2"
-                        checked={savedata.find((d) => d.username === item.username).download}
+                        checked={savedata.find((d) => d.username === item.username)?.download || false}
                         onChange={() => handleCheckboxChange(item, 'download')}
                       />
                       <label htmlFor={`download-${item.username}`}>Download</label>
@@ -308,6 +324,22 @@ const ManageUser = ({ setActiveTab }) => {
               ))}
             </tbody>
           </table>
+
+          {numRows > 0 && (
+            <div className='paginationNbutton'>
+              <div style={{ display: "flex", flexDirection: "row", gap: "1vw", marginTop: "2vh", width: "100%", justifyContent: "center" }}>
+                <div style={{ display: "flex", flexDirection: "row" }}>
+                  <div style={{ marginTop: "2.5vh", marginLeft: "1vw", fontSize: "1cqw" }}> Rows per Page: {pageSize}</div>
+                  <div style={{ marginTop: "2vh" }}>
+                    <Stack spacing={1}>
+                      <Pagination count={Math.ceil(numRows / pageSize)} page={page} onChange={handleChange} />
+                    </Stack>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
         </div>
 
         <div id="buttons" className="my-5">

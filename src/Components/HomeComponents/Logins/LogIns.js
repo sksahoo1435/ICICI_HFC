@@ -5,6 +5,8 @@ import axios from "axios";
 import Papa from "papaparse";
 import dropdownImg from '../../../../src/Assets/dropdwonImg.svg';
 import { Menu, Dropdown } from "antd";
+import Pagination from "@mui/material/Pagination";
+import Stack from "@mui/material/Stack";
 
 const LogIns = ({ setActiveTab }) => {
   const [data, setData] = useState([]);
@@ -12,10 +14,14 @@ const LogIns = ({ setActiveTab }) => {
   const [eventedData, setEventedData] = useState([]);
   const [sortbyname, setSortByName] = useState('');
   const [sortbyOrder, setSortByOrder] = useState('')
+  const [page, setPage] = useState(1);
+  const [numRows, setNumRows] = useState(0);
 
-  const loginDetails = async () => {
+  const pageSize = 500;
+
+  const loginDetails = async (newPage) => {
     try {
-      const ApiTofetch = `https://localhost:7062/api/Admin/GetAllUserLogs`;
+      const ApiTofetch = `https://localhost:7062/api/Admin/GetAllUserLogsWithPagination/${pageSize}/${newPage}`;
 
       const response = await axios.get(ApiTofetch, {
         withCredentials: true,
@@ -24,8 +30,10 @@ const LogIns = ({ setActiveTab }) => {
       console.log("response are", response);
 
       if (response.status === 200) {
-        setData(response.data);
-        setEventedData(response.data);
+        setData(response.data.data);
+        setEventedData(response.data.data);
+        setPage(newPage);
+        setNumRows(response.data.totalCount)
       } else {
         console.log("API ERROR", response);
       }
@@ -35,8 +43,13 @@ const LogIns = ({ setActiveTab }) => {
   };
 
   useEffect(() => {
-    loginDetails();
+    loginDetails(page);
   }, []);
+
+  const handleChange = (event, value) => {
+    loginDetails(value);
+  };
+
 
   const handleDownload = () => {
     const csv = Papa.unparse(eventedData);
@@ -103,14 +116,14 @@ const LogIns = ({ setActiveTab }) => {
       setEventedData(data);
     } else {
       try {
-        const ApiForFolder = `https://localhost:7062/api/AdminFilter/FilterLogByEvent?byEvent=${selectedEvent}`;
+        const ApiForFolder = `https://localhost:7062/api/AdminFilter/FilterlogByEvent/${pageSize}/${page}?eventStatus=${selectedEvent}`;
 
         const response = await axios.get(ApiForFolder, {
           withCredentials: true,
         });
 
         if (response.status === 200) {
-          setEventedData(response.data);
+          setEventedData(response.data.data);
         } else {
           console.log('api response', response.status);
         }
@@ -126,14 +139,14 @@ const LogIns = ({ setActiveTab }) => {
 
     const fetchData = async () => {
       try {
-        const ApiToFetch = `https://localhost:7062/api/AdminFilter/FilterLogByName?bywhich=${sortbyname}`;
+        const ApiToFetch = `https://localhost:7062/api/AdminFilter/FilterLogByName/${pageSize}/${page}?sortBy=${sortbyname}`;
 
         const response = await axios.get(ApiToFetch, {
           withCredentials: true,
         });
 
         if (response.status === 200) {
-          setEventedData(response.data);
+          setEventedData(response.data.data);
         } else {
           console.log('API response error', response.status);
         }
@@ -149,14 +162,14 @@ const LogIns = ({ setActiveTab }) => {
 
     const fetchData = async () => {
       try {
-        const ApiToFetch = `https://localhost:7062/api/AdminFilter/FilterLogByDate?bywhich=${sortbyOrder}`;
+        const ApiToFetch = `https://localhost:7062/api/AdminFilter/FilterlogByDate/${pageSize}/${page}?sortByDate=${sortbyOrder}`;
 
         const response = await axios.get(ApiToFetch, {
           withCredentials: true,
         });
 
         if (response.status === 200) {
-          setEventedData(response.data);
+          setEventedData(response.data.data);
         } else {
           console.log('API response error', response.status);
         }
@@ -265,6 +278,22 @@ const LogIns = ({ setActiveTab }) => {
               ))}
             </tbody>
           </table>
+          
+          {numRows > 0 && (
+            <div className='paginationNbutton'>
+              <div style={{ display: "flex", flexDirection: "row", gap: "1vw", marginTop: "2vh", width: "100%", justifyContent: "center" }}>
+                <div style={{ display: "flex", flexDirection: "row" }}>
+                  <div style={{ marginTop: "2.5vh", marginLeft: "1vw", fontSize: "1cqw" }}> Rows per Page: {pageSize}</div>
+                  <div style={{ marginTop: "2vh" }}>
+                    <Stack spacing={1}>
+                      <Pagination count={Math.ceil(numRows / pageSize)} page={page} onChange={handleChange} />
+                    </Stack>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
         </div>
 
         <div id="buttons" className="my-5">

@@ -74,6 +74,33 @@
 }
 
 
+.FileDictionaryTableSecdateInputs{
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 2vh;
+  margin-top: 0vh;
+}
+
+.dateInputs{
+  position: relative;
+  height: 10%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  gap: 2vw;
+}
+
+
+.datepicker{
+  border: 1px solid rgba(141, 138, 138, 0.66);
+  border-radius: 0.5rem;
+  padding: 0vh 1vw;
+  width: 10vw;
+  font-size: 1cqw;
+  height: 4vh;
+}
+
 .tableContainer {
   max-height: 50vh;
   overflow-x: auto;
@@ -81,6 +108,7 @@
   /* overflow: hidden; */
   border-radius: 1rem;
   position: relative;
+  max-width: 57vw;
 }
 
 .tableFile {

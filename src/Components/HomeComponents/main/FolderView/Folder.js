@@ -10,7 +10,7 @@ import axios from "axios";
 import Statecontext from "../../../Context/Statecontext";
 
 const Folder = ({ gridView, fileView, setFileView }) => {
-  const { setFilesInfolder } = useContext(Statecontext);
+  const { setFilesInfolder,setFfolderName} = useContext(Statecontext);
 
   const [selectDrop, setSelectDrop] = useState('');
 
@@ -25,6 +25,7 @@ const Folder = ({ gridView, fileView, setFileView }) => {
 
       const files = filesResponse.data;
       setFilesInfolder(files)
+      setFfolderName(folderName)
       console.log("needded files", files);
 
     } catch (error) {
@@ -54,7 +55,7 @@ const Folder = ({ gridView, fileView, setFileView }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const ApiToFetch = `https://localhost:7062/api/ReportingModuleFilter/GetFoldersWithPermissions?sortOrder=${selectDrop}`;
+        const ApiToFetch = `https://localhost:7062/api/ReportingModuleFilter/GetFoldersWithPermissionsFilter?sortOrder=${selectDrop}`;
 
         const response = await axios.get(ApiToFetch, {
           withCredentials: true,

@@ -14,9 +14,9 @@
 
 }
 
-.submitBtnDisable{
+.submitBtnDisable {
     border: 1px solid #e4e2e2;
-    color:  #B3B3B3; 
+    color: #B3B3B3;
     height: 5vh;
     width: 8vw;
     display: flex;
@@ -48,7 +48,7 @@
     letter-spacing: 0em;
 }
 
-.prviewDownloadTable{
+.prviewDownloadTable {
     position: relative;
     max-width: 56vw;
     max-height: 30vh;
@@ -59,6 +59,33 @@
     border-right: 1px solid rgb(177, 175, 175);
     height: 50vh;
 }
+
+.dateInputsDownload {
+    position: relative;
+    height: 10%;
+    display: flex;
+    flex-direction: row;
+    gap: 2vw;
+    
+}
+
+.datepickerDownload {
+    border: 1px solid rgba(201, 199, 199, 0.66);
+    border-radius: 0.5rem;
+    padding: 0vh 1vw;
+    height: 5vh;
+    width: 10vw;
+    font-size: 1cqw;
+    color: #36556B;
+}
+
+.dateInputsDownloadSec{
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+    margin-top: -3.5vh;
+}
+
 
 .select_Application {
     display: flex;

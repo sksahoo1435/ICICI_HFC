@@ -46,7 +46,7 @@ const Navbar = () => {
   let username;
 
   const userName = sessionStorage.getItem('userId')
-  username = userName === null ? 'shetej':userName
+  username = userName === null ?'shetej':userName;
   let splituser = username.split(" ")
 
   let z = splituser.length - 1

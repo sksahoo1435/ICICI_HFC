@@ -15,12 +15,12 @@ const TableFile = ({ data, onSort }) => {
     {
       key: '1',
       label: 'A-Z',
-      onClick: () => handleSort(columnName, 'A-Z'),
+      onClick: () => handleSort(columnName, 'ASC'),
     },
     {
       key: '2',
       label: 'Z-A',
-      onClick: () => handleSort(columnName, 'Z-A'),
+      onClick: () => handleSort(columnName, 'DESC'),
     },
   ];
 
