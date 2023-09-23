@@ -5,15 +5,16 @@ import Statecontext from '../../../../Context/Statecontext';
 
 const SingleRow = ({ source, heading, dateModified, type }) => {
   const [open, setOpen] = useState(false);
-  const {setFileNameTosend} = useContext(Statecontext);
-  
-  
+  const { setFileNameTosend } = useContext(Statecontext);
+
+
   return (
     <>
-      <tr className='singleRow' onClick={() => { setOpen(true);setFileNameTosend(heading); }}>
+      <tr className='singleRow' onClick={() => { setOpen(true); setFileNameTosend(heading); }}>
         <td >
           <div className='nameDiv'>
-            <img src={source} className='sourceImg' alt="" height={100} width={100} />&nbsp;&nbsp;<p style={{marginTop:"1vh"}}> {heading}</p>
+            <img src={source} className='sourceImg' alt="" height={100} width={100} />
+            &nbsp;&nbsp;<p style={{ marginTop: "1vh",marginLeft:"4vw" }}> {heading}</p>
           </div>
         </td>
         <td>{dateModified}</td>

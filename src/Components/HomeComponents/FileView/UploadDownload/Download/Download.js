@@ -36,7 +36,7 @@ const Download = () => {
   const [columnName, setColumnName] = useState('')
 
   const handleapplicationSelection = async (e) => {
-    setSelectedFolder(e)
+
     try {
       const ApiToFetch = `https://localhost:7062/api/ReportingModule/GetFilesInFolder/${e}`;
       const response = await axios.get(ApiToFetch, {
@@ -46,6 +46,7 @@ const Download = () => {
       if (response.status === 200) {
         setFilesName(response.data);
         setFilesNameForSearch(response.data)
+
       } else {
         console.log('api status', response.status);
       }
@@ -103,7 +104,6 @@ const Download = () => {
 
   const handleInputValueChange = (e) => {
     setInputValue(e.target.value);
-    console.log("check the function", e.target.value)
   };
 
   const userName = sessionStorage.getItem('userId');
@@ -146,7 +146,6 @@ const Download = () => {
         });
         if (response.status === 200) {
           setPreviewData(response.data)
-          console.log("this is on date filter", response.data)
           setDownloadActive(true);
         } else {
           console.log("API error");
@@ -207,7 +206,7 @@ const Download = () => {
       setFilesName(filesNameForSearch);
     } else {
       try {
-        const apiToFetch = `https://localhost:7062/api/ReportingModuleFilter/GetFilesInFolderSearch/${selectedFolder}/${subStr}`;
+        const apiToFetch = `https://localhost:7062/api/ReportingModuleFilter/GetFilesInFolderSearch/${selected}/${subStr}`;
         const response = await axios.get(apiToFetch, {
           withCredentials: true,
         });
@@ -232,7 +231,7 @@ const Download = () => {
     const fetchData = async () => {
       setSearchString('');
       try {
-        const ApiToFetch = `https://localhost:7062/api/ReportingModuleFilter/GetFilesInFolderSortBy/${selectedFolder}/${sortbyname}`;
+        const ApiToFetch = `https://localhost:7062/api/ReportingModuleFilter/GetFilesInFolderSortBy/${selected}/${sortbyname}`;
 
         const response = await axios.get(ApiToFetch, {
           withCredentials: true,
@@ -280,7 +279,7 @@ const Download = () => {
             </div>
           </div>
 
-          {selectedFolder !== '' &&
+          {selected !== '' &&
             <div id="filternSearchSec">
               <p className="text-[#36556B] mt-3 text-lg font-semibold">Files</p>
               <div className="search_btn_sec">
@@ -316,9 +315,11 @@ const Download = () => {
                   <div id="checboxs" key={item}>
                     <input
                       type="checkbox"
+
                       onChange={() => {
-                        setSelectedCheckbox(item);
+                        setSelectedCheckbox(item === selectedCheckbox ? '' : item);
                         setCheckedFileName(item === selectedCheckbox ? '' : item);
+                        setSelectedFolder(item)
                       }}
                       checked={item === selectedCheckbox}
                     />

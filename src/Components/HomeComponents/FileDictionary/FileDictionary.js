@@ -123,11 +123,17 @@ const FileDictionary = () => {
         const response = await axios.get(apiUrl, {
           withCredentials: true,
         })
-       
+
         if (response.status === 200) {
-          setDatas(response.data.data)
-          setNumRows(response.data.totalCount)
-          setPage(newPage);
+          if (response.data === 'FILTER DATA NOT PRESENT') {
+            setDatas('FILTER DATA NOT PRESENT')
+            setNumRows(0)
+          } else {
+            setDatas(response.data.data)
+            setNumRows(response.data.totalCount)
+            setPage(newPage);
+          }
+
         } else {
           console.log("Error");
         }
@@ -222,6 +228,7 @@ const FileDictionary = () => {
         });
         if (response.status === 200) {
           setFilesName(response.data)
+          setKeyToRemount(keyToRemount+1)
         } else {
           console.log('API response error', response.status);
         }
@@ -247,7 +254,7 @@ const FileDictionary = () => {
     if (selectedParentFolder) {
       tableToShow(selectedParentFolder, checkedCheckboxes, page);
     }
-  }, [selectedParentFolder, checkedCheckboxes, isStartDate, isEndDate, page]);
+  }, [selectedParentFolder, checkedCheckboxes, page, startDatefilter, endDatefilter]);
 
   const items = [
     {
@@ -268,7 +275,7 @@ const FileDictionary = () => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `data.csv`;
+    a.download = `files.csv`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -407,7 +414,9 @@ const FileDictionary = () => {
                 </div>
 
                 <div className="tableContainer">
-                  <table className="tableFile">
+                  {datas === 'FILTER DATA NOT PRESENT' ? (<h1>
+                    DATA NOT PRESENT
+                  </h1>) : (<table className="tableFile">
                     <thead className="tableHeadFile">
                       {data.map((items) => (
                         <th className="tableHeadFileTh" key={items}>
@@ -426,7 +435,7 @@ const FileDictionary = () => {
                         </tr>
                       ))}
                     </tbody>
-                  </table>
+                  </table>)}
 
                 </div>
                 {numRows > 0 && (

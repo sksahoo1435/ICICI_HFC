@@ -94,14 +94,15 @@ function ViewModal({ data, modalOpen, setModalOpen }) {
     }
 
 
-    const handleCheckboxChange = async (items) => {
+    const handleCheckboxChange = async (item) => {
 
         const updatedItem = {
-            username: items.usermame,
-            contentId: items.contentId,
-            fieldId: items.fieldId,
-            view: items.view === 1 ? 0 : 1
+            username: item.usermame,
+            contentId: item.contentId,
+            fieldId: item.fieldId,
+            view: item.view === 1 ? 0 : 1,
         };
+    
         try {
             const ApiToUse = `https://localhost:7062/api/Admin/updatefieldsaccess`;
 
@@ -115,11 +116,11 @@ function ViewModal({ data, modalOpen, setModalOpen }) {
             if (response.status === 200) {
                 toast.success(`Access Successfully Updated`, { theme: "colored" });
 
-                setColumnName((prevColumnName) =>
-                    prevColumnName.map((ele) =>
-                        ele.fieldId === items.fieldId ? { ...ele, view: updatedItem.view } : ele
-                    )
-                );
+                setSearchcolumnName((prevSearchcolumnName) =>
+                prevSearchcolumnName.map((ele) =>
+                    ele.fieldId === item.fieldId ? { ...ele, view: updatedItem.view } : ele
+                )
+            );
             } else {
                 console.log("error", response);
                 toast.error(`Something went wrong.`, { theme: "colored" });
@@ -129,12 +130,6 @@ function ViewModal({ data, modalOpen, setModalOpen }) {
             toast.error(`Something went wrong.`, { theme: "colored" });
         }
     };
-
-    // const handleSearchInputChange = (event) => {
-    //     const inputValue = event.target.value;
-    //     setSearchText(inputValue);
-    //     fetchFilesBySearch(inputValue);
-    //   };
 
     useEffect(() => { fetchFilesBySearch(searchText) }, [searchText])
 

@@ -9,7 +9,7 @@ const SettingsComp = () => {
   return (
     <>
       <div className='settingComp'>
-        <p className="goBack" onClick={() => { navigate("/") }}>
+        <p className="goBack" onClick={() => { navigate("/home") }}>
           <ArrowBackIosIcon style={{ height: "1.5vh", color: "#063E67", marginLeft: "1vw" }} />  Back to Home Page </p>
         <p className='settings'> Settings  </p>
         <CollapseComp />

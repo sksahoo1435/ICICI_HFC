@@ -1,11 +1,11 @@
-import React, { useState} from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Snackbar from '@mui/material/Snackbar';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import IconButton from '@mui/material/IconButton';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import alertImg from '../../../src/Assets/alertImg.svg';
-import { ToastContainer,toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './loginform.css';
 import axios from 'axios';
@@ -28,50 +28,71 @@ const LoginFormPart = () => {
         setToggleVisibility(!toggleVisible);
     }
 
-    const handleLoginAction = async () => {
-        const inputData = {
-            "username": userid,
-            "password": password
-        }
-
+    const fetchUserName = async () => {
         try {
-            const getuserId = 'https://localhost:7062/api/ReportingModule/login';
-            const response = await axios.post(
-                getuserId,
-                inputData,
-                {
-                    withCredentials: true,
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                }
-            );
+            const APItoUse = `https://localhost:7062/api/ReportingModule/GetUsername`;
+
+            const response = await axios.get(APItoUse, {
+                withCredentials: true,
+            });
 
             if (response.status === 200) {
-                if (!(userid && password)) {
-                    setOpen(true);
-                } else if (userid === "" || password === "") {
-                    setOpen(true);
-                } else {
-                    
-                    navigate("/home");
-                }
-            } else {
-                setError('Invalid credentials');
-                if (response.data.username !== userid) {
-                    setUseridError(true);
-                } else {
-                    setPasswordError(true);
-                }
-
-                setLoginAttempts(loginAttempts + 1);
+                sessionStorage.setItem("userId", response.data.username);
+                sessionStorage.setItem("userRole", response.data.role);
+                sessionStorage.setItem("userDownload", response.data.download);
+                sessionStorage.setItem("userUpload", response.data.upload);
             }
-        } catch (error) {
-            console.error('Error:', error);
-            setError('An error occurred');
-            toast.error("please check the userId & Password.....",{theme:"colored"})
-            setLoginAttempts(loginAttempts + 1);
+        } catch (err) {
+            console.log("API Error", err);
         }
+    };
+
+    const handleLoginAction = async () => {
+        // const inputData = {
+        //     "username": userid,
+        //     "password": password
+        // }
+
+        // try {
+        //     const getuserId = 'https://localhost:7062/api/ReportingModule/login';
+        //     const response = await axios.post(
+        //         getuserId,
+        //         inputData,
+        //         {
+        //             withCredentials: true,
+        //             headers: {
+        //                 'Content-Type': 'application/json'
+        //             }
+        //         }
+        //     );
+
+        //     if (response.status === 200) {
+        //         fetchUserName()
+        //         if (!(userid && password)) {
+        //             setOpen(true);
+        //         } else if (userid === "" || password === "") {
+        //             setOpen(true);
+        //         } else {
+
+        //             navigate("/home");
+        //         }
+        //     } else {
+        //         setError('Invalid credentials');
+        //         if (response.data.username !== userid) {
+        //             setUseridError(true);
+        //         } else {
+        //             setPasswordError(true);
+        //         }
+
+        //         setLoginAttempts(loginAttempts + 1);
+        //     }
+        // } catch (error) {
+        //     console.error('Error:', error);
+        //     setError('An error occurred');
+        //     toast.error("please check the userId & Password.....", { theme: "colored" })
+        //     setLoginAttempts(loginAttempts + 1);
+        // }
+        navigate("/home")
     }
 
     const handleUseridChange = (e) => {
@@ -99,7 +120,7 @@ const LoginFormPart = () => {
                     severity="error"
                 />
             ) : ""}
-            <ToastContainer/>
+            <ToastContainer />
             <div className="login-container">
                 <h3 className="login-header">Sign In</h3>
                 <div className="login-form">
@@ -143,9 +164,9 @@ const LoginFormPart = () => {
                     </div>
 
                     {loginAttempts >= 3 &&
-                        <div style={{ display: "flex", height: "3.4vh",marginTop:"-0.5vh", flexDirection: "row", gap: "0.5vw", width: "100%", position: "relative" }}>
+                        <div style={{ display: "flex", height: "3.4vh", marginTop: "-0.5vh", flexDirection: "row", gap: "0.5vw", width: "100%", position: "relative" }}>
                             <img src={alertImg} alt='alert' />
-                            <p style={{fontSize:"0.7rem",color:"red"}}>{`Your Account Has Been Locked Due To Multiple Attempts 
+                            <p style={{ fontSize: "0.7rem", color: "red" }}>{`Your Account Has Been Locked Due To Multiple Attempts 
                                 Please Contact Admin`}</p>
                         </div>}
 

@@ -1,7 +1,4 @@
-import React, { useContext, useState } from 'react'
-import Input from "@mui/material/Input";
-import { InputAdornment } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
+import React, { useState } from 'react'
 import grid from "../../../Assets/Tile View Icons.jpg";
 import list from "../../../Assets/Component 1.png";
 import FileContent from './FileContent/FileContent';
@@ -26,8 +23,6 @@ import inactiveDownload from '../../../Assets/Download Inactive.svg';
 
 
 const FileView = ({ activeTab, setActiveTab, fileView, setFileView }) => {
-
-
 
 
   const [gridView, setGridView] = useState(true);
@@ -176,21 +171,7 @@ const FileView = ({ activeTab, setActiveTab, fileView, setFileView }) => {
           )}
         </div>
 
-        <div className='endingDIv'>
-          <div className="searchDiv">
-            <Input
-              disableUnderline={true}
-              className="search-inputforHome"
-              sx={{ marginLeft: "-2vw" }}
-              startAdornment={
-                <InputAdornment position="start">
-                  <SearchIcon className="searchicon" sx={{ color: "#FFA000" }} />
-                </InputAdornment>
-              }
-              placeholder="Enter Text Here"
-              type="text"
-            ></Input>
-          </div>
+       {activeTab !== 6 && <div className='endingDIv'>
           {!advance && <div className="gridViewDiv">
             <img
               src={gridView ? grid : list} height={50} width={50}
@@ -201,7 +182,7 @@ const FileView = ({ activeTab, setActiveTab, fileView, setFileView }) => {
             />
           </div>
           }
-        </div>
+        </div>}
       </div>
 
       {activeTab === 5 && userUpload === '1' ? (
