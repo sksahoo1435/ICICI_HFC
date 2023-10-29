@@ -4,10 +4,10 @@ import Settings from "../Pages/Settings";
 import Login from '../Pages/Login';
 
 export const router = createBrowserRouter([
-    {
-        path:"/",
-        element:<Login/>
-    },
+     {
+         path:"/",
+         element:<Login/>
+     },
     {
         path:"/home",
         element:<HomePage/>

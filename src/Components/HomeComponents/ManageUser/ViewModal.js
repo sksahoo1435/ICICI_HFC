@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,useContext } from 'react';
 import './viewmodal.css';
 import rightArrow from '../../../Assets/rightArrow.svg'
 import axios from 'axios';
@@ -6,6 +6,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import Input from "@mui/material/Input";
 import { InputAdornment } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import Statecontext from '../../Context/Statecontext';
 
 function ViewModal({ data, modalOpen, setModalOpen }) {
 
@@ -20,12 +21,12 @@ function ViewModal({ data, modalOpen, setModalOpen }) {
     const [contentIdForsearch, SetcontentIdForsearch] = useState('');
 
     const [userNameForsearch, SetuserNameForsearch] = useState('');
+const {apiBaseurl} = useContext(Statecontext);
 
-
-
+const username=sessionStorage.getItem("userId");
     const getFolderName = async () => {
         try {
-            const ApiToUse = `https://localhost:7062/api/ReportingModule/GetFoldersWithPermissions`
+            const ApiToUse = `${apiBaseurl}api/Admin/GetFoldersWithPermissions`
 
             const response = await axios.get(ApiToUse, {
                 withCredentials: true,
@@ -48,7 +49,7 @@ function ViewModal({ data, modalOpen, setModalOpen }) {
 
     const getFilesName = async (filename) => {
         try {
-            const ApiToUse = `https://localhost:7062/api/Admin/filesInFolder?folderName=${filename}`
+            const ApiToUse = `${apiBaseurl}api/Admin/filesInFolder?folderName=${filename}`
 
             const response = await axios.get(ApiToUse, {
                 withCredentials: true,
@@ -69,8 +70,9 @@ function ViewModal({ data, modalOpen, setModalOpen }) {
     // const userName = sessionStorage.getItem('userId')
 
     const getColumns = async (items) => {
+        console.log("-------------",data.username)
         try {
-            const ApiToUse = `https://localhost:7062/api/Admin/GetFileFields?username=${data.username}&contentId=${items.contentId}`
+            const ApiToUse = `${apiBaseurl}api/Admin/GetFileFields?username=${data.username}&contentId=${items.contentId}`
 
             const response = await axios.get(ApiToUse, {
                 withCredentials: true,
@@ -102,11 +104,28 @@ function ViewModal({ data, modalOpen, setModalOpen }) {
             fieldId: item.fieldId,
             view: item.view === 1 ? 0 : 1,
         };
+
+        if (item.fieldName === "*") {
+            // Update all checkboxes to the same value as the "Select All" checkbox
+            const updatedItems = searchcolumnName.map((ele) => {
+                if (ele.fieldName !== "*") {
+                    return { ...ele, view: updatedItem.view };
+                }
+                return ele;
+            });
+            setSearchcolumnName(updatedItems);
+        } else {
+            // Update the individual checkbox
+            const updatedItems = searchcolumnName.map((ele) =>
+                ele.fieldId === item.fieldId ? { ...ele, view: updatedItem.view } : ele
+            );
+            setSearchcolumnName(updatedItems);
+        }
     
         try {
-            const ApiToUse = `https://localhost:7062/api/Admin/updatefieldsaccess`;
+            const ApiToUse = `${apiBaseurl}api/Admin/updatefieldsaccess`;
 
-            const response = await axios.post(ApiToUse, updatedItem, {
+            const response = await axios.post(ApiToUse, JSON.stringify(updatedItem), {
                 withCredentials: true,
                 headers: {
                     'Content-Type': 'application/json'
@@ -131,6 +150,8 @@ function ViewModal({ data, modalOpen, setModalOpen }) {
         }
     };
 
+    
+
     useEffect(() => { fetchFilesBySearch(searchText) }, [searchText])
 
     const fetchFilesBySearch = async (searchText) => {
@@ -138,7 +159,7 @@ function ViewModal({ data, modalOpen, setModalOpen }) {
             setSearchcolumnName(columnName);
         } else {
             try {
-                const apiToFetch = `https://localhost:7062/api/AdminFilter/GetColumnNamesBySearch?username=${contentIdForsearch}&contentId=${userNameForsearch}&filter=${searchText}`;
+                const apiToFetch = `${apiBaseurl}api/AdminFilter/GetColumnNamesBySearch?username=${contentIdForsearch}&contentId=${userNameForsearch}&filter=${searchText}`;
                 const response = await axios.get(apiToFetch, {
                     withCredentials: true,
                 });
@@ -170,7 +191,7 @@ function ViewModal({ data, modalOpen, setModalOpen }) {
                 <div className='headersSectionModal'>
 
                     <div className='headersSectionModalText'>
-                        {showFiles === false ? showColumns === true ? <p>{`< Select Columns`}</p> : <p>{`< Select Folder`}</p> : <p>{`< Select Files`}</p>}
+                        {showFiles === false ? showColumns === true ? <p>{`Select Columns`}</p> : <p>{`Select Folder`}</p> : <p>{`Select Files`}</p>}
                     </div>
 
                     <div style={{ marginTop: "-1vh" }}>
@@ -187,7 +208,7 @@ function ViewModal({ data, modalOpen, setModalOpen }) {
                         folderName.map((ele) =>
                             <div className='headersSectionModalBodysecSubdiv'>
 
-                                <div style={{ paddingLeft: "1vw" }}>
+                                <div style={{ paddingLeft: "1vw" }} onClick={() => getFilesName(ele)}>
                                     <p>{ele}</p>
                                 </div>
 
@@ -205,7 +226,7 @@ function ViewModal({ data, modalOpen, setModalOpen }) {
                         Object.values(filesName).map((ele) =>
                             <div className='headersSectionModalBodysecSubdiv'>
 
-                                <div style={{ paddingLeft: "1vw" }}>
+                                <div style={{ paddingLeft: "1vw" }} onClick={() => getColumns(ele)}>
                                     <p>{ele.filename}</p>
                                 </div>
 

@@ -7,12 +7,12 @@ import Statecontext from "../../../Context/Statecontext";
 
 const List = ({ setFileView,updateData }) => {
 
-  const { setFilesInfolder } = useContext(Statecontext);
+  const { setFilesInfolder,apiBaseurl } = useContext(Statecontext);
 
 
   const fetchFilesInFolder = async (folderName) => {
     try {
-      const getFilesInFolderApiUrl = `https://localhost:7062/api/ReportingModule/GetFilesInFolder/${folderName}`;
+      const getFilesInFolderApiUrl = `${apiBaseurl}api/ReportingModule/GetFilesInFolder/${folderName}`;
       const filesResponse = await axios.get(getFilesInFolderApiUrl, {
         withCredentials: true,
       });

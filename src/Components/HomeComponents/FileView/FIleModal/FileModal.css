@@ -8,17 +8,17 @@
 
 }
 
-.paginationNbutton {
+.paginationNbuttonmodal {
     display: flex;
     flex-direction: row;
     gap: 4vw;
     position: relative;
-    margin-top: -1vh;
+    margin-top: 0vh;
 }
 
-.pagination,
+/* .pagination, */
 .btnSec {
-    margin-top: 2vh;
+    margin-top: 0vh;
 }
 
 .pagination {
@@ -35,7 +35,7 @@
     float: right;
     position: relative;
     display: flex;
-    margin-top: 6vh;
+    margin-top: -5vh;
     margin-right: -1vw;
 }
 

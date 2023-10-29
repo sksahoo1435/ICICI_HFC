@@ -8,7 +8,7 @@ import Statecontext from '../../../../Context/Statecontext';
 const PreviewFile = ({ handlePreview, file, progressbarHandler, columnForPrev }) => {
     const [data, setData] = useState([]);
 
-    const { fileNameForUpload,setIsUploadTrue } = useContext(Statecontext);
+    const { fileNameForUpload, setIsUploadTrue, apiBaseurl } = useContext(Statecontext);
 
     const btnHandler = (e) => {
         const resultbtn = e === 'back' ? true : false;
@@ -34,10 +34,13 @@ const PreviewFile = ({ handlePreview, file, progressbarHandler, columnForPrev })
         };
         reader.readAsBinaryString(file);
     }
-
+    console.log("aaaa", columnForPrev)
     const dateColumns = columnForPrev
+
         .filter((column) => column.dataType === 'date')
+
         .map((column) => column.columnName);
+
 
     const handleConfirm = async () => {
         const filename = fileNameForUpload;
@@ -55,9 +58,19 @@ const PreviewFile = ({ handlePreview, file, progressbarHandler, columnForPrev })
 
                     if (column) {
                         if (column.dataType === 'date') {
-                            const transactionDate = new Date(item[key]);
-                            const formattedTransactionDate = transactionDate.toISOString();
-                            convertedValue = `${formattedTransactionDate}`;
+                           // const transactionDate = new Date(item[key]);
+                            const date = new Date(1900, 0, item[key] - 1);
+                            const days = date.getDate();
+                            const month = date.getMonth() + 1; // Month is 0-based, so add 1
+                            const year = date.getFullYear();
+                            // Format the date as "DD/MM/YYYY"
+                            const formattedDate = `${days}/${month}/${year}`;
+                    
+                           // const formattedTransactionDate = transactionDate.toISOString();
+
+                           // convertedValue = `${formattedTransactionDate}`;
+                           convertedValue=`${formattedDate}`;
+                            console.log("confirmvalue",formattedDate)
                         } else if (column.dataType !== 'string') {
                             convertedValue = `${JSON.stringify(item[key])}`;
                         } else {
@@ -73,8 +86,8 @@ const PreviewFile = ({ handlePreview, file, progressbarHandler, columnForPrev })
 
             return convertedItem;
         });
-        const sendFileToDb = `https://localhost:7062/api/ReportingModule/InsertUploadData/${userId}/${filename}`;
-
+        const sendFileToDb = `${apiBaseurl}api/ReportingModule/InsertUploadData/${userId}/${filename}`;
+console.log("msg",formattedDataWithoutExcludedColumns)
         try {
             const response = await axios.post(sendFileToDb, formattedDataWithoutExcludedColumns, {
                 withCredentials: true,
@@ -82,8 +95,9 @@ const PreviewFile = ({ handlePreview, file, progressbarHandler, columnForPrev })
                     'Content-Type': 'application/json',
                 },
             });
-
+            console.log("msgoutput",response)
             if (response.status === 200) {
+                console.log("going")
                 progressbarHandler(true);
                 setIsUploadTrue(true);
             } else {
@@ -96,10 +110,22 @@ const PreviewFile = ({ handlePreview, file, progressbarHandler, columnForPrev })
             progressbarHandler(false);
             new Error('This file is not matched with the API');
             setIsUploadTrue(false);
-           
+
         }
     };
 
+    const formatDateFromString = (dateString) => {
+        //  const date=new Date(dateString);
+        const date = new Date(1900, 0, dateString - 1);
+        const days = date.getDate();
+        const month = date.getMonth() + 1; // Month is 0-based, so add 1
+        const year = date.getFullYear();
+        // Format the date as "DD/MM/YYYY"
+        const formattedDate = `${days}/${month}/${year}`;
+
+        
+        return formattedDate;
+    }
 
 
     return (
@@ -107,7 +133,7 @@ const PreviewFile = ({ handlePreview, file, progressbarHandler, columnForPrev })
             <div className="previewtext">
                 <p>Preview</p>
             </div>
-            
+
             <div className="previewTable">
                 <table className="w-full border-collapse border rounded-xl overflow-hidden shadow-lg">
                     <thead className="bg-[#F36523] text-white">
@@ -126,7 +152,8 @@ const PreviewFile = ({ handlePreview, file, progressbarHandler, columnForPrev })
                                     <td className="py-2 px-4 border" key={colIndex}>
                                         <p style={{ display: 'flex', justifyContent: 'center' }}>
                                             {dateColumns.includes(column.columnName)
-                                                ? new Date(row[column.columnName]).toLocaleDateString()
+                                                ? formatDateFromString(row[column.columnName])
+                                                // ?  new Date(row[column.columnName]).toLocaleDateString('en-US')
                                                 : row[column.columnName]
                                             }
                                         </p>

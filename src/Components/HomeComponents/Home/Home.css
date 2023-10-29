@@ -66,7 +66,7 @@
 
 .search-inputforHome {
   background: #FFFFFF;
-  height: 4.8vh;
+  height: 5.8vh;
   margin-top: 0vh;
   position: relative;
   font-size: 1.8vh !important;
@@ -121,11 +121,20 @@
   max-height: 10vh;
   overflow-y: auto;
   background-color: #fff;
-  border-radius: 0.5rem; 
+  border-radius: 0.5rem;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.search-dropdown::-webkit-scrollbar{
+.MuiTooltip-tooltip {
+  background-color: #063E67 !important;
+}
+
+.MuiTooltip-arrow {
+  color: #063E67 !important;
+}
+
+
+.search-dropdown::-webkit-scrollbar {
   display: none;
 }
 

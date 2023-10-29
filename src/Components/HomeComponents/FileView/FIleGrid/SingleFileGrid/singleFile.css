@@ -40,9 +40,19 @@
 }
 
 .titlegridContents {
-    position: relative;
+    position: absolute;
     margin-left: 1vw;
     font-size: 1cqw;
-    width: 90%;
+    max-width: 100%;
+    overflow: auto;
     margin-right: 1vw;
+    bottom: 0;
+    display: flex;
+   
+margin-left: 0vw;
+padding-left: 5px;
+padding-right: 5px;
+}
+.titlegridContents::-webkit-scrollbar{
+    display: none;
 }

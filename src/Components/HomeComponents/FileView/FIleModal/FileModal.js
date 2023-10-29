@@ -13,7 +13,7 @@ import 'rsuite/dist/rsuite.min.css';
 
 const FileModal = (props) => {
   const { modalOpen, setModalOpen } = props;
-  const { fileNameTosend } = useContext(Statecontext);
+  const { fileNameTosend,apiBaseurl } = useContext(Statecontext);
 
   const [pdata, setPdata] = useState([{}]);
   const [fullDataToDownload, setFullDataToDownload] = useState([]);
@@ -26,19 +26,23 @@ const FileModal = (props) => {
 
   const userId = sessionStorage.getItem('userId');
 
-  const pageSize = 500;
+  const pageSize = 100;
 
   const fetchContentInFiles = async (e, newPage) => {
+
     try {
-      const getContentInFilesApiUrl = `https://localhost:7062/api/ReportModules/getmodaldata${userId}/${e}/${pageSize}/${newPage}`;
+      
+      const getContentInFilesApiUrl = `${apiBaseurl}api/ReportModules/getmodaldata${userId}/${e}/${pageSize}/${newPage}`;
       const filesResponse = await axios.get(getContentInFilesApiUrl, {
         withCredentials: true,
       });
+      console.log("datafetchonclick of modal",filesResponse)
       if (filesResponse.data === "You dont have access to this data") {
         setAccessGranted(false);
       } else {
 
         let pro = filesResponse.data.data;
+       // console("pro is",pro);
         setPdata(pro);
         setNumRows(filesResponse.data.totalCount);
         setAccessGranted(true);
@@ -62,7 +66,7 @@ const FileModal = (props) => {
 
   const getFullFileData = async (filename) => {
     try {
-      const getContentInFilesApiUrl = `https://localhost:7062/api/ReportModules/getallmodaldata/${userId}/${filename}`;
+      const getContentInFilesApiUrl = `${apiBaseurl}api/ReportModules/getallmodaldata/${userId}/${filename}`;
       const filesResponse = await axios.get(getContentInFilesApiUrl, {
         withCredentials: true,
       });
@@ -163,9 +167,10 @@ const FileModal = (props) => {
   const fetchSortedData = async (column, order) => {
     try {
 
-      const sortedDataResponse = await axios.get(`https://localhost:7062/api/ReportingModuleFilter/GetFilesInFolderUsingFilter/${userId}/${fileNameTosend}/${page}/${pageSize}/${column}/${order}`, {
+      const sortedDataResponse = await axios.get(`${apiBaseurl}api/ReportingModuleFilter/GetFilesInFolderUsingFilter/${userId}/${fileNameTosend}/${page}/${pageSize}/${column}/${order}`, {
         withCredentials: true,
       });
+      console.log("sortedDataResponse",sortedDataResponse)
       setPdata(sortedDataResponse.data.data);
       setNumRows(sortedDataResponse.data.totalCount);
       setAccessGranted(true);
@@ -177,7 +182,7 @@ const FileModal = (props) => {
 
 
   let userRole = sessionStorage.getItem("userRole");
-
+  console.log("xyz",pdata,accessGranted,handleSort,sortColumn,sortOrder);
   return (
     <Modal centered
 
@@ -211,7 +216,7 @@ const FileModal = (props) => {
 
           <div style={{ display: "flex", flexDirection: "row", gap: "1vw", marginTop: "2vh", width: "86%" }}>
             {numRows > 0 && (
-              <div className='paginationNbutton'>
+              <div className='paginationNbuttonmodal'>
                 <div style={{ display: "flex", flexDirection: "row", gap: "1vw", marginTop: "2vh", width: "100%" }}>
                   <div style={{ display: "flex", flexDirection: "row" }}>
                     <div style={{ marginTop: "2.5vh", marginLeft: "1vw" }}> Rows per Page: {pageSize}</div>
@@ -227,11 +232,6 @@ const FileModal = (props) => {
           </div>
 
           <div className='btnSec'>
-            {/* <select className='customSelect' placeholder='Download' value='Download' onChange={(e) => handleFileDownload(e.target.value)}>
-              <option hidden>Download</option>
-              <option value='csv'>CSV</option>
-              <option value='xlsx'>XLSX</option>
-            </select> */}
 
             <Dropdown title="Download">
 

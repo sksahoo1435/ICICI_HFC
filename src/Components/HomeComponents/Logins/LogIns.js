@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import "./Log-ins.css";
 import axios from "axios";
@@ -7,6 +7,7 @@ import dropdownImg from '../../../../src/Assets/dropdwonImg.svg';
 import { Menu, Dropdown } from "antd";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
+import Statecontext from "../../Context/Statecontext";
 
 const LogIns = ({ setActiveTab }) => {
   const [data, setData] = useState([]);
@@ -16,12 +17,12 @@ const LogIns = ({ setActiveTab }) => {
   const [sortbyOrder, setSortByOrder] = useState('')
   const [page, setPage] = useState(1);
   const [numRows, setNumRows] = useState(0);
-
+  const { apiBaseurl } = useContext(Statecontext);
   const pageSize = 500;
 
   const loginDetails = async (newPage) => {
     try {
-      const ApiTofetch = `https://localhost:7062/api/Admin/GetAllUserLogsWithPagination/${pageSize}/${newPage}`;
+      const ApiTofetch = `${apiBaseurl}api/Admin/GetAllUserLogsWithPagination/${pageSize}/${newPage}`;
 
       const response = await axios.get(ApiTofetch, {
         withCredentials: true,
@@ -50,6 +51,64 @@ const LogIns = ({ setActiveTab }) => {
     loginDetails(value);
   };
 
+  const sendMail = async () => {
+
+    const mailDatasTosend = {
+      "to": "sunil",
+      "subject": "string",
+      "body": "string"
+    }
+    try {
+      const ApiTofetch = `${apiBaseurl}api/Email/SendEmail`;
+
+      const response = await axios.post(ApiTofetch, mailDatasTosend, {
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      console.log("response send mails", response);
+
+      if (response.status === 200) {
+        console.log("send mails", response)
+      } else {
+        console.log("API ERROR", response);
+      }
+    } catch (error) {
+      console.log("The API error is", error);
+    }
+  }
+
+  let userName = sessionStorage.getItem("userId");
+
+  const userLogs = async () => {
+
+    const mailDatasTosend = {
+      "username": userName,
+      "action": "Download",
+      "downloadUploadFile": "User Logs"
+    }
+    try {
+      const ApiTofetch = `${apiBaseurl}api/UsersLogs/UserAction`;
+
+      const response = await axios.post(ApiTofetch, mailDatasTosend, {
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.status === 200) {
+        console.log("user download details", response)
+      } else {
+        console.log("API ERROR", response);
+      }
+    } catch (error) {
+      console.log("The API error is", error);
+    }
+  }
+
 
   const handleDownload = () => {
     const csv = Papa.unparse(eventedData);
@@ -60,6 +119,8 @@ const LogIns = ({ setActiveTab }) => {
     a.download = `userLoginDetails.csv`;
     a.click();
     URL.revokeObjectURL(url);
+    sendMail()
+    userLogs()
   };
 
   const items = [
@@ -116,7 +177,7 @@ const LogIns = ({ setActiveTab }) => {
       setEventedData(data);
     } else {
       try {
-        const ApiForFolder = `https://localhost:7062/api/AdminFilter/FilterlogByEvent/${pageSize}/${page}?eventStatus=${selectedEvent}`;
+        const ApiForFolder = `${apiBaseurl}api/AdminFilter/FilterlogByEvent/${pageSize}/${page}?eventStatus=${selectedEvent}`;
 
         const response = await axios.get(ApiForFolder, {
           withCredentials: true,
@@ -139,7 +200,7 @@ const LogIns = ({ setActiveTab }) => {
 
     const fetchData = async () => {
       try {
-        const ApiToFetch = `https://localhost:7062/api/AdminFilter/FilterLogByName/${pageSize}/${page}?sortBy=${sortbyname}`;
+        const ApiToFetch = `${apiBaseurl}api/AdminFilter/FilterLogByName/${pageSize}/${page}?sortBy=${sortbyname}`;
 
         const response = await axios.get(ApiToFetch, {
           withCredentials: true,
@@ -162,7 +223,7 @@ const LogIns = ({ setActiveTab }) => {
 
     const fetchData = async () => {
       try {
-        const ApiToFetch = `https://localhost:7062/api/AdminFilter/FilterlogByDate/${pageSize}/${page}?sortByDate=${sortbyOrder}`;
+        const ApiToFetch = `${apiBaseurl}api/AdminFilter/FilterlogByDate/${pageSize}/${page}?sortByDate=${sortbyOrder}`;
 
         const response = await axios.get(ApiToFetch, {
           withCredentials: true,
@@ -181,7 +242,7 @@ const LogIns = ({ setActiveTab }) => {
     fetchData();
   }, [sortbyOrder]);
 
-  
+
   return (
     <>
       <div className="px-[5vw]" style={{ marginTop: "-2vh" }}>
@@ -201,84 +262,88 @@ const LogIns = ({ setActiveTab }) => {
           </div>
         </div>
 
-        <div className="table-container_login">
-          <table className="table_login">
-            <thead className="tableHead_login">
-              <tr>
-                <th className="py-2 px-4 border">
-                  <div style={{ display: 'flex', alignItems: 'center', gap: "2vw" }}>
-                    Date
-                    <Dropdown overlay={<Menu>{itemsOrder.map(item => (
-                      <Menu.Item key={item.key} onClick={item.onClick}>
-                        {item.label}
-                      </Menu.Item>
-                    ))}</Menu>}>
-                      <img src={dropdownImg} alt="Dropdown" className="dropdown-icon" />
-                    </Dropdown>
-                  </div>
-                </th>
-                <th className="py-2 px-4 border">Time</th>
+        <div className="table-main-login">
+          <div className="wrapTableLogins">
+            <table className="table_login">
+              <thead className="tableHead_login">
+                <tr>
+                  <th className="py-2 px-4 border">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: "2vw" }}>
+                      Date
+                      <Dropdown overlay={<Menu>{itemsOrder.map(item => (
+                        <Menu.Item key={item.key} onClick={item.onClick}>
+                          {item.label}
+                        </Menu.Item>
+                      ))}</Menu>}>
+                        <img src={dropdownImg} alt="Dropdown" className="dropdown-icon" />
+                      </Dropdown>
+                    </div>
+                  </th>
+                  <th className="py-2 px-4 border">Time</th>
 
-                <th className="py-2 px-4 border">
-                  <div style={{ display: 'flex', alignItems: 'center', gap: "2vw" }}>
-                    Username
-                    <Dropdown overlay={<Menu>{itemsName.map(item => (
-                      <Menu.Item key={item.key} onClick={item.onClick}>
-                        {item.label}
-                      </Menu.Item>
-                    ))}</Menu>}>
-                      <img src={dropdownImg} alt="Dropdown" className="dropdown-icon" />
-                    </Dropdown>
-                  </div>
-                </th>
+                  <th className="py-2 px-4 border">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: "2vw" }}>
+                      Username
+                      <Dropdown overlay={<Menu>{itemsName.map(item => (
+                        <Menu.Item key={item.key} onClick={item.onClick}>
+                          {item.label}
+                        </Menu.Item>
+                      ))}</Menu>}>
+                        <img src={dropdownImg} alt="Dropdown" className="dropdown-icon" />
+                      </Dropdown>
+                    </div>
+                  </th>
 
-                <th className="py-2 px-4 border">Last Logged In</th>
+                  <th className="py-2 px-4 border">Last Logged In</th>
 
-                <th className="py-2 px-4 border" >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: "2vw" }}>
-                    Event Status
-                    <Dropdown overlay={<Menu>{items.map(item => (
-                      <Menu.Item key={item.key} onClick={item.onClick}>
-                        {item.label}
-                      </Menu.Item>
-                    ))}</Menu>}>
-                      <img src={dropdownImg} alt="Dropdown" className="dropdown-icon" />
-                    </Dropdown>
-                  </div>
-                </th>
-              </tr>
-            </thead>
-
-            <tbody className="tableBody_login">
-              {eventedData.map((item) => (
-                <tr
-                  key={item.id}
-                  className={item.id % 2 === 0 ? "bg-gray-100" : "bg-white"}
-                >
-                  <td className="tableBody_login_td">
-                    {new Date(item.formattedDate).toLocaleDateString("en-GB")}
-                  </td>
-                  <td className="tableBody_login_td">{item.formattedTime}</td>
-                  <td className="tableBody_login_td">{item.username}</td>
-                  <td className="tableBody_login_td">
-                    {new Date(item.formattedLastLoggedIn).toLocaleDateString(
-                      "en-GB"
-                    )}
-                  </td>
-
-                  <td
-                    className={`tableBody_login_td ${item.eventStatus === "Successful"
-                      ? "text-green-500"
-                      : "text-red-500"
-                      }`}
-                  >
-                    {item.eventStatus}
-                  </td>
+                  <th className="py-2 px-4 border" >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: "2vw" }}>
+                      Event Status
+                      <Dropdown overlay={<Menu>{items.map(item => (
+                        <Menu.Item key={item.key} onClick={item.onClick}>
+                          {item.label}
+                        </Menu.Item>
+                      ))}</Menu>}>
+                        <img src={dropdownImg} alt="Dropdown" className="dropdown-icon" />
+                      </Dropdown>
+                    </div>
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-          
+              </thead>
+
+              <tbody className="tableBody_login">
+                {eventedData.map((item) => (
+                  <tr
+                    key={item.id}
+                    className={item.id % 2 === 0 ? "bg-gray-100" : "bg-white"}
+                  >
+                    <td className="tableBody_login_td">
+                      {new Date(item.formattedDate).toLocaleDateString("en-GB")}
+                    </td>
+                    <td className="tableBody_login_td">{item.formattedTime}</td>
+                    <td className="tableBody_login_td">{item.username}</td>
+                    <td className="tableBody_login_td">
+                      {new Date(item.formattedLastLoggedIn).toLocaleDateString(
+                        "en-GB"
+                      )}
+                    </td>
+
+                    <td
+                      className={`tableBody_login_td ${item.eventStatus === "Successful"
+                        ? "text-green-500"
+                        : "text-red-500"
+                        }`}
+                    >
+                      {item.eventStatus}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div>
           {numRows > 0 && (
             <div className='paginationNbutton'>
               <div style={{ display: "flex", flexDirection: "row", gap: "1vw", marginTop: "2vh", width: "100%", justifyContent: "center" }}>
@@ -293,11 +358,10 @@ const LogIns = ({ setActiveTab }) => {
               </div>
             </div>
           )}
-
         </div>
 
-        <div id="buttons" className="my-5">
-          <div className="absolute right-0 px-[5vw]">
+        <div id="buttons" >
+          <div className="absolute right-0 bottom-5 place-self-center px-[5vw]">
             <button
               className="border py-2 px-9 mx-2 rounded-full text-white bg-gradient-to-t from-[#E75126] to-[#F8A716]"
               onClick={handleDownload}

@@ -1,6 +1,6 @@
-.table-containers {
+/* .table-containersModal {
     border-radius: 1rem;
-    overflow: auto;
+    overflow: hidden;
     max-height: 53vh;
     height: 48vh;
     max-width: 100%;
@@ -20,6 +20,12 @@
         linear-gradient(0deg, #ffffff, #ffffff);
     height: 3vh;
     border-right: 1px solid white;
+    white-space: nowrap;
+}
+
+.tableBody{
+    overflow: scroll;
+    max-height: 40vh;        
 }
 
 .table td {
@@ -118,4 +124,82 @@
 }
 
 
+ */
 
+.table-containersModal {
+    max-height: 50vh;
+    overflow-y: scroll;
+    margin: 20px;
+    border-radius: 1rem;
+}
+
+.tableModal {
+    border: 1px solid rgb(205, 202, 202);
+    border-radius: 1rem;
+    min-width: max-content;
+}
+
+.tableModalHeadTh{
+    padding: 11px;
+    position: sticky;
+    top: 0px;
+    color: white;
+    padding: 2vh;
+    background: linear-gradient(0deg, #f36523, #f36523),
+        linear-gradient(0deg, #ffffff, #ffffff);
+    height: 5vh;
+    border-right: 1px solid white;
+    text-wrap: nowrap;
+}
+
+.tableModal .tableModalBody p,
+.tableModal .tableModalHeadTh p {
+    font-family: Noto Sans;
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.1rem;
+    letter-spacing: 0em;
+    text-align: left;
+    padding-left: 2vw;
+    color: white;
+}
+
+.tableModal .tableModalBody p {
+    color: #36556b;
+}
+
+.tableModalBody tr:nth-child(even) {
+    background: linear-gradient(0deg, #dddddd, #dddddd),
+        linear-gradient(0deg, #f6f6f6, #f6f6f6);
+}
+
+
+.table-containersModal::-webkit-scrollbar {
+    width: 0.8vw;
+    height: 2vh;
+    border-radius: 1vh;
+
+}
+
+
+.table-containersModal::-webkit-scrollbar-thumb {
+    background-color: rgba(186, 186, 186, 0.682);
+    border-radius: 1vh;
+}
+
+
+
+.table-containersModal::-webkit-scrollbar-track {
+    background-color: #E5E5E5;
+}
+
+.table-containersModal::-webkit-scrollbar-horizontal {
+    height: 1vh;
+    border-radius: 1vh;
+}
+
+.table-containersModal::-webkit-scrollbar-thumb:horizontal {
+    background-color: rgba(186, 186, 186, 0.682);
+    border-radius: 1vh;
+    z-index: 1999;
+}

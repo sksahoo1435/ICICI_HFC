@@ -10,7 +10,7 @@ import axios from "axios";
 import Statecontext from "../../../Context/Statecontext";
 
 const Folder = ({ gridView, fileView, setFileView }) => {
-  const { setFilesInfolder,setFfolderName} = useContext(Statecontext);
+  const { setFilesInfolder,setFfolderName,apiBaseurl} = useContext(Statecontext);
 
   const [selectDrop, setSelectDrop] = useState('');
 
@@ -18,7 +18,7 @@ const Folder = ({ gridView, fileView, setFileView }) => {
 
   const fetchFilesInFolder = async (folderName) => {
     try {
-      const getFilesInFolderApiUrl = `https://localhost:7062/api/ReportingModule/GetFilesInFolder/${folderName}`;
+      const getFilesInFolderApiUrl = `${apiBaseurl}api/ReportingModule/GetFilesInFolder/${folderName}`;
       const filesResponse = await axios.get(getFilesInFolderApiUrl, {
         withCredentials: true,
       });
@@ -32,10 +32,10 @@ const Folder = ({ gridView, fileView, setFileView }) => {
       console.error("Error fetching files in folder:", error);
     }
   };
-
+  const username=sessionStorage.getItem("userId");
   useEffect(() => {
-    const files = "https://localhost:7062/api/ReportingModule/GetFoldersWithPermissions";
-
+    const files = `${apiBaseurl}api/ReportingModule/GetFoldersWithPermissions?userName=${username}`;
+   
     async function fetchData() {
       try {
         const result1 = await axios.get(files, {
@@ -55,7 +55,7 @@ const Folder = ({ gridView, fileView, setFileView }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const ApiToFetch = `https://localhost:7062/api/ReportingModuleFilter/GetFoldersWithPermissionsFilter?sortOrder=${selectDrop}`;
+        const ApiToFetch = `${apiBaseurl}api/ReportingModuleFilter/GetFoldersWithPermissionsFilter?userName=${username}&sortOrder=${selectDrop}`;
 
         const response = await axios.get(ApiToFetch, {
           withCredentials: true,
@@ -86,7 +86,7 @@ const Folder = ({ gridView, fileView, setFileView }) => {
               : "dropdownButtonSort"
           }
           onClick={() => {
-            setSelectDrop('A-Z');
+            setSelectDrop('ASC');
           }}
         >
           A to Z
@@ -103,7 +103,7 @@ const Folder = ({ gridView, fileView, setFileView }) => {
               : "dropdownButtonSort"
           }
           onClick={() => {
-            setSelectDrop('Z-A');
+            setSelectDrop('DESC');
           }}
         >
           Z to A

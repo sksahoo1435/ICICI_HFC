@@ -9,10 +9,11 @@ import Statecontext from '../../../Context/Statecontext';
 
 
 const FileContent = ({ admin, gridView }) => {
-  const { setFilesInfolder,folderName } = useContext(Statecontext);
-  
+  const { setFilesInfolder, folderName, apiBaseurl } = useContext(Statecontext);
+
   const [selectDrop, setSelectDrop] = useState('');
- 
+
+
   const items = [
     {
       key: '1',
@@ -20,27 +21,30 @@ const FileContent = ({ admin, gridView }) => {
     },
     {
       key: '2',
-      label: <button  onClick={() => { setSelectDrop('DESC') }} >Z to A</button>,
+      label: <button onClick={() => { setSelectDrop('DESC') }} >Z to A</button>,
     },
-    
+
   ];
 
   useEffect(() => {
 
-    const fetchData = async () => {
-      try {
-        const ApiToFetch = `https://localhost:7062/api/ReportingModuleFilter/GetFilenamesInsideFolderOrdered?foldername=${folderName}&sortOrder=${selectDrop}`;
 
-        const response = await axios.get(ApiToFetch, {
-          withCredentials: true,
-        });
-        if (response.status === 200) {
-          setFilesInfolder(response.data)
-        } else {
-          console.log('API response error', response.status);
+    const fetchData = async () => {
+      if (selectDrop !== "") {
+        try {
+          const ApiToFetch = `${apiBaseurl}api/ReportingModuleFilter/GetFilenamesInsideFolderOrdered?foldername=${folderName}&sortOrder=${selectDrop}`;
+
+          const response = await axios.get(ApiToFetch, {
+            withCredentials: true,
+          });
+          if (response.status === 200) {
+            setFilesInfolder(response.data)
+          } else {
+            console.log('API response error', response.status);
+          }
+        } catch (err) {
+          console.log('Error in API', err);
         }
-      } catch (err) {
-        console.log('Error in API', err);
       }
     };
 
@@ -56,7 +60,7 @@ const FileContent = ({ admin, gridView }) => {
         <div className='topBarFile'>
 
           <div className='starting'>
-            <p>Home</p>  {" > "} <p style={{marginTop:"0.2vh"}}>Files</p>
+            <p>Home</p>  {" > "} <p style={{ marginTop: "0.2vh" }}>Files</p>
           </div>
 
           <div className='ending' >

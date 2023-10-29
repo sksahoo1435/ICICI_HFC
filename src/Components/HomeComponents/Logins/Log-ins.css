@@ -1,10 +1,20 @@
-.table-container_login {
+
+.table-main-login{
     border-radius: 1rem;
     overflow: auto;
-    max-height: 70vh;
+    border:1px solid #36556b;
+    max-height: 50vh;
+}
+
+.tableHead_login{
+    position: sticky;
+    top: 0;
+}
+.tableBody_login {
+    max-height: 50vh;
     max-width: 100%;
-    margin-top: 2vh;
-    box-shadow: 0.4px 1.5px #c6c4c4;
+    margin-top: 0.5vh;
+    
 }
 
 .table_login {
@@ -89,34 +99,38 @@
 }
 
 
-.table-container_login::-webkit-scrollbar {
+.table-main-login::-webkit-scrollbar {
     width: 0.8vw;
-    height: 2vh;
+    height: 1vh;
     border-radius: 1vh;
-
+    display: none;
 }
 
 
-.table-container_login::-webkit-scrollbar-thumb {
+.table-main-login::-webkit-scrollbar-thumb {
     background-color: rgba(186, 186, 186, 0.682);
     border-radius: 1vh;
 }
 
 
 
-.table-container_login::-webkit-scrollbar-track {
+.table-main-login::-webkit-scrollbar-track {
     background-color: #E5E5E5;
 }
 
-.table-container_login::-webkit-scrollbar-horizontal {
+.table-main-login::-webkit-scrollbar-horizontal {
     height: 1vh;
     border-radius: 1vh;
 }
 
-.table-container_login::-webkit-scrollbar-thumb:horizontal {
+.table-main-login::-webkit-scrollbar-thumb:horizontal {
     background-color: rgba(186, 186, 186, 0.682);
     border-radius: 1vh;
 }
-
-
-
+/* #buttons{
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-self: center;
+    margin-top: -2vh;
+} */

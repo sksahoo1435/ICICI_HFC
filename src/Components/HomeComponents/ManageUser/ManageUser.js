@@ -10,6 +10,10 @@ import dropdownImg from '../../../../src/Assets/dropdwonImg.svg';
 import { Menu, Dropdown } from "antd";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
+import { useContext } from 'react';
+import Statecontext from '../../Context/Statecontext';
+import { Tooltip } from "@mui/material";
+
 
 const ManageUser = ({ setActiveTab }) => {
   const [data, setData] = useState([]);
@@ -22,17 +26,18 @@ const ManageUser = ({ setActiveTab }) => {
   const [sortbyOrder, setSortByOrder] = useState('');
   const [page, setPage] = useState(1);
   const [numRows, setNumRows] = useState(0);
-
+  const { apiBaseurl } = useContext(Statecontext);
+  let [updatesvale, setUpdateVal] = useState('');
 
   const pageSize = 500;
 
   const fetchUsersToManage = async (newPage) => {
     try {
-      const userApi = `https://localhost:7062/api/Admin/manageuserwithpagination/${pageSize}/${newPage}`;
+      const userApi = `${apiBaseurl}api/Admin/manageuserwithpagination/${pageSize}/${newPage}`;
       const response = await axios.get(userApi, {
         withCredentials: true,
       });
-  
+
       const initialData = response.data.data.map((item) => ({ ...item, isChecked: false }));
       setData(initialData);
       setSaveData(initialData);
@@ -44,14 +49,96 @@ const ManageUser = ({ setActiveTab }) => {
     }
   };
 
+  let userName = sessionStorage.getItem("userId");
+  const uploadDownloadLogs = async (user, action) => {
+    const mailDatasTosend = {
+      "username": user,
+      "action": `${action} Access updated - ${user}`,
+
+    }
+    try {
+      const ApiTofetch = `${apiBaseurl}api/UsersLogs/AdminAction`;
+      const response = await axios.post(ApiTofetch, mailDatasTosend, {
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      if (response.status === 200) {
+        console.log("user download details", response)
+      } else {
+        console.log("API ERROR", response);
+      }
+    } catch (error) {
+      console.log("The API error is", error);
+    }
+  }
+
+
+  const sendMail = async () => {
+
+    const mailDatasTosend = {
+      "to": userName,
+      "subject": "string",
+      "body": "string"
+    }
+    try {
+      const ApiTofetch = `${apiBaseurl}api/Email/SendEmail`;
+
+      const response = await axios.post(ApiTofetch, mailDatasTosend, {
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      console.log("response send mails", response);
+
+      if (response.status === 200) {
+        console.log("send mails", response)
+      } else {
+        console.log("API ERROR", response);
+      }
+    } catch (error) {
+      console.log("The API error is", error);
+    }
+  }
+
+
+
+  const userLogs = async () => {
+    const mailDatasTosend = {
+      "username": userName,
+      "action": "Download",
+      "downloadUploadFile": "User Access"
+    }
+    try {
+      const ApiTofetch = `${apiBaseurl}api/UsersLogs/UserAction`;
+      const response = await axios.post(ApiTofetch, mailDatasTosend, {
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      if (response.status === 200) {
+        console.log("user download details", response)
+      } else {
+        console.log("API ERROR", response);
+      }
+    } catch (error) {
+      console.log("The API error is", error);
+    }
+  }
+
+
   const handleChange = (event, value) => {
     fetchUsersToManage(value);
   };
 
-  const updateUserAccess = async (item) => {
-    console.log("..update access....",item,item.upload)
+  const updateUserAccess = async (item, updatedfield) => {
+
     try {
-      const userApi = `https://localhost:7062/api/Admin/UpdateUserManage`;
+      const userApi = `${apiBaseurl}api/Admin/UpdateUserManage`;
       const response = await axios.post(
         userApi,
         {
@@ -65,14 +152,13 @@ const ManageUser = ({ setActiveTab }) => {
       );
 
       if (response.status === 204 || response.status === 200) {
+        console.log("some response", updatedfield)
         toast.success(`Access Successfully Updated For ${item.username} `, { theme: "colored" })
+        setUpdateVal("")
+        //  uploadDownloadLogs(item.username,)
       } else {
         toast.error(`Something went wrong..`, { theme: "colored" })
       }
-      console.log('Updated user access:', response);
-
-
-
     } catch (error) {
       console.error('Error updating user access:', error);
       toast.error(`Something went wrong..`, { theme: "colored" })
@@ -88,18 +174,30 @@ const ManageUser = ({ setActiveTab }) => {
   }, [recall]);
 
   useEffect(() => {
+
     for (const item of savedata) {
       const originalItem = sortedData.find((d) => d.username === item.username);
+      // console.log("checks....",item.upload, item.download)
+      // let updatesvale = item.upload === true ? 'upload' : item.upload === false ? 'upload' : 'download';
+
+      // if (originalItem.upload !== item.upload) {
+      //   setUpdateVal('Upload')
+      // } else {
+      //   setUpdateVal('Download')
+      // }
+
       if (
         originalItem.upload !== item.upload ||
         originalItem.download !== item.download
       ) {
-        updateUserAccess(item);
+
+        updateUserAccess(item, updatesvale);
       }
     }
   }, [savedata, data, sortedData]);
 
   const handleCheckboxChange = (item, checkValue) => {
+    setUpdateVal(checkValue)
     setSaveData((prevData) => {
       const updatedData = prevData.map((prevItem) =>
         prevItem.username === item.username
@@ -116,14 +214,21 @@ const ManageUser = ({ setActiveTab }) => {
     toast.success("Items are saved successfully...!", { theme: "colored", })
   }
 
-  const handleDownload = () => {
 
+  const handleDownload = () => {
     const removeIsCheckedProperty = (sortedData) => {
       const { isChecked, ...updatedUserObject } = sortedData;
       return updatedUserObject;
+
     };
 
-    const updatedUserObjects = data.map(removeIsCheckedProperty);
+    const updatedUserObjects = data.map((item) => {
+      return {
+        ...removeIsCheckedProperty(item), // Remove isChecked property
+        upload: item.upload ? "YES" : "NO", // Convert 1 to YES and 0 to NO for upload
+        download: item.download ? "YES" : "NO", // Convert 1 to YES and 0 to NO for download
+      };
+    });
 
     const csv = Papa.unparse(updatedUserObjects);
     const blob = new Blob([csv], { type: 'text/csv' });
@@ -132,9 +237,12 @@ const ManageUser = ({ setActiveTab }) => {
     a.href = url;
     a.download = `UserAccessDetails.csv`;
     a.click();
-    URL.revokeObjectURL(url);
+    userLogs();
+    sendMail();
 
-  }
+    URL.revokeObjectURL(url);
+  };
+
 
   const handleView = (item) => {
     setViewModalData(item);
@@ -146,7 +254,7 @@ const ManageUser = ({ setActiveTab }) => {
     const fetchData = async () => {
 
       try {
-        const ApiToFetch = `https://localhost:7062/api/AdminFilter/UserMangerFilterByName/${pageSize}/${page}?sortBy=${sortbyname}`;
+        const ApiToFetch = `${apiBaseurl}api/AdminFilter/UserMangerFilterByName/${pageSize}/${page}?sortBy=${sortbyname}`;
 
         const response = await axios.get(ApiToFetch, {
           withCredentials: true,
@@ -166,11 +274,13 @@ const ManageUser = ({ setActiveTab }) => {
     fetchData();
   }, [sortbyname]);
 
+  console.log("----->", sortedData)
+
   useEffect(() => {
 
     const fetchData = async () => {
       try {
-        const ApiToFetch = `https://localhost:7062/api/AdminFilter/UserMangerFilterByDate/${pageSize}/${page}?sortingOrder=${sortbyOrder}`;
+        const ApiToFetch = `${apiBaseurl}api/AdminFilter/UserMangerFilterByDate/${pageSize}/${page}?sortingOrder=${sortbyOrder}`;
 
         const response = await axios.get(ApiToFetch, {
           withCredentials: true,
@@ -237,14 +347,15 @@ const ManageUser = ({ setActiveTab }) => {
         </div>
         <ToastContainer />
 
-        <div
+        <div className="tablecontent_manageuser" >
 
-          className="tablecontent"
-        >
-          <table className="table">
-            <thead className="tableHead">
-              <tr>
-                <th className="tableHeadTh">
+          <div className="tablecontent_manageuser_inner">
+
+            <table className="tablemanageuser">
+
+              <thead className="tableHeadmanageuser">
+
+                <th className="tableHeadmanageuserTh">
                   <div style={{ display: 'flex', alignItems: 'center', gap: "2vw" }}>
                     Username
                     <Dropdown overlay={<Menu>{itemsName.map(item => (
@@ -256,7 +367,7 @@ const ManageUser = ({ setActiveTab }) => {
                     </Dropdown>
                   </div>
                 </th>
-                <th className="tableHeadTh">
+                <th className="tableHeadmanageuserTh">
                   <div style={{ display: 'flex', alignItems: 'center', gap: "2vw" }}>
                     Last Logged In
                     <Dropdown overlay={<Menu>{itemsOrder.map(item => (
@@ -268,63 +379,70 @@ const ManageUser = ({ setActiveTab }) => {
                     </Dropdown>
                   </div>
                 </th>
-                <th className="tableHeadTh">Access</th>
-              </tr>
-            </thead>
+                <th className="tableHeadmanageuserTh">Access</th>
 
-            {modalOpen && (
-              <div className="overlay open">
-                <ViewModal
-                  data={viewModalData}
-                  modalOpen={modalOpen}
-                  setModalOpen={setModalOpen}
-                />
-              </div>
-            )}
+              </thead>
 
-            <tbody className='tableBody'>
-              {sortedData.map((item) => (
+              {modalOpen && (
+                <div className="overlay open">
+                  <ViewModal
+                    data={viewModalData}
+                    modalOpen={modalOpen}
+                    setModalOpen={setModalOpen}
+                  />
+                </div>
+              )}
 
-                <tr
-                  key={item.id}
-                  className={item.id % 2 === 0 ? 'bg-gray-100' : 'bg-white'}
-                >
-                  <td className="tableBodyTd">{item.username}</td>
-                  {console.log("updated sort data",sortedData,"saved data",savedata)}
-                  <td className="tableBodyTd">{new Date(item.lastloggedin).toLocaleDateString(
-                    "en-GB"
-                  )}</td>
-                  <td className="tableBodyTdSubdiv">
-                    <span>
+              <tbody className='tableBodyManageuser'>
+                {sortedData.map((item) => (
 
-                      <button htmlFor={`view-${item.username}`} onClick={() => handleView(item)} ><p>{`View  >`}</p></button>
-                    </span>
-                    <span>
-                      <input
-                        type="checkbox"
-                        id={`upload-${item.username}`}
-                        className="mr-2"
-                        checked={savedata.find((d) => d.username === item.username)?.upload || false}
-                        onChange={() => handleCheckboxChange(item, 'upload')}
-                      />
-                      <label htmlFor={`upload-${item.username}`}>upload</label>
-                    </span>
-                    <span>
-                      <input
-                        type="checkbox"
-                        id={`download-${item.username}`}
-                        className="mr-2"
-                        checked={savedata.find((d) => d.username === item.username)?.download || false}
-                        onChange={() => handleCheckboxChange(item, 'download')}
-                      />
-                      <label htmlFor={`download-${item.username}`}>Download</label>
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  <tr
+                    key={item.id}
+                    className={item.id % 2 === 0 ? 'bg-gray-100' : 'bg-white'}
+                  >
+                    <td className="tableBodyManageuserTd">{item.username}</td>
 
+                    <td className="tableBodyManageuserTd">{new Date(item.lastloggedin).toLocaleDateString(
+                      "en-GB"
+                    )}</td>
+                    <td className="tableBodyManageuserTdSubdiv">
+                      <Tooltip title="Manage the tables that the user can view" arrow enterDelay={1000}>
+                        <span>
+
+                          <button htmlFor={`view-${item.username}`} onClick={() => handleView(item)} ><p>{`View`}</p></button>
+                        </span>
+                      </Tooltip>
+                      <span>
+                        <input
+                          type="checkbox"
+                          id={`upload-${item.username}`}
+                          className="mr-2"
+                          checked={savedata.find((d) => d.username === item.username)?.upload || false}
+                          onChange={() => handleCheckboxChange(item, 'upload')}
+                        />
+                        <label htmlFor={`upload-${item.username}`}>upload</label>
+                      </span>
+                      <span>
+                        <input
+                          type="checkbox"
+                          id={`download-${item.username}`}
+                          className="mr-2"
+                          checked={savedata.find((d) => d.username === item.username)?.download || false}
+                          onChange={() => handleCheckboxChange(item, 'download')}
+                        />
+                        <label htmlFor={`download-${item.username}`}>Download</label>
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+
+            </table>
+          </div>
+
+        </div>
+
+        <div>
           {numRows > 0 && (
             <div className='paginationNbutton'>
               <div style={{ display: "flex", flexDirection: "row", gap: "1vw", marginTop: "2vh", width: "100%", justifyContent: "center" }}>
@@ -339,8 +457,8 @@ const ManageUser = ({ setActiveTab }) => {
               </div>
             </div>
           )}
-
         </div>
+
 
         <div id="buttons" className="my-5">
           <div className="absolute right-0 px-[5vw]" style={{ display: "flex" }} >

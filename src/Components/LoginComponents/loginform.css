@@ -35,8 +35,8 @@
 }
 
 .has-text {
-    background-color: lightgreen; 
-  }
+    background-color: lightgreen;
+}
 
 .input-label {
     display: block;
@@ -59,7 +59,7 @@
 
 .error-input {
     border: 1px solid red;
-  }
+}
 
 .password-input {
     position: relative;
@@ -105,6 +105,86 @@
 .input-fieldwhite-background {
     background-color: white;
 }
+
+.caps-lock-icon {
+    position: relative;
+    
+}
+
+.caps-lock-tooltip {
+    /* position: absolute;
+    bottom: 35px;
+    left: 10%;
+    transform: translateX(-90%); */
+    margin: 8%;
+    position: relative;
+    background-color: #f36523c5;
+    color: white;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 1cqw;
+    display: flex;
+    align-self: center;
+    align-items: center;
+    justify-content: flex-end;
+    float: right;
+}
+
+.caps-lock-tooltip-text {
+    margin-left: 5px;
+    text-wrap: nowrap;
+}
+
+/* WelcomePopup.css */
+.popup-overlay {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Add a semi-transparent background overlay */
+    z-index: 999; /* Make sure it appears on top of other elements */
+}
+
+.popup {
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    max-width: 400px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2vh;
+}
+
+.message {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    align-self: center;
+}
+
+.close-button_popup {
+    background-color: #333;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background-color 0.3s;
+}
+
+.close-button_popup:hover {
+    background-color: #555;
+}
+
+
 
 @media (max-width:1300px) and (min-width:900px) {
     .login-button {

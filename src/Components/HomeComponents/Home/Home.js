@@ -22,6 +22,8 @@ import activeFileDictionary from '../../../Assets/File Dictionary active.svg'
 import inactiveFileDictionary from '../../../Assets/File Dictionary Inactive.svg'
 import Statecontext from "../../Context/Statecontext";
 import FileModal from "../FileView/FIleModal/FileModal";
+import styled from 'styled-components';
+import WelcomePopup from "../../LoginComponents/WelcomePopup";
 
 const HomeComp = ({
   fileView,
@@ -38,16 +40,20 @@ const HomeComp = ({
   const [selectedOption, setSelectedOption] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  const { filesinFolder, setFileNameTosend, filesinsearch, setFilesinSearch } = useContext(Statecontext);
+  const { filesinFolder, setFileNameTosend, filesinsearch, setFilesinSearch, showPopup, setShowPopup, apiBaseurl } = useContext(Statecontext);
 
   let userName = sessionStorage.getItem("userId");
+
+  const RedTooltip = styled(Tooltip)`
+  background-color: red;
+`;
 
   const fetchFilesBySearch = async (searchText) => {
     if (searchText === "") {
       setFilesinSearch([]);
     } else {
       try {
-        const apiToFetch = `https://localhost:7062/api/ReportingModuleFilter/GetGlobalFilenames?username=${userName}&searchString=${searchText}`;
+        const apiToFetch = `${apiBaseurl}api/ReportingModuleFilter/GetGlobalFilenames?username=${userName}&searchString=${searchText}`;
         const response = await axios.get(apiToFetch, {
           withCredentials: true,
         });
@@ -63,30 +69,30 @@ const HomeComp = ({
     }
   };
 
-  const fetchUserName = async () => {
-    try {
-      const APItoUse = `https://localhost:7062/api/ReportingModule/GetUsername`;
+  // const fetchUserName = async () => {
+  //   try {
+  //     const APItoUse = `${apiBaseurl}api/ReportingModule/GetUsername`;
 
-      const response = await axios.get(APItoUse, {
-        withCredentials: true,
-      });
+  //     const response = await axios.get(APItoUse, {
+  //       withCredentials: true,
+  //     });
 
-      if (response.status === 200) {
-        sessionStorage.setItem("userId", response.data.username);
-        sessionStorage.setItem("userRole", response.data.role);
-        sessionStorage.setItem("userDownload", response.data.download);
-        sessionStorage.setItem("userUpload", response.data.upload);
-      }
-    } catch (err) {
-      console.log("API Error", err);
-    }
-  };
+  //     if (response.status === 200) {
+  //       sessionStorage.setItem("userId", response.data.username);
+  //       sessionStorage.setItem("userRole", response.data.role);
+  //       sessionStorage.setItem("userDownload", response.data.download);
+  //       sessionStorage.setItem("userUpload", response.data.upload);
+  //     }
+  //   } catch (err) {
+  //     console.log("API Error", err);
+  //   }
+  // };
 
   let userRole = sessionStorage.getItem("userRole");
 
-  useEffect(() => {
-    fetchUserName();
-  }, []);
+  // useEffect(() => {
+  //   fetchUserName();
+  // }, []);
 
   useEffect(() => {
     fetchFilesBySearch(searchText);
@@ -100,11 +106,22 @@ const HomeComp = ({
     console.log("Selected option:", file);
   };
 
+
   return (
     <>
       <div className="overalTabs">
 
         <FileModal modalOpen={openModal} setModalOpen={() => { setOpenModal(false) }} />
+
+        {showPopup && (
+          <WelcomePopup
+            message={`Welcome to ICICI, ${userName}!`}
+            // duration={10000}
+            onClose={() => setShowPopup(false)}
+          />
+        )}
+
+
 
         <div className="mainTabs">
           {userRole !== "User" ? (
@@ -130,6 +147,7 @@ const HomeComp = ({
                 title="Manage user roles and access"
                 arrow
                 enterDelay={1000}
+
               >
                 <button
                   className={
@@ -260,18 +278,19 @@ const HomeComp = ({
                   ""
                 )}
               </div>
-
-              <div className="gridViewDiv">
-                <img
-                  src={gridView ? grid : list}
-                  height={50}
-                  width={50}
-                  alt=""
-                  onClick={() => {
-                    setGridView(!gridView);
-                  }}
-                />
-              </div>
+              {activeTab === 0 &&
+                <div className="gridViewDiv">
+                  <img
+                    src={gridView ? grid : list}
+                    height={50}
+                    width={50}
+                    alt=""
+                    onClick={() => {
+                      setGridView(!gridView);
+                    }}
+                  />
+                </div>
+              }
             </div>
           </>
         )}

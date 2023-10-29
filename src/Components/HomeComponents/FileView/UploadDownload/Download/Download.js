@@ -14,6 +14,8 @@ import PreviewDownload from './PreviewDownload';
 import ReactDatePicker from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker.css';
 import { format } from "date-fns";
+import { useContext } from 'react';
+import Statecontext from '../../../../Context/Statecontext';
 
 const Download = () => {
   const [selected, setSelected] = useState('');
@@ -32,13 +34,13 @@ const Download = () => {
   const [searchString, setSearchString] = useState('');
   const [sortbyname, setSortByName] = useState('');
   const [downloadActive, setDownloadActive] = useState(false)
-
+ const {apiBaseurl}=useContext(Statecontext);
   const [columnName, setColumnName] = useState('')
 
   const handleapplicationSelection = async (e) => {
 
     try {
-      const ApiToFetch = `https://localhost:7062/api/ReportingModule/GetFilesInFolder/${e}`;
+      const ApiToFetch = `${apiBaseurl}api/ReportingModule/GetFilesInFolder/${e}`;
       const response = await axios.get(ApiToFetch, {
         withCredentials: true,
       });
@@ -54,10 +56,10 @@ const Download = () => {
       console.log('API error', err);
     }
   };
-
+const username=sessionStorage.getItem("userId");
   const getFolder = async () => {
     try {
-      const ApiForFolder = `https://localhost:7062/api/ReportingModule/GetFoldersWithPermissions`;
+      const ApiForFolder = `${apiBaseurl}api/ReportingModule/GetFoldersWithPermissions?userName=${username}`;
 
       const response = await axios.get(ApiForFolder, {
         withCredentials: true,
@@ -76,7 +78,7 @@ const Download = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const ApiToFetch = `https://localhost:7062/api/ReportingModuleFilter/filterFieldNames?tableName=${selectedFolder}`;
+        const ApiToFetch = `${apiBaseurl}api/ReportingModuleFilter/filterFieldNames?tableName=${selectedFolder}`;
 
         const response = await axios.get(ApiToFetch, {
           withCredentials: true,
@@ -135,7 +137,7 @@ const Download = () => {
       const formattedStartDate = startDatefilterStatus ? format(startDatefilter, 'yyyy-MM-dd', new Date()) : null;
       const formattedEndDate = endDatefilterStatus ? format(endDatefilter, 'yyyy-MM-dd', new Date()) : null;
 
-      const sendFileToDb = `https://localhost:7062/api/ReportingModuleFilter/downloadwithcolumnanddate?username=${userName}&filename=${selectedFolder}&startDate=${formattedStartDate}&endDate=${formattedEndDate}&columnName=${columnName}`
+      const sendFileToDb = `${apiBaseurl}api/ReportingModuleFilter/downloadwithcolumnanddate?username=${userName}&filename=${selectedFolder}&startDate=${formattedStartDate}&endDate=${formattedEndDate}&columnName=${columnName}`
 
       try {
         const response = await axios.post(sendFileToDb, formattedDataArray, {
@@ -164,7 +166,7 @@ const Download = () => {
         const dataArray = inputValue.split(',')
         const formattedDataArray = dataArray.map(item => item);
 
-        const sendFileToDb = `https://localhost:7062/api/ReportingModuleFilter/downloadwithcolumn?username=${userName}&filename=${selectedFolder}&columnName=${columnName}`
+        const sendFileToDb = `${apiBaseurl}api/ReportingModuleFilter/downloadwithcolumn?username=${userName}&filename=${selectedFolder}&columnName=${columnName}`
 
         try {
           const response = await axios.post(sendFileToDb, formattedDataArray, {
@@ -206,7 +208,7 @@ const Download = () => {
       setFilesName(filesNameForSearch);
     } else {
       try {
-        const apiToFetch = `https://localhost:7062/api/ReportingModuleFilter/GetFilesInFolderSearch/${selected}/${subStr}`;
+        const apiToFetch = `${apiBaseurl}api/ReportingModuleFilter/GetFilesInFolderSearch/${selected}/${subStr}`;
         const response = await axios.get(apiToFetch, {
           withCredentials: true,
         });
@@ -231,7 +233,7 @@ const Download = () => {
     const fetchData = async () => {
       setSearchString('');
       try {
-        const ApiToFetch = `https://localhost:7062/api/ReportingModuleFilter/GetFilesInFolderSortBy/${selected}/${sortbyname}`;
+        const ApiToFetch = `${apiBaseurl}api/ReportingModuleFilter/GetFilesInFolderSortBy/${selected}/${sortbyname}`;
 
         const response = await axios.get(ApiToFetch, {
           withCredentials: true,
@@ -257,15 +259,15 @@ const Download = () => {
           <div id="select_Application">
             <p className="text-select_app">Select Application</p>
             <div>
-              <FormControl style={{ width: '90%', marginTop: '2vh' }}>
-                <InputLabel id="demo-simple-select-label">Click to Select</InputLabel>
+              <FormControl style={{ width: '90%', marginTop: '2vh', height: '10vh' }}>
+                <InputLabel id="demo-simple-select-label" style={{display:"flex",justifyContent:"Centre"}}>Click to Select</InputLabel>
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
                   value={selected}
                   label="Option"
                   onChange={(e) => setSelected(e.target.value)}
-                  style={{ borderRadius: '5rem', height: '5.5vh' }}
+                  style={{ borderRadius: '5rem', height: '7vh' }}
                 >
                   {foldername &&
                     foldername.length > 0 &&

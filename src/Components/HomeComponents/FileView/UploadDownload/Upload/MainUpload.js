@@ -29,14 +29,14 @@ const MainUpload = () => {
     const [prv, setPrev] = useState(true);
     const [dataForFile, setDataForFile] = useState([]);
 
-    const { fileNameForUpload, isUploadTrue } = useContext(Statecontext);
+    const { fileNameForUpload, isUploadTrue,apiBaseurl } = useContext(Statecontext);
     const [rowCount, setRowCount] = useState(0);
     const [colCount, setColCount] = useState(0);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const ApiToFetch = `https://localhost:7062/api/ReportingModule/GetColumnNamesAndDataTypes?tableName=${fileNameForUpload}`;
+                const ApiToFetch = `${apiBaseurl}api/ReportingModule/GetColumnNamesAndDataTypes?tableName=${fileNameForUpload}`;
 
                 const response = await axios.get(ApiToFetch, {
                     withCredentials: true,
@@ -58,6 +58,7 @@ const MainUpload = () => {
     const generateDummyXLSX = () => {
         const columnNameValues = dataForFile.map(column => column.columnName)
         const data = [columnNameValues]
+        console.log("upload-download data",data);
         const ws = XLSX.utils.aoa_to_sheet(data);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
@@ -78,11 +79,13 @@ const MainUpload = () => {
             setPrev(true)
         } else {
             if (isUploadTrue) {
+                console.log("isUploadTrue",isUploadTrue)
                 setPreviewShow(e);
                 setShowProgress(true);
                 setPrev(false);
                 toast.success("uploaded successfully...", { theme: "colored", })
             } else {
+                console.log("isUploadFalse",isUploadTrue)
                 setPrev(true);
                 setPreviewShow(e);
                 setShowProgress(false);
@@ -91,10 +94,10 @@ const MainUpload = () => {
 
         }
 
-        console.log("the modal", e, btn)
+       // console.log("the modal", e, btn)
     }
 
-
+    console.log("the modal", isUploadTrue)
     const downloadFile = () => {
         if (file) {
             const url = URL.createObjectURL(file);

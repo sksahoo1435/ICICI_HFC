@@ -14,13 +14,15 @@ import "./FileDictionary.css";
 import ReactDatePicker from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker.css';
 import { format } from "date-fns";
+import { useContext } from "react";
+import Statecontext from "../../Context/Statecontext";
 
 const FileDictionary = () => {
   const [datas, setDatas] = useState([]);
   const [filesName, setFilesName] = useState([]);
   const [filesNameForSearch, setFilesNameForSearch] = useState([]);
   const [fileChildren, setFileChildren] = useState({});
-  const [checkedCheckboxes, setCheckedCheckboxes] = useState({});
+  const [checkedCheckboxes, setCheckedCheckboxes] = useState([]);
   const [selectedParentFolder, setSelectedParentFolder] = useState(null);
   const [page, setPage] = useState(1);
   const [numRows, setNumRows] = useState(0);
@@ -29,9 +31,13 @@ const FileDictionary = () => {
   const [searchText, setSearchText] = useState("");
   const [startDatefilter, setStartDatefilter] = useState(new Date());
   const [endDatefilter, setEndDatefilter] = useState(new Date());
-
+  const { apiBaseurl } = useContext(Statecontext);
   const [isStartDate, setisStartDate] = useState(false);
   const [isEndDate, setisEndDate] = useState(false);
+  const [parentTable, setParentTable] = useState([]);
+  const [selectedparentTable, setSelectedParentTable] = useState('');
+  const [isParentTableShow, setIsParentTableShow] = useState(false)
+
 
   const pageSize = 500;
 
@@ -39,9 +45,28 @@ const FileDictionary = () => {
     tableToShow(selectedParentFolder, checkedCheckboxes, value);
   };
 
-  const getFilesName = async () => {
+  const getParentTable = async () => {
+
     try {
-      const apiToFetch = `https://localhost:7062/api/Admin/GetFileNamesForDictionarys`;
+      const apiToFetch = `${apiBaseurl}api/Admin/GetFileNamesForDictionarys`;
+      const response = await axios.get(apiToFetch, {
+        withCredentials: true,
+      });
+
+      if (response.status === 200) {
+        setParentTable(response.data);
+      } else {
+        console.log("Something went wrong", response);
+      }
+    } catch (error) {
+      console.error('Error fetching data from API:', error);
+    }
+
+  }
+
+  const getFilesName = async (foldername) => {
+    try {
+      const apiToFetch = `${apiBaseurl}api/FileDictionary/GetDistinctRelationTables?tableName=${foldername}`;
       const response = await axios.get(apiToFetch, {
         withCredentials: true,
       });
@@ -59,7 +84,7 @@ const FileDictionary = () => {
 
   const loadFileChildren = async (fileName) => {
     try {
-      const apiToFetchChildren = `https://localhost:7062/api/Admin/GetColumnNamesByTableName/${fileName}`;
+      const apiToFetchChildren = `${apiBaseurl}api/Admin/GetColumnNamesByTableName/${fileName}`;
       const response = await axios.get(apiToFetchChildren, {
         withCredentials: true,
       });
@@ -78,19 +103,28 @@ const FileDictionary = () => {
   };
 
   const handleCheckboxChange = (tableName, fileName) => {
-    const checkboxKey = `${fileName}`;
+    let copycheckedCheckboxes = [...checkedCheckboxes];
 
-    if (checkedCheckboxes[checkboxKey]) {
-      const updatedCheckboxes = { ...checkedCheckboxes };
-      delete updatedCheckboxes[checkboxKey];
-      setCheckedCheckboxes(updatedCheckboxes);
+    if (copycheckedCheckboxes.includes(tableName)) {
+
+      copycheckedCheckboxes.splice(copycheckedCheckboxes.indexOf(tableName), 1)
+
     } else {
-      setCheckedCheckboxes((prevCheckboxes) => ({
-        ...prevCheckboxes,
-        [checkboxKey]: tableName,
-      }));
+
+      copycheckedCheckboxes.push(tableName)
+
     }
+
+    setCheckedCheckboxes(copycheckedCheckboxes)
+
   };
+
+
+  const handleCheckboxParentFolder = (parentname) => {
+    setIsParentTableShow(true);
+    getFilesName(parentname);
+    setSelectedParentTable(parentname)
+  }
 
   const handleSearchInputChange = (event) => {
     const inputValue = event.target.value;
@@ -98,71 +132,101 @@ const FileDictionary = () => {
     fetchFilesBySearch(inputValue);
   };
 
-  const tableToShow = async (tableName, filesName, newPage) => {
-    const result = Object.values(filesName).map(value => {
-      const parts = value.split('-');
-      return parts[1];
+  function convertToDotNotation(inputArray) {
+    return inputArray.map(item => {
+
+      const parts = item.split('-');
+      const result = parts.slice(0, -1).join('.');
+
+      return result;
+    });
+  }
+
+  const getheaderName = (files, parentName) => {
+    var x = files.map(item => {
+
+      const parts = item.split('-');
+      const result = parts[0]
+
+      return result;
     });
 
-    const tableResult = tableName.split('-');
-    const tabletoSend = tableResult[0];
+    var arr = x.filter((item) => { return item !== parentName })
+
+    return [...new Set(arr)]
+  }
+
+
+  const tableToShow = async (tableName, filesName, newPage) => {
+
+    if (filesName.length === 0) {
+      setIsParentTableShow(false)
+      setDatas([])
+    } else {
+      setIsParentTableShow(true)
+    }
 
     if (isStartDate && isEndDate) {
-      const formattedStartDate = isStartDate ? format(startDatefilter, 'yyyy-MM-dd', new Date()) : null;
-      const formattedEndDate = isEndDate ? format(endDatefilter, 'yyyy-MM-dd', new Date()) : null;
+      // const formattedStartDate = isStartDate ? format(startDatefilter, 'yyyy-MM-dd', new Date()) : null;
+      // const formattedEndDate = isEndDate ? format(endDatefilter, 'yyyy-MM-dd', new Date()) : null;
 
-      try {
-        const baseUrl = `https://localhost:7062/api/AdminFilter/GetColumnDataByDateFilterInDictinory`;
-        const columnNamesParams = [];
-        for (const columnName of result) {
-          columnNamesParams.push(`ColumnNames=${columnName}`);
-        }
-        const columnNamesQueryString = columnNamesParams.join('&');
-        const apiUrl = `${baseUrl}?TableName=${tabletoSend}&${columnNamesQueryString}&Page=${newPage}&PageSize=${pageSize}&StartDate=${formattedStartDate}&EndDate=${formattedEndDate}`;
+      // try {
+      //   const baseUrl = `${apiBaseurl}api/AdminFilter/GetColumnDataByDateFilterInDictinory`;
+      //   const columnNamesParams = [];
+      //   for (const columnName of result) {
+      //     columnNamesParams.push(`ColumnNames=${columnName}`);
+      //   }
+      //   const columnNamesQueryString = columnNamesParams.join('&');
+      //   const apiUrl = `${baseUrl}?TableName=${tabletoSend}&${columnNamesQueryString}&Page=${newPage}&PageSize=${pageSize}&StartDate=${formattedStartDate}&EndDate=${formattedEndDate}`;
 
-        const response = await axios.get(apiUrl, {
-          withCredentials: true,
-        })
+      //   const response = await axios.get(apiUrl, {
+      //     withCredentials: true,
+      //   })
 
-        if (response.status === 200) {
-          if (response.data === 'FILTER DATA NOT PRESENT') {
-            setDatas('FILTER DATA NOT PRESENT')
-            setNumRows(0)
-          } else {
-            setDatas(response.data.data)
-            setNumRows(response.data.totalCount)
-            setPage(newPage);
-          }
+      //   if (response.status === 200) {
+      //     if (response.data === 'FILTER DATA NOT PRESENT') {
+      //       setDatas('FILTER DATA NOT PRESENT')
+      //       setNumRows(0)
+      //     } else {
+      //       setDatas(response.data.data)
+      //       setNumRows(response.data.totalCount)
+      //       setPage(newPage);
+      //     }
 
-        } else {
-          console.log("Error");
-        }
+      //   } else {
+      //     console.log("Error");
+      //   }
 
-      } catch (err) {
-        console.log("API error", err);
-      }
+      // } catch (err) {
+      //   console.log("API error", err);
+      // }
 
     } else {
       try {
-        const baseUrl = `https://localhost:7062/api/Admin/GetColumnData`;
-        const columnNamesParams = [];
-        for (const columnName of result) {
-          columnNamesParams.push(`ColumnNames=${columnName}`);
+        const baseUrl = `${apiBaseurl}api/FileDictionary/FileDicitonary`;
+
+        const datafortable = {
+          "columnNames": convertToDotNotation(filesName),
+          "primaryTable": selectedparentTable,
+          "joinTables": getheaderName(filesName, selectedparentTable),
+          "pageNumber": newPage,
+          "pageSize": pageSize
         }
-        const columnNamesQueryString = columnNamesParams.join('&');
-        const apiUrl = `${baseUrl}?TableName=${tabletoSend}&${columnNamesQueryString}&Page=${newPage}&PageSize=${pageSize}`;
 
-        const response = await axios.get(apiUrl, {
+        const response = await axios.post(baseUrl, datafortable, {
           withCredentials: true,
-        })
-
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
         if (response.status === 200) {
           setDatas(response.data.data)
-          setNumRows(response.data.totalCount)
+          setNumRows(response.data.totalRowCount)
           setPage(newPage);
         } else {
-          console.log("Error");
+          console.log("API error");
         }
+       
 
       } catch (err) {
         console.log("API error", err);
@@ -175,7 +239,7 @@ const FileDictionary = () => {
       setFilesName(filesNameForSearch);
     } else {
       try {
-        const apiToFetch = `https://localhost:7062/api/AdminFilter/GetFileNamesBySearchInDictionary?searchString=${searchText}`;
+        const apiToFetch = `${apiBaseurl}api/AdminFilter/GetFileNamesBySearchInDictionary?searchString=${searchText}`;
         const response = await axios.get(apiToFetch, {
           withCredentials: true,
         });
@@ -191,11 +255,22 @@ const FileDictionary = () => {
     }
   };
 
+  const PTableEle = parentTable.map((tablename, ind) => (
+    <div className="parentTableContainer" key={ind}>
+
+      <p>{tablename}</p>
+
+      <input type="checkbox" onChange={() => handleCheckboxParentFolder(tablename)} />
+
+    </div>
+  ))
+
   const collapseEle = filesName.map((fileName, index) => ({
-    key: `${index + 1}`,
+    key: `${index}`,
     label: <p style={{ fontSize: "1cqw" }}>{fileName}</p>,
     children: fileChildren[fileName] ? (
       <div className="scrollable-section">
+        
         {fileChildren[fileName].map((child, childIndex) => (
           <div key={childIndex}>
             <input
@@ -218,17 +293,21 @@ const FileDictionary = () => {
   }));
 
   useEffect(() => {
+    getParentTable();
+  }, [])
+
+  useEffect(() => {
 
     const fetchData = async () => {
       try {
-        const ApiToFetch = `https://localhost:7062/api/AdminFilter/GetFileNamesForDictionarySortBy?sortOrder=${sortbyname}`;
+        const ApiToFetch = `${apiBaseurl}api/AdminFilter/GetFileNamesForDictionarySortBy?sortOrder=${sortbyname}`;
 
         const response = await axios.get(ApiToFetch, {
           withCredentials: true,
         });
         if (response.status === 200) {
           setFilesName(response.data)
-          setKeyToRemount(keyToRemount+1)
+          setKeyToRemount(keyToRemount + 1)
         } else {
           console.log('API response error', response.status);
         }
@@ -240,21 +319,12 @@ const FileDictionary = () => {
     fetchData();
   }, [sortbyname]);
 
-  useEffect(() => {
-    getFilesName();
-  }, []);
-
-
-  useEffect(() => {
-    setCheckedCheckboxes({});
-    setKeyToRemount((prevKey) => prevKey + 1);
-  }, [selectedParentFolder]);
 
   useEffect(() => {
     if (selectedParentFolder) {
       tableToShow(selectedParentFolder, checkedCheckboxes, page);
     }
-  }, [selectedParentFolder, checkedCheckboxes, page, startDatefilter, endDatefilter]);
+  }, [checkedCheckboxes, page, startDatefilter, endDatefilter]);
 
   const items = [
     {
@@ -285,7 +355,7 @@ const FileDictionary = () => {
   return (
     <>
       <ErrorBoundary>
-        <div className="fileDictionary_container" key={keyToRemount}>
+        <div className="fileDictionary_container" >
           <div className="fileDictionary_container_left">
             <div className="fileDictionary_container_left_dataSec">
               <div>
@@ -350,19 +420,18 @@ const FileDictionary = () => {
                   </Dropdown>
                 </div>
               </div>
-              <div>
-                <Collapse
-                  className="bg-white border-none outline-none shadow-none font-semibold 2xl:text-xl"
-                  items={collapseEle}
-                />
-              </div>
+              {isParentTableShow === false ?
+                <div className="isParentTableShow_divContainer">
+                  {PTableEle}
+                </div> :
+                <div className="collapse_scrollabalesec">
+                  <Collapse
+                    className="bg-white border-none outline-none shadow-none font-semibold 2xl:text-xl"
+                    items={collapseEle}
+                  />
+                </div>}
             </div>
-            <div className="fileDictionary_container_left_btn">
-              <button className="border py-2 px-9 mx-2 rounded-full text-white bg-gradient-to-t from-[#E75126] to-[#F8A716]"
-                onClick={handleDownload}>
-                <p style={{ color: "white" }}>Download</p>
-              </button>
-            </div>
+
           </div>
 
           <div className="fileDictionary_container_right">
@@ -416,26 +485,38 @@ const FileDictionary = () => {
                 <div className="tableContainer">
                   {datas === 'FILTER DATA NOT PRESENT' ? (<h1>
                     DATA NOT PRESENT
-                  </h1>) : (<table className="tableFile">
-                    <thead className="tableHeadFile">
-                      {data.map((items) => (
-                        <th className="tableHeadFileTh" key={items}>
-                          {items}
-                        </th>
-                      ))}
-                    </thead>
-                    <tbody className="tableBodyFile">
-                      {datas.map((item, index) => (
-                        <tr key={index}>
-                          {data.map((key) => (
-                            <td className="tableBodyFileTd" key={key}>
-                              <p>{item[key] === '' ? '' : item[key]}</p>
-                            </td>
-                          ))}
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>)}
+                  </h1>) : (
+                    <div className="table-container_filedict">
+                      <div className="table-wrapper">
+                        <table className="tableFile">
+                          <thead className="tableHeadFile">
+                            {data.map((items) => (
+                              <th className="tableHeadFileTh" key={items}>
+                                {items}
+                              </th>
+                            ))}
+                          </thead>
+
+                          <tbody className="tableBodyFile">
+                            {datas.map((item, index) => (
+                              <tr key={index}>
+                                {data.map((key) => (
+                                  <td className="tableBodyFileTd" key={key}>
+                                    <p>{item[key] === '' ? '' : item[key]}</p>
+                                  </td>
+                                ))}
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+
+
+
+
+
+                  )}
 
                 </div>
                 {numRows > 0 && (
@@ -451,8 +532,17 @@ const FileDictionary = () => {
                       </div>
                     </div>
                   </div>
+
                 )}
+                <div className="fileDictionary_container_left_btn">
+                  <button className="border py-2 px-9 mx-2 rounded-full text-white bg-gradient-to-t from-[#E75126] to-[#F8A716]"
+                    onClick={handleDownload}>
+                    <p style={{ color: "white" }}>Download</p>
+                  </button>
+                </div>
+
               </div>
+
 
             )}
           </div>

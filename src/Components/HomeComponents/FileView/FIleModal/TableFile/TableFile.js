@@ -7,7 +7,6 @@ const TableFile = ({ data, onSort }) => {
   const [columnName, setcolumnName] = useState('');
 
   const handleSort = (column, order) => {
-
     onSort(column, order);
   };
 
@@ -24,16 +23,16 @@ const TableFile = ({ data, onSort }) => {
     },
   ];
 
-
   const columns = Object.keys(data[0]);
 
   return (
-    <div className="table-containers">
-      <table className='table'>
-        <thead className="tableHead">
-          <tr>
+    <div className="table-containersModal">
+
+      <div className="tableWrapcontainersModal">
+        <table className='tableModal'>
+          <thead className="tableModalHead">
             {columns.map((column, index) => (
-              <th className="tableHeadTh" key={index}>
+              <th className="tableModalHeadTh" key={index}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: "2vw" }}>
                   <p>{column}</p>
                   <Dropdown overlay={<Menu>{itemsName.map(item => (
@@ -43,20 +42,25 @@ const TableFile = ({ data, onSort }) => {
                   ))}</Menu>}>
                     <img src={dropdownImg} alt="Dropdown" className="dropdown-icon" onClick={() => setcolumnName(column)} />
                   </Dropdown>
-                </div></th>
+                </div>
+              </th>
             ))}
-          </tr>
-        </thead>
-        <tbody className='tableBody'>
-          {data.map((rowData, rowIndex) => (
-            <tr key={rowIndex}>
-              {columns.map((column, colIndex) => (
-                <td key={colIndex} className="tableBodyTd" ><p>{rowData[column]}</p></td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+
+          <tbody className='tableModalBody'>
+            {data.map((rowData, rowIndex) => (
+              <tr key={rowIndex}>
+                {columns.map((column, colIndex) => (
+                  <td key={colIndex} className="tableModalBodyTd"><p>{rowData[column]}</p></td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+
+
     </div>
   );
 };

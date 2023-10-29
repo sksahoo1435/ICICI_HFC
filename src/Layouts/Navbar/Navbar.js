@@ -7,9 +7,18 @@ import settings from "../../Assets/Vector.png"
 import logout from "../../Assets/Vector (1).png"
 import downArrow from "../../Assets/Union 2.png";
 import axios from 'axios';
+import { useContext ,useState} from 'react';
+import Statecontext from '../../Components/Context/Statecontext';
 
 const Navbar = () => {
   let navigate = useNavigate();
+  const { apiBaseurl } = useContext(Statecontext);
+  const [logoutTimer, setLogoutTimer] = useState(null);
+
+  const logoutHandler=()=>{
+    localStorage.setItem("token","");
+    navigate("/")
+  }
   const items = [
     {
       key: '1',
@@ -18,45 +27,50 @@ const Navbar = () => {
     },
     {
       key: '2',
-      label: <button className=" dropdownButton" onClick={() => { navigate("/") }} ><img src={logout} alt="edit" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Logout</button>,
+      label: <button className=" dropdownButton" onClick={logoutHandler} ><img src={logout} alt="edit" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Logout</button>,
 
     },
   ];
-  const fetchUserName = async () =>{
-    try{
 
-      const APItoUse = `https://localhost:7062/api/ReportingModule/GetUsername`
+  const startLogoutTimer = () => {
+    const timer = setTimeout(() => {
+      // Logout the user when the timer expires
+      handleLogout();
+    }, 15 * 60 * 1000); // 15 minutes in milliseconds
+    setLogoutTimer(timer);
+  };
 
-      const response = await axios.get(APItoUse,{
-        withCredentials:true,
-      })
-      if(response.status === 200){
-        sessionStorage.setItem("userId", response.data.username);
-       
-      }
+  const handleLogout = () => {
+    // Clear the timer and do the logout
+    clearTimeout(logoutTimer);
+    localStorage.setItem("token", "");
+    navigate('/'); // Replace with the actual logout route
+  };
+  const fetchUserName = async () => {
 
-    }catch(err){
-      console.log("API Error",err)
-    }
+    startLogoutTimer();
+    sessionStorage.getItem("userId")
   }
-  
+  if (localStorage.getItem("token") === "" || localStorage.getItem("token") === null) {
+    navigate("/")
+  }
 
 
   let userIcon;
   let username;
 
   const userName = sessionStorage.getItem('userId')
-  username = userName === null ?'shetej':userName;
-  let splituser = username.split(" ")
-
-  let z = splituser.length - 1
+  username = userName === null ? 'shetej' : userName;
+  let splituser = username.split("")
+  console.log(splituser)
+  //let z = splituser.length - 1
 
   let f = splituser[0]
-  let l = splituser[z]
+  let l = splituser[1]
 
   userIcon = f[0] + l[0];
 
-  useEffect(()=>{fetchUserName();},[])
+  useEffect(() => { fetchUserName(); }, [])
 
   return (
     <>

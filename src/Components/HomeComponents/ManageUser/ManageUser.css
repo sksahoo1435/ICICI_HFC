@@ -1,43 +1,36 @@
-.tablecontent {
-  border-radius: 1rem;
-  overflow: hidden;
-  max-height: 60vh;
-}
-
-.table {
-  width: 100%;
-  border-collapse: collapse;
+.tablecontent_manageuser {
+  max-height: 45vh;
   overflow-y: scroll;
-  height: 100%;
-  border-bottom: 1.5px solid #DDDDDD;
-  border-left: 1.5px solid #DDDDDD;
-  border-right: 1.5px solid #DDDDDD;
+  border-radius: 1rem;
 }
 
-.tableHead {
-  background: linear-gradient(0deg, #F36523, #F36523),
-    linear-gradient(0deg, #FFFFFF, #FFFFFF);
+.tablecontent_manageuser_inner{
+  position: static;
+}
+
+.tablemanageuser {
+  border: 1px solid rgb(205, 202, 202);
+  border-radius: 1rem;
+  min-width: max-content;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.tableHeadmanageuserTh {
+  padding: 11px;
+  position: sticky;
+  top: 0px;
   color: white;
-  font-family: Arial;
-  font-size: 1rem;
-  font-weight: 400;
-  line-height: 1.1rem;
-  letter-spacing: 0em;
-  text-align: left;
-
-}
-
-.tableHeadTh {
   padding: 2vh;
-  text-align: left;
-  position: relative;
-  padding-left: 2vw;
+  background: linear-gradient(0deg, #f36523, #f36523),
+    linear-gradient(0deg, #ffffff, #ffffff);
+  height: 5vh;
   border-right: 1px solid white;
-
+  text-wrap: nowrap;
 }
 
-.tableBodyTd {
-  padding: 2vh;
+.tableBodyManageuserTd{
+padding: 2vh;
   padding-left: 2vw;
   color: #36556B;
   font-family: Arial;
@@ -48,7 +41,8 @@
   border-bottom: 1.5px solid #DDDDDD
 }
 
-.tableBodyTdSubdiv {
+
+.tableBodyManageuserTdSubdiv{
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -65,115 +59,35 @@
   border-bottom: 1.5px solid #DDDDDD
 }
 
-.tableBody tr:nth-child(even) {
-  background: linear-gradient(0deg, #DDDDDD, #DDDDDD),
-    linear-gradient(0deg, #F6F6F6, #F6F6F6);
-
-
+.tableBodyManageuser tr:nth-child(even) {
+  background: linear-gradient(0deg, #dddddd, #dddddd),
+    linear-gradient(0deg, #f6f6f6, #f6f6f6);
 }
 
-.tableBody label {
-  cursor: pointer;
+.tablecontent_manageuser::-webkit-scrollbar {
+  width: 0.6vw;
+  height: 2vh;
+  border-radius: 1vh;
 }
 
-@media (max-width:800px) {
-  .tableHead {
-    background: linear-gradient(0deg, #F36523, #F36523),
-      linear-gradient(0deg, #FFFFFF, #FFFFFF);
-    color: white;
-    font-family: Arial;
-    font-size: 0.9rem;
-    font-weight: 400;
-    line-height: 1rem;
-    letter-spacing: 0em;
-    text-align: left;
-    height: 0.7vh !important;
-
-  }
-
-  .tableBodyTd {
-    padding: 2vh;
-    padding-left: 2vw;
-    color: #36556B;
-    font-family: Arial;
-    font-size: 0.9rem;
-    font-weight: 400;
-    line-height: 1rem;
-    letter-spacing: 0em;
-    height: 0.7vh !important;
-  }
-
-  .tableBodyTdSubdiv {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    padding: 2vh;
-    color: #36556B;
-    font-family: Arial;
-    font-size: 0.9rem;
-    font-weight: 400;
-    line-height: 1rem;
-    letter-spacing: 0em;
-    text-align: left;
-    padding-left: 2vw;
-    padding-right: 2vw;
-    height: 0.7vh !important;
-  }
+.tablecontent_manageuser::-webkit-scrollbar-thumb {
+  background-color: rgba(186, 186, 186, 0.682);
+  border-radius: 1vh;
+  top: calc(5vh / 10); /* Adjust the top position */
 }
 
-@media (max-width:670px) {
-  .tableHead {
-    background: linear-gradient(0deg, #F36523, #F36523),
-      linear-gradient(0deg, #FFFFFF, #FFFFFF);
-    color: white;
-    font-family: Arial;
-    font-size: 0.6rem;
-    font-weight: 400;
-    line-height: 0.8rem;
-    letter-spacing: 0em;
-    text-align: left;
-    height: 0.7vh !important;
-
-  }
-
-  .tableBodyTd {
-    padding: 2vh;
-    padding-left: 2vw;
-    color: #36556B;
-    font-family: Arial;
-    font-size: 0.6rem;
-    font-weight: 400;
-    line-height: 0.8rem;
-    letter-spacing: 0em;
-    height: 0.7vh !important;
-  }
-
-  .table td {
-    padding: 2.5vh;
-    border-bottom: none;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+.tablecontent_manageuser::-webkit-scrollbar-horizontal {
+  height: 1vh;
+  border-radius: 1vh;
 }
 
-  .tableBodyTdSubdiv {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    padding: 3vh;
-    color: #36556B;
-    font-family: Arial;
-    font-size: 0.6rem;
-    font-weight: 400;
-    line-height: 0.8rem;
-    letter-spacing: 0em;
-    border-bottom: none;
-    text-align: left;
-    padding-left: 2vw;
-    padding-right: 2vw;
-    height: 0.7vh !important;
-  }
+.tablecontent_manageuser::-webkit-scrollbar-thumb:horizontal {
+  background-color: rgba(186, 186, 186, 0.682);
+  border-radius: 1vh;
+  z-index: 1999;
+  top: calc(5vh / 2); /* Adjust the top position */
 }
+
 
 #buttons {
   text-align: right;
@@ -221,28 +135,6 @@
   font-size: 1.2cqw;
 }
 
-
-.table::-webkit-scrollbar {
-  width: 10px;
-}
-
-.table::-webkit-scrollbar-thumb {
-  background-color: rgba(186, 186, 186, 0.682);
-  border-radius: 5px;
-}
-
-.table::-webkit-scrollbar-thumb:hover {
-  background-color: #FFA500;
-}
-
-.table::-webkit-scrollbar-track {
-  background-color: #E5E5E5;
-}
-
-.table {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(186, 186, 186, 0.682) #E5E5E5;
-}
 
 .overlay {
   display: none;

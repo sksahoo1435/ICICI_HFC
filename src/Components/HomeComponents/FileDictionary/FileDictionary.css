@@ -55,9 +55,80 @@
 }
 
 .fileDictionary_container_left_btn {
-  margin-top: 1vh;
+
   position: relative;
+  display: flex;
+  justify-content: flex-end;
+
 }
+
+.isParentTableShow_divContainer {
+  max-height: 40vh;
+  position: relative;
+  overflow: auto;
+  width: 100%;
+}
+
+.isParentTableShow_divContainer::-webkit-scrollbar {
+  display: none;
+}
+
+.parentTableContainer {
+  height: 6vh;
+  display: flex;
+  flex-direction: row;
+  border-bottom: 1px solid #a1a2a3;
+
+}
+
+.parentTableContainer p {
+  width: 80%;
+  justify-content: center;
+  align-self: center;
+  overflow-x: scroll;
+  padding-left: 1vw;
+}
+
+.parentTableContainer input {
+  height: 2vh;
+  width: 2vw;
+  justify-content: center;
+  align-self: center;
+}
+
+.parentTableContainer p::-webkit-scrollbar {
+  display: none;
+}
+
+.collapse_scrollabalesec{
+  position: relative;
+  max-height: 60vh;
+  overflow-y: scroll;
+}
+
+.collapse_scrollabalesec::-webkit-scrollbar {
+  width: 0.8vw;
+  height: 1vh;
+  border-radius: 1vh;
+}
+
+
+.collapse_scrollabalesec::-webkit-scrollbar-thumb {
+  background-color: rgba(186, 186, 186, 0.682);
+  border-radius: 1vh;
+}
+
+
+
+.collapse_scrollabalesec::-webkit-scrollbar-track {
+  background-color: #E5E5E5;
+}
+
+.collapse_scrollabalesec::-webkit-scrollbar-horizontal {
+  height: 1vh;
+  border-radius: 1vh;
+}
+
 
 .label {
   color: #36556B;
@@ -74,15 +145,15 @@
 }
 
 
-.FileDictionaryTableSecdateInputs{
+.FileDictionaryTableSecdateInputs {
   position: relative;
   display: flex;
   flex-direction: column;
   gap: 2vh;
-  margin-top: 0vh;
+  margin-top: 9vh;
 }
 
-.dateInputs{
+.dateInputs {
   position: relative;
   height: 10%;
   display: flex;
@@ -92,7 +163,7 @@
 }
 
 
-.datepicker{
+.datepicker {
   border: 1px solid rgba(141, 138, 138, 0.66);
   border-radius: 0.5rem;
   padding: 0vh 1vw;
@@ -101,70 +172,89 @@
   height: 4vh;
 }
 
-.tableContainer {
+.table-container_filedict {
   max-height: 50vh;
-  overflow-x: auto;
   border: 1px solid #a1a2a3;
-  /* overflow: hidden; */
   border-radius: 1rem;
   position: relative;
   max-width: 57vw;
+  overflow-y: scroll;
+  margin: 20px;
 }
+
 
 .tableFile {
   width: 100%;
   border-collapse: collapse;
-  border-bottom: none;
-}
-
-
-.tableHeadFile {
-  background-color: #E75126;
-  color: white;
+  border-radius: 1rem;
+  min-width: max-content;
+  border: 1px solid rgb(205, 202, 202);
 }
 
 .tableHeadFileTh {
-  padding: 1rem;
-  text-align: center;
-  font-family: Arial;
-  font-size: 1cqw;
-  font-weight: 400;
-  line-height: 1.1rem;
-  letter-spacing: 0em;
-  margin-bottom: 0.5vh;
+  background: linear-gradient(0deg, #f36523, #f36523),
+    linear-gradient(0deg, #ffffff, #ffffff);
+  color: white;
+  position: sticky;
+  top: 0px;
+  padding: 2vh;
+  height: 5vh;
   border-right: 1px solid white;
+  text-wrap: nowrap;
 }
 
-.tableBodyFile tr:nth-child(even) {
-  background: linear-gradient(0deg, #DDDDDD, #DDDDDD),
-    linear-gradient(0deg, #F6F6F6, #F6F6F6);
+.tableHeadFileTh p {
+  font-family: Noto Sans;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.1rem;
+  letter-spacing: 0em;
+  text-align: left;
+  padding-left: 2vw;
+  color: #36556b;
+  white-space: nowrap;
 }
 
 .tableBodyFileTd {
-  padding: 0.9rem;
-  border-bottom: 1px solid #ccc;
-  text-align: center;
-  font-family: Arial;
-  font-size: 1cqw;
-  font-weight: 400;
-  line-height: 1rem;
+  height: 5vh;
+  margin-left: 2vw;
+}
+
+.tableBodyFileTd p {
+  display: flex;
+  justify-content: center;
+  font-family: Noto Sans;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.1rem;
   letter-spacing: 0em;
-  color: #36556B;
+  text-align: left;
+  padding-left: 2vw;
+  color: #36556b;
+  white-space: nowrap;
 }
 
-.tableContainer::-webkit-scrollbar {
+
+.tableFile tr:nth-child(even) {
+  background: linear-gradient(0deg, #dddddd, #dddddd),
+    linear-gradient(0deg, #f6f6f6, #f6f6f6);
+}
+
+.table-container_filedict::-webkit-scrollbar {
   width: 0.7vw;
-  height: 1.5vh;
+  height: 1.3vh;
+  display: none;
 }
 
-.tableContainer::-webkit-scrollbar-thumb {
+.table-container_filedict::-webkit-scrollbar-thumb {
   background-color: #888;
   border-radius: 4px;
 }
 
-.tableContainer::-webkit-scrollbar-thumb:hover {
+.table-container_filedict::-webkit-scrollbar-thumb:hover {
   background-color: #555;
 }
+
 
 
 .scrollable-section {

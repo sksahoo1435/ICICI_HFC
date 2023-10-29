@@ -10,13 +10,13 @@ import axios from 'axios';
 
 const DownloadDestination = ({ gridView, advance, setAdvance }) => {
 
-  const { setFileNameForUpload } = useContext(Statecontext);
+  const { setFileNameForUpload,apiBaseurl } = useContext(Statecontext);
 
   const [folders, setFolders] = useState([]);
   const [selectDrop, setSelectDrop] = useState('');
 
   const fetchFolderForUpload = async () => {
-    const ApiTouse = `https://localhost:7062/api/ReportingModule/GetUploadFileNames`
+    const ApiTouse = `${apiBaseurl}api/ReportingModule/GetUploadFileNames`
 
     try {
       const response = await axios.get(ApiTouse, {
@@ -39,7 +39,7 @@ const DownloadDestination = ({ gridView, advance, setAdvance }) => {
   useEffect(()=>{
     const fetchData = async (data) => {
       try {
-        const ApiToFetch = `https://localhost:7062/api/ReportingModuleFilter/GetUploadFileNamesBySorting?sortOrder=${data}`;
+        const ApiToFetch = `${apiBaseurl}api/ReportingModuleFilter/GetUploadFileNamesBySorting?sortOrder=${data}`;
 
         const response = await axios.get(ApiToFetch, {
           withCredentials: true,
