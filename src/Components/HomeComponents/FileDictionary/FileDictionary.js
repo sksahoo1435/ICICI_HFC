@@ -37,6 +37,7 @@ const FileDictionary = () => {
   const [parentTable, setParentTable] = useState([]);
   const [selectedparentTable, setSelectedParentTable] = useState('');
   const [isParentTableShow, setIsParentTableShow] = useState(false)
+  const [checkedIndex, setCheckedIndex] = useState(null);
 
 
   const pageSize = 500;
@@ -120,10 +121,15 @@ const FileDictionary = () => {
   };
 
 
-  const handleCheckboxParentFolder = (parentname) => {
+  const handleCheckboxParentFolder = (parentname, index) => {
     setIsParentTableShow(true);
     getFilesName(parentname);
     setSelectedParentTable(parentname)
+    if (index === checkedIndex) {
+      setCheckedIndex(null);
+    } else {
+      setCheckedIndex(index);
+    }
   }
 
   const handleSearchInputChange = (event) => {
@@ -159,79 +165,106 @@ const FileDictionary = () => {
 
   const tableToShow = async (tableName, filesName, newPage) => {
 
-    if (filesName.length === 0) {
-      setIsParentTableShow(false)
-      setDatas([])
+    console.log("inside table show", tableName, filesName,startDatefilter === null,filesName.length === 0)
+
+    if (startDatefilter === null && endDatefilter === null && filesName.length === 0) {
+      console.log("enter to date...")
+      return
     } else {
-      setIsParentTableShow(true)
-    }
 
-    if (isStartDate && isEndDate) {
-      // const formattedStartDate = isStartDate ? format(startDatefilter, 'yyyy-MM-dd', new Date()) : null;
-      // const formattedEndDate = isEndDate ? format(endDatefilter, 'yyyy-MM-dd', new Date()) : null;
+      if (isStartDate && isEndDate) {
+        const formattedStartDate = isStartDate ? format(startDatefilter, 'yyyy-MM-dd', new Date()) : null;
+        const formattedEndDate = isEndDate ? format(endDatefilter, 'yyyy-MM-dd', new Date()) : null;
 
-      // try {
-      //   const baseUrl = `${apiBaseurl}api/AdminFilter/GetColumnDataByDateFilterInDictinory`;
-      //   const columnNamesParams = [];
-      //   for (const columnName of result) {
-      //     columnNamesParams.push(`ColumnNames=${columnName}`);
-      //   }
-      //   const columnNamesQueryString = columnNamesParams.join('&');
-      //   const apiUrl = `${baseUrl}?TableName=${tabletoSend}&${columnNamesQueryString}&Page=${newPage}&PageSize=${pageSize}&StartDate=${formattedStartDate}&EndDate=${formattedEndDate}`;
-
-      //   const response = await axios.get(apiUrl, {
-      //     withCredentials: true,
-      //   })
-
-      //   if (response.status === 200) {
-      //     if (response.data === 'FILTER DATA NOT PRESENT') {
-      //       setDatas('FILTER DATA NOT PRESENT')
-      //       setNumRows(0)
-      //     } else {
-      //       setDatas(response.data.data)
-      //       setNumRows(response.data.totalCount)
-      //       setPage(newPage);
-      //     }
-
-      //   } else {
-      //     console.log("Error");
-      //   }
-
-      // } catch (err) {
-      //   console.log("API error", err);
-      // }
-
-    } else {
-      try {
-        const baseUrl = `${apiBaseurl}api/FileDictionary/FileDicitonary`;
-
-        const datafortable = {
-          "columnNames": convertToDotNotation(filesName),
-          "primaryTable": selectedparentTable,
-          "joinTables": getheaderName(filesName, selectedparentTable),
-          "pageNumber": newPage,
-          "pageSize": pageSize
-        }
-
-        const response = await axios.post(baseUrl, datafortable, {
-          withCredentials: true,
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-        if (response.status === 200) {
-          setDatas(response.data.data)
-          setNumRows(response.data.totalRowCount)
-          setPage(newPage);
+        if (filesName.length === 0) {
+          setIsParentTableShow(false)
+          setDatas([])
         } else {
-          console.log("API error");
+          setIsParentTableShow(true)
         }
-       
 
-      } catch (err) {
-        console.log("API error", err);
+        try {
+          const baseUrl = `${apiBaseurl}api/FileDictionary/FileDictionaryWithDateFilter`;
+
+          const datafortable = {
+            "columnNames": convertToDotNotation(filesName),
+            "primaryTable": selectedparentTable,
+            "joinTables": getheaderName(filesName, selectedparentTable),
+            "pageNumber": newPage,
+            "pageSize": pageSize,
+            "startDate": formattedStartDate,
+            "endDate": formattedEndDate
+          }
+
+          const response = await axios.post(baseUrl, datafortable, {
+            withCredentials: true,
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+
+          console.log("date filter file dict", response)
+
+          if (response.status === 200) {
+            if (response.data === 'FILTER DATA NOT PRESENT') {
+              setDatas('FILTER DATA NOT PRESENT')
+              setNumRows(0)
+            } else {
+              setDatas(response.data.data)
+              setNumRows(response.data.totalRowCount)
+              setPage(newPage);
+            }
+          } else {
+            console.log("API error");
+          }
+
+        } catch (err) {
+          console.log("API error", err);
+        }
+
+      } else {
+        if (filesName.length === 0) {
+          setIsParentTableShow(false)
+          setDatas([])
+        } else {
+          setIsParentTableShow(true)
+        }
+        try {
+          const baseUrl = `${apiBaseurl}api/FileDictionary/FileDicitonary`;
+
+          const datafortable = {
+            "columnNames": convertToDotNotation(filesName),
+            "primaryTable": selectedparentTable,
+            "joinTables": getheaderName(filesName, selectedparentTable),
+            "pageNumber": newPage,
+            "pageSize": pageSize
+          }
+
+          console.log("data for the table is", datafortable)
+
+          const response = await axios.post(baseUrl, datafortable, {
+            withCredentials: true,
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+          if (response.status === 200) {
+            setDatas(response.data.data)
+            setNumRows(response.data.totalRowCount)
+            setPage(newPage);
+          } else {
+            console.log("API error");
+          }
+
+
+        } catch (err) {
+          console.log("API error", err);
+        }
       }
+
     }
+
+
   };
 
   const fetchFilesBySearch = async (searchText) => {
@@ -260,37 +293,73 @@ const FileDictionary = () => {
 
       <p>{tablename}</p>
 
-      <input type="checkbox" onChange={() => handleCheckboxParentFolder(tablename)} />
+      <input type="checkbox" checked={ind === checkedIndex} onChange={() => handleCheckboxParentFolder(tablename, ind)} />
 
     </div>
   ))
 
-  const collapseEle = filesName.map((fileName, index) => ({
-    key: `${index}`,
-    label: <p style={{ fontSize: "1cqw" }}>{fileName}</p>,
-    children: fileChildren[fileName] ? (
-      <div className="scrollable-section">
-        
-        {fileChildren[fileName].map((child, childIndex) => (
-          <div key={childIndex}>
+
+  const areAllChildrenSelected = (fileName,index) => {
+    console.log("check collapse ele...", fileName, index)
+    return fileChildren[fileName].every((child, childIndex) => {
+      return checkedCheckboxes[`${fileName}-${child}-${childIndex}`];
+    });
+  };
+
+  const collapseEle = filesName.map((fileName, index) => {
+    
+    return {
+      key: `${index + 1}`,
+      label: <p style={{ fontSize: "1cqw" }}>{fileName}</p>,
+      children: fileChildren[fileName] ? (
+        <div className="scrollable-section">
+          <div>
             <input
               type="checkbox"
-              id={`checkbox-${fileName}-${childIndex}`}
-              checked={checkedCheckboxes[`${fileName}-${child}`]}
-              onChange={() => handleCheckboxChange(`${fileName}-${child}-${childIndex}`, childIndex)}
+              checked={areAllChildrenSelected(fileName,index)}
+              onChange={() => handleSelectAllChildren(fileName)}
             />
-            <label htmlFor={`checkbox-${fileName}-${childIndex}`} style={{ paddingLeft: "0.5vw" }}>{child}</label>
+            <label>Select All</label>
           </div>
-        ))}
-      </div>
-    ) : (
-      <div>Loading...</div>
-    ),
-    onClick: () => {
-      loadFileChildren(fileName); setSelectedParentFolder(fileName); setisEndDate(false);
-      setEndDatefilter(null); setStartDatefilter(null);; setisStartDate(false);
-    },
-  }));
+
+          {fileChildren[fileName].map((child, childIndex) => (
+            <div key={childIndex}>
+              <input
+                type="checkbox"
+                id={`checkbox-${fileName}-${childIndex}`}
+                checked={checkedCheckboxes[`${fileName}-${child}`]}
+                onChange={() =>
+                  handleCheckboxChange(`${fileName}-${child}-${childIndex}`, childIndex)
+                }
+              />
+              <label htmlFor={`checkbox-${fileName}-${childIndex}`} style={{ paddingLeft: "0.5vw" }}>
+                {child}
+              </label>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div>Loading...</div>
+      ),
+      onClick: () => {
+        loadFileChildren(fileName);
+        setSelectedParentFolder(fileName);
+        setisEndDate(false);
+        setEndDatefilter(null);
+        setStartDatefilter(null);
+        setisStartDate(false);
+      },
+    };
+  });
+
+  const handleSelectAllChildren = (fileName) => {
+
+    const result = fileChildren[fileName].map((fieldName, ind) => `${fileName}-${fieldName}-${ind}`);
+    const uniqueValues = new Set([...checkedCheckboxes, ...result]);
+
+    const newCheckedCheckboxes = [...uniqueValues];
+    setCheckedCheckboxes(newCheckedCheckboxes);
+  };
 
   useEffect(() => {
     getParentTable();
@@ -325,6 +394,8 @@ const FileDictionary = () => {
       tableToShow(selectedParentFolder, checkedCheckboxes, page);
     }
   }, [checkedCheckboxes, page, startDatefilter, endDatefilter]);
+
+  // console.log("check globally...", selectedParentFolder, checkedCheckboxes, page, startDatefilter, endDatefilter)
 
   const items = [
     {
